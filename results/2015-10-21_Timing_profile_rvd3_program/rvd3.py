@@ -17,6 +17,7 @@ from itertools import repeat
 import h5py
 import tempfile
 import logging
+from time import time
 import time
 from datetime import datetime
 from datetime import date
@@ -166,34 +167,34 @@ def write_dualvcf(outputFile, loc, call, refb, controlR=None, controlN=None, cas
     print("##FORMAT=<ID=GU,Number=1,Type=Integer,Description=\"Number of 'G' alleles\">", file=vcfF)
     print("##FORMAT=<ID=TU,Number=1,Type=Integer,Description=\"Number of 'T' alleles\">", file=vcfF)
     
-    # print("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tNormal\tCase", file=vcfF)
+    print("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tNormal\tCase", file=vcfF)
 
-    # for i in xrange(J):
-    #     # pdb.set_trace()
-    #     if call[i]:           
-    #         # restore R
-    #         actg = ['A','C','G','T']
+    for i in xrange(J):
+        # pdb.set_trace()
+        if call[i]:           
+            # restore R
+            actg = ['A','C','G','T']
 
-    #         idx = actg.index(refb[i])
-    #         caseR4 = np.zeros(4)
-    #         controlR4 = np.zeros(4)
-    #         caseR4[idx] = np.median(caseN[:,i])-np.sum(caseR[i,:])
-    #         controlR4[idx] = np.median(controlN[:,i])-np.sum(controlR[i,:])
-    #         for d in xrange(idx):
-    #             caseR4[d] = caseR[i,d]
-    #             controlR4[d] = controlR[i,d]
-    #         for d in xrange(3-idx):
-    #             caseR4[d+idx+1] = caseR[i,d+idx]
-    #             controlR4[d+idx+1] = controlR[i,d+idx]
+            idx = actg.index(refb[i])
+            caseR4 = np.zeros(4)
+            controlR4 = np.zeros(4)
+            caseR4[idx] = np.median(caseN[:,i])-np.sum(caseR[i,:])
+            controlR4[idx] = np.median(controlN[:,i])-np.sum(controlR[i,:])
+            for d in xrange(idx):
+               caseR4[d] = caseR[i,d]
+               controlR4[d] = controlR[i,d]
+            for d in xrange(3-idx):
+               caseR4[d+idx+1] = caseR[i,d+idx]
+               controlR4[d+idx+1] = controlR[i,d+idx]
 
-    #         print ("chr%s\t%d\t.\t%s\t.\t.\tPASS\t.\tAU:CU:GU:TU\t%d:%d:%d:%d\t%d:%d:%d:%d" \
-    #                % (chrom[i], pos[i], refb[i],\
-    #                   controlR4[0], controlR4[1], controlR4[2], controlR4[3],\
-    #                   caseR4[0], caseR4[1], caseR4[2], caseR4[3]), file=vcfF)
+            print ("chr%s\t%d\t.\t%s\t.\t.\tPASS\t.\tAU:CU:GU:TU\t%d:%d:%d:%d\t%d:%d:%d:%d" \
+                 % (chrom[i], pos[i], refb[i],\
+                    controlR4[0], controlR4[1], controlR4[2], controlR4[3],\
+                    caseR4[0], caseR4[1], caseR4[2], caseR4[3]), file=vcfF)
                 
-    # vcfF.close()
+    vcfF.close()
 
-    print("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT", file=vcfF)
+    '''print("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT", file=vcfF)
 
     for i in xrange(J):
         # pdb.set_trace()
@@ -215,7 +216,8 @@ def write_dualvcf(outputFile, loc, call, refb, controlR=None, controlN=None, cas
 
             print ("chr%s\t%d\t.\t%s\t.\t.\tPASS\t.\tAU:CU:GU:TU" % (chrom[i], pos[i], refb[i]), file=vcfF)
                 
-    vcfF.close()
+    vcfF.close()'''
+
 def chi2combinetest(R, N, bayescall = 1, pvalue = 0.05):
 
     nRep = R.shape[0]
@@ -702,17 +704,18 @@ def opt_par(func, x, args, bnds, parlabel):
         
     return res.x
 
-def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, dsample = None, region = None):
+def beta_mean(p):
+    return p[0]*1.0/np.sum(p)
+
+def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, vaf = None):
 
     if pool is not None:
         pool = mp.Pool(processes=pool)
     # t = str(datetime.now)
-    if dsample is not None and region is not None:
-        f = open('ELBO_%d_%s.txt' %(dsample, region), 'w')
-        t = time.time()
-    else:
-        f = open('ELBO.txt','w')
-        t = time.time()
+    f = open('ELBO%s.txt' % str(vaf).replace(".", "_", 1),'w')
+    # generate a timing profile
+
+    t = time.time()
 
     # print("ELBO optimization trace starting from %s: \n" %t, file=f)
 
@@ -723,7 +726,6 @@ def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, dsample = Non
         (N, J) = r.shape# sum over non-reference bases
     # r = r.T
     # n = n.T
-    # print (r, N, J)
 
     if seed is not None: np.random.seed(seed = seed)
 
@@ -733,12 +735,13 @@ def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, dsample = Non
     #logging.info('Storing model updates in %s' % temp)  
 
     ## Define optimization stopping criterion
-    MAXITER = 50
-    ELBOTOLPCT = 0.01 *100
-    MAXVARITER = 50     
+    MAXITER = 1
+    ELBOTOLPCT = 0.001 *100
+    MAXVARITER = 1     
     NORMTOL = 0.1
 
     ## Initialize model parameters
+    t0 = time.time()
     if phi is None:
         phi, mu, theta = estimate_mom(r, n)
     else:
@@ -746,9 +749,11 @@ def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, dsample = Non
     mu0 = phi['mu0']
     M0 = phi['M0']
     M = phi['M']
+    t1 = time.time()
+    time_ini_model_para = t1 - t0
 
     ## Initialize the variational parameters
-   
+    t0 = time.time()
     if q is None:
         #delta = np.random.uniform(low = 0.1, high = 100, size = (N,J,2))
         #gam = np.random.uniform(low=0.1, high=100, size = (J,2))
@@ -758,21 +763,23 @@ def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, dsample = Non
     else:
         delta = q['delta']
         gam = q['gam']
-
+    
     phi = {'mu0':mu0, 'M0':M0, 'M':M}
     q = {'delta':delta, 'gam':gam}
     #save_model('initial_value.hdf5', r, n, phi, q)  
+    t1 = time.time()
+    time_ini_var_para = t1 - t0
 
-    ## Initialize ELBO
+    ## Initialize ELBO    
+    t0 = time.time()
     elbo = [ELBO(r, n, M, mu0, M0, delta, gam)]
     logging.info("Initial ELBO: %0.2f" % elbo[-1])
+    t1 = time.time()
+    time_ini_ELBO = t1 - t0
 
     print("M-iteration\tE-iteration\tELBO\tIncrease Percentage\tdelta-deltaprev\tgam-gamprev\tt-gam\tt-delta\tt-mu0\tt-M0\tt-M", file=f)
-
     print("%d\t%d\t%0.2f\t%0.3f%%\t\t\t\t\t\t\t" %(0, 0, elbo[-1], 0), file=f)
-
     # print("Initial \tELBO: \t%0.2f" % elbo[-1], file = f)
-
 
     ## Optimization
     moditer = 0
@@ -784,7 +791,9 @@ def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, dsample = Non
         var_elbo = [ elbo[-1] ]
         (norm_delta_delta, norm_delta_gam) = (np.inf, np.inf)
         delta_varelbo_pct = np.inf
+        ################################################################
         logging.info("E-step")
+
         while variter < MAXVARITER \
             and delta_varelbo_pct > ELBOTOLPCT \
             and (norm_delta_delta > NORMTOL or norm_delta_gam > NORMTOL):
@@ -800,24 +809,35 @@ def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, dsample = Non
             delta = opt_delta(r, n, M, delta, gam, pool = pool)  # theta~Beta(delta)
             t2=time.time()                        
 
+            time_opt_gam = t1 - t0
+            time_opt_delta = t2 - t1
+            
+            ################################################################
             #Test for convergence
+            t0 = time.time()
             var_elbo.append(ELBO(r, n, M, mu0, M0, delta, gam))
             delta_varelbo_pct = 100.0*(var_elbo[-1] - var_elbo[-2])/abs(var_elbo[-2])
             logging.info("********Variational Iteration %d of %d********" % (variter+1, MAXVARITER))
             logging.info("ELBO: %0.2f; Percent Change: %0.3f%%" % (var_elbo[-1], delta_varelbo_pct))
             # print("Variational \tELBO: \t%0.2f \tPercent Change: \t%0.3f%%" % (var_elbo[-1], delta_varelbo_pct), file = f)
            
-
             norm_delta_delta = linalg.norm(delta - delta_prev)
             norm_delta_gam = linalg.norm(gam - gam_prev)
+
             logging.debug("||delta - delta_prev|| = %0.2f; ||gam - gam_prev|| = %0.2f" 
                 % (norm_delta_delta, norm_delta_gam))
 
             print("%d\t%d\t%0.2f\t%0.3f%%\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t\t\t" %(moditer, variter+1, var_elbo[-1],\
-             delta_varelbo_pct,norm_delta_delta, norm_delta_gam, t1-t0,t2-t1), file=f)
+             delta_varelbo_pct,norm_delta_delta, norm_delta_gam, time_opt_gam, time_opt_delta), file=f)
+
+            t1 = time.time()
+            time_conv = t1 - t0
+
             variter += 1
 
+        ################################################################
         logging.info("M-step")
+
         # M-step: Update model parameters
         t0=time.time()
         mu0 = opt_mu0(mu0, M0, gam)
@@ -827,10 +847,16 @@ def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, dsample = Non
         M = opt_M(M, delta, gam, pool = pool)
         t3=time.time()
 
+        time_opt_mu0 = t1 - t0
+        time_opt_M0 = t2 - t1
+        time_opt_M = t3 - t2       
+
+        t0 = time.time()
         elbo.append(ELBO(r, n, M, mu0, M0, delta, gam))
         delta_elbo_pct = 100*(elbo[-1] - elbo[-2])/abs(elbo[-2])
+        t1 = time.time()
+        time_update_ELBO = t1 - t0
         moditer += 1
-
 
         # ibic
 
@@ -841,24 +867,22 @@ def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, dsample = Non
         
         # print("M-iteration\tE-iteration\tELBO\tIncrease Percentage\tdelta-deltaprev\tgam-gamprev\tt-gam\tt-beta\tt-mu0\tt-M0\tt-M")        
         # print("Iteration %d of %d.\tELBO: \t%0.2f \tPercent Change:\t %0.3f%%" % (moditer, MAXITER, elbo[-1], delta_elbo_pct), file = f)
-        print("%d\t%d\t%0.2f\t%0.3f%%\t\t\t\t\t%0.2f\t%0.2f\t%0.2f" %(moditer,0, elbo[-1],delta_elbo_pct, t1-t0,t2-t1,t3-t2), file=f)
+        print("%d\t%d\t%0.2f\t%0.3f%%\t\t\t\t\t%0.2f\t%0.2f\t%0.2f" %(moditer,0, elbo[-1],delta_elbo_pct, time_opt_mu0,time_opt_M0,time_opt_M), file=f)
 
         logging.info("M0 = %0.2e" % M0)
         logging.info("mu0 = %0.2f" % mu0)
 
-        # Store the model for viewing
+        '''# Store the model for viewing
         phi = {'mu0':mu0, 'M0':M0, 'M':M}
         q = {'delta':delta, 'gam':gam}
-        save_model(h5file.name, r, n, phi, q)
+        save_model(h5file.name, r, n, phi, q)'''
 
-        phi = {'mu0':mu0, 'M0':M0, 'M':M}
-        q = {'delta':delta, 'gam':gam}
-        
     print("Total elapsed time is %0.3f seconds." %(time.time()-t), file=f)
-    
-    f.close()
-    return(phi, q)
 
+    f.close()
+    return(phi, q, time_ini_model_para, time_ini_var_para, time_ini_ELBO, time_opt_gam, time_opt_delta, time_conv, \
+    time_opt_mu0, time_opt_M0, time_opt_M, time_update_ELBO)
+ 
 def estimate_mom(r, n):
     """ Return model parameter estimates using method-of-moments.
     """
