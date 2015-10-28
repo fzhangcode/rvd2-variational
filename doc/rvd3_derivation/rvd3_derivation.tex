@@ -1,0 +1,343 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[top=1in, left=1in, right=1in, bottom=1in]{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ...
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{algorithm}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{graphicx}
+
+\usepackage{verbatim}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage{enumitem}
+
+\usepackage{setspace}
+\doublespacing
+
+\usepackage{natbib}
+
+%\usepackage{epstopdf}
+%\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\newcommand{\RR}{I\!\!R} %real numbers
+\DeclareMathOperator{\diag}{diag}
+
+\algnewcommand{\Inputs}[1]{%
+  \State \textbf{Inputs:}
+  \Statex \hspace*{\algorithmicindent}\parbox[t]{.8\linewidth}{\raggedright #1}
+}
+\algnewcommand{\Initialize}[1]{%
+  \State \textbf{Initialize:}
+  \Statex \hspace*{\algorithmicindent}\parbox[t]{.8\linewidth}{\raggedright #1}
+}
+
+\title[RVD3]{Supplementary Information for RVD3}
+\author{Fan Zhang}
+\date{}
+
+\begin{document}
+
+\maketitle
+\section{Derivation of Variational Inference}
+\subsection{Factorization}
+We propose the following factorized variational distribution to approximate the true posterior over latent variables $\mu_j$ and $\theta_{ij}$. $q(\mu_j)$ approximates the variational posterior distribution of $\mu_j$, which represents the local error rate distribution in position $j$ across different replicates. $q(\theta_{ij})$ approximates the posterior distribution of $\theta_{ij}$, which is the error rate distribution in position $j$ replicate $i$.
+\begin{equation}
+  q(\mu, \theta) = q(\mu)q(\theta) = \prod_{j=1}^J q(\mu_{j}) \prod_{i=1}^N q(\theta_{ji}).
+  \label{eq:vardist}
+\end{equation}
+
+\subsection{Evidence Lower Bound (ELBO)}
+The log-likelihood of the data is lower-bounded according to Jensen's inequality:
+\begin{equation}
+\begin{split}
+\log p \left( r | \phi \right) &= \log \int_\mu \int_\theta p\left(r,\mu,\theta \right) d\theta d\mu \\
+&= \log \int_\mu \int_\theta p\left(r,\mu,\theta \right)\frac{q\left(\mu,\theta \right) }{q\left(\mu,\theta \right) } d\theta d\mu \\
+&\geq \int_\mu \int_\theta q\left(\mu,\theta \right) \log \frac{ p\left(r,\mu,\theta \right)}{q\left(\mu,\theta \right)} d\theta d\mu \\
+&= E_q \left[ \log p\left(r,\mu,\theta \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
+&\triangleq \mathcal{L}(q, \phi).
+\end{split}
+\end{equation}
+where $ \phi= \left( \mu_0, M_0, M \right) $.
+
+The item $\mathcal{L}(q, \phi)$ is the evidence of lower bound (ELBO) of the log-likelihood of the data, which is the sum of $q$-expected complete log-likelihood and the entropy of the variational distribution $q$. The goal of variational inference is maximizing the ELBO. Equivalently, $q$ is chosen by minimizing the Kullback-Liebler (KL) divergence between the variational distribution and the true posterior distribution.
+
+The ELBO is written out in this way:
+\begin{equation}
+\begin{split}
+\label{L}
+\mathcal{L}(q, \phi) &= E_q \left[ \log p\left(r,\mu,\theta | n; \phi \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
+&= E_q \left[ \log p\left(r | \theta, n \right)\right] + E_q \left[ \log p\left(\theta | \mu; M \right)\right] + E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]- E_q \left[ \log q\left(\mu \right)\right]- E_q \left[ \log q\left(\theta \right)\right] \\
+\end{split}
+\end{equation}
+We write out each component. Recall that $r_{ij}|n_{ij}\thicksim \text{Binomial}(\theta_{ij}, n _{ji})$,
+\begin{equation}
+\begin{split}
+\label{r}
+E_q \left[ \log p\left(r | \theta, n \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log p \left( r_{ji} | \theta_{ji}, n_{ji} \right) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N}  E_q  \left[ \log \left( \frac{ \Gamma(n_{ji}+1) } { \Gamma(r_{ji}+1) \Gamma( n_{ji} - r_{ji} + 1 ) } \theta_{ji}^{r_{ji}} (1 - \theta_{ji})^{n_{ji} - r_{ji}} \right) \right] \\
+%&= \sum_{j=1}^{J} \sum_{i=1}^{N}  E_q  \left[ r_{ji} \log \theta_{ji} + (n_{ji} - r_{ji}) \log (1 - \theta_{ji}) \right] + con. \\
+%&= \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace + con. \\
+%
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} \log \left( \frac{ \Gamma(n_{ji}+1) } { \Gamma(r_{ji}+1) \Gamma( n_{ji} - r_{ji} + 1 ) }\right)  \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N}  E_q  \left[ r_{ji} \log \theta_{ji} + (n_{ji} - r_{ji}) \log (1 - \theta_{ji}) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} \log \left( \frac{ \Gamma(n_{ji}+1) } { \Gamma(r_{ji}+1) \Gamma( n_{ji} - r_{ji} + 1 ) }\right)  \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace \\
+\end{split}
+\end{equation}
+
+Recall that $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$,
+\begin{equation}
+\begin{split}
+\label{theta}
+E_q \left[ \log p\left(\theta | \mu; M \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q \left[ \log p\left(\theta_{ji} | \mu_j; M_j \right)\right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N}  E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) } \theta_{ji}^{M_j\mu_j -1} (1 - \theta_{ji})^{M_j ( 1 - \mu_j) - 1} \right) \right] \\
+%
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N}  E_q  \left[ \log \left( \theta_{ji}^{M_j\mu_j -1} (1 - \theta_{ji})^{M_j ( 1 - \mu_j) - 1} \right) \right] \\
+%
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right]  \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \left( M_j\mu_j -1 \right) \log \theta_{ji} \right] + E_q \left[ \left( M_j ( 1 - \mu_j) - 1 \right) \log \left( 1 - \theta_{ji} \right) \right]\right\rbrace \\
+%
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+&= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+%
+%&= \sum_{j=1}^{J}  \left\lbrace E_q  \left[ \log \Gamma(M_j) \right] - E_q  \left[ \log \Gamma(\mu_j M_j) \right] + E_q  \left[ \log \Gamma(M_j (1-\mu_j)) \right] \right\rbrace \\
+%&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+%
+%&= \sum_{j=1}^{J}  \left\lbrace \log \Gamma(M_j) - E_q  \left[ \log \Gamma(\mu_j M_j) \right] + E_q  \left[ \log \Gamma(M_j (1-\mu_j)) \right] \right\rbrace \\
+%&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+\end{split}
+\end{equation}
+
+Recall that $\mu_j \thicksim \text{Beta}(\mu_0, M_0)$,
+\begin{equation}
+\begin{split}
+\label{mu}
+E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] &= \sum_{j=1}^{J} E_q  \left[ \log p\left( \mu_j; \mu_0, M_0 \right) \right] \\
+&= \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0)) } \mu_j^{M_0\mu_0 -1} (1 - \mu_j)^{M_0 ( 1 - \mu_0) - 1} \right) \right] \\
+&= \sum_{j=1}^{J} \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace  \\
+&= J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace  \\
+%
+%&= \left\lbrace \log \Gamma(M_0) - \log \Gamma(\mu_0 M_0) - \log \Gamma(M_0 (1-\mu_0))\right\rbrace \\
+%&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace  \\
+%
+\end{split}
+\end{equation}
+
+Therefore, in order to compute ELBO, we need to compute the following expectations with respect to variational distribution: $ E_q \left[ \log \theta_{ji} \right] $, $ E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] $ , $ E_q  \left[ \log \mu_j \right] $ , $ E_q  \left[ \log (1 - \mu_j)\right] $, $ E_q \left[ \mu_j \right] $ and $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.%$  E_q  \left[ \log \Gamma(\mu_j M_j) \right] $ and $ E_q  \left[ \log \Gamma(M_j (1-\mu_j)) \right] $ %$ E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] $.
+
+\subsection{Variational Distributions}
+\subsubsection{Variational Distribution $\theta_{ji}$}
+The posterior distribution of $\theta_{ij}$ is a Beta distribution,
+\begin{align}
+p(\theta_{ji}|r_{ji},n_{ji},\mu_j,M_j)&\thicksim \text{Beta}(r_{ji}+M_j \mu_j, n_{ji}-r_{ji}+M_j(1-\mu_j)).
+\end{align}
+Therefore, we propose Beta distribution with parameter vector $\delta_{ji}$ as variational distribution,
+\begin{align}
+\theta_{ji} &\thicksim \text{Beta}(\delta_{ji}) \nonumber
+\end{align}
+%
+\subsubsection{Variational Distribution $\mu_j$}
+The posterior distribution of $\mu_j$ is given by its Markov blanket
+\begin{align}
+p(\mu_j|\theta_{ji},M_j,\mu_0,M_0)\propto p(\mu_j|\mu_0,M_0)p(\theta_{ji}|\mu_j,M_j).
+\end{align}
+This is not in the form of any known distribution. Therefore, we propose Beta distribution with parameter vector $\gamma_{ji}$ as variational distribution to simplify the variational derivation.
+\begin{align}
+\mu_j &\thicksim \text{Beta}(\gamma_j) \nonumber
+\end{align}
+%
+Given the variational distributions, we have
+\begin{align}
+E_q \left[ \log \theta_{ji} \right] &= \psi(\delta_{ji1}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber \\
+E_q \left[ \log \left( 1 - \theta_{ji}\right) \right]&= \psi(\delta_{ji2}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber \\
+E_q \left[ \mu_j \right] &= \frac{\gamma_{j1}}{\gamma_{j1} + \gamma_{j2}} \nonumber \\
+E_q  \left[ \log \mu_j \right] &= \psi(\gamma_{j1}) - \psi(\gamma_{j1}+\gamma_{j2}) \nonumber \\
+E_q  \left[ \log (1 - \mu_j)\right] &= \psi(\gamma_{j2}) - \psi(\gamma_{j1}+\gamma_{j2})\nonumber \\
+\end{align}
+There is no analytical representation for $  E_q  \left[ \log \Gamma(\mu_j M_j) \right] $ and $ E_q  \left[ \log \Gamma(M_j (1-\mu_j)) \right] $. Therefore, we propose to use trapezoidal numerical integration to approximate these two expectations.
+
+Moreover, according to the entropy of beta distribution random variable,
+\begin{equation}
+\begin{split}
+E_q \left[ \log q\left(\mu \right)\right] &= \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right] \\
+&= -\sum_{j=1}^{J} \left\lbrace \log (B(\gamma_{j1},\gamma_{j2}))-(\gamma_{j1}-1)\psi(\gamma_{j1})-(\gamma_{j2}-1)\psi(\gamma_{j2})
++ (\gamma_{j1}+\gamma_{j2}-2)\psi(\gamma_{j1}+\gamma_{j2})\right\rbrace
+\end{split}
+\end{equation}
+\begin{equation}
+\begin{split}
+E_q \left[ \log q\left(\theta \right)\right] &= \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right] \\
+&= -\sum_{j=1}^{J}\sum_{i=1}^{N} \\
+&\quad \left\lbrace \log (B(\delta_{ji1},\delta_{ji2}))-(\delta_{ji1}-1)\psi(\delta_{ji1})-(\delta_{ji2}-1)\psi(\delta_{ji2})
++ (\delta_{ji1}+\delta_{ji2}-2)\psi(\delta_{ji1}+\delta_{ji2})\right\rbrace
+\end{split}
+\end{equation}
+
+\subsection{Optimizing Model Parameters $ \phi = \left\lbrace \mu_0, M_0, M \right\rbrace  $}
+% Optimizing mu0
+\subsubsection{Optimizing $ \mu_0 $}
+The ELBO with respect to $ \mu_0 $ is
+\begin{equation}
+\begin{split}
+\label{mu_0}
+\mathcal{L}_{[\mu_0]}
+&= -J*\log  \Gamma(\mu_0 M_0) - J*\log \Gamma(M_0 (1-\mu_0))
++ M_0\mu_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
+- E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace . \\
+\end{split}
+\end{equation}
+Take the derivative with respect to $ \mu_0 $ and set it equal to zero,
+\begin{equation}
+\begin{split}
+\label{mu_0}
+\mathcal{L}_{[\mu_0]}'
+&= -J*M_0 \psi(\mu_0 M_0) + J*M_0 \psi(M_0 (1-\mu_0))
++ M_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
+- E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace =0 , \\
+\end{split}
+\end{equation}
+the update for $ \mu_0 $ can be numerically computed.
+% Optimizing M0
+\subsubsection{Optimizing $ M_0 $}
+The ELBO with respect to $ M_0 $ is
+\begin{equation}
+\begin{split}
+\label{M_0}
+\mathcal{L}_{[M_0]}
+&=J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}
++ M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace  \\
+\end{split}
+\end{equation}
+Take the derivative with respect to $ M_0 $ and set it equal to zero,
+\begin{equation}
+\begin{split}
+\label{M_0}
+\mathcal{L}_{[M_0]}'
+&= \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}
++ M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace  \\
+&= \psi(M_0)  - \mu_0 \psi(\mu_0 M_0) - (1-\mu_0) \psi(M_0 (1-\mu_0))  \\
+\quad &+ \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace \\
+&=0 \\
+\end{split}
+\end{equation}
+the update for $ M_0 $ can be numerically computed.
+% Optimizing M
+\subsubsection{Optimizing $ M $}
+\begin{equation}
+\begin{split}
+\label{M}
+\mathcal{L}_{{[M]}}
+&= \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + M_j \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] + \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+\end{split}
+\end{equation}
+Suppose
+\begin{equation}
+\begin{split}
+f(\mu) &= \log\left( \frac{\Gamma(M)}{\Gamma(\mu M) \Gamma(M (1-\mu ))}\right) \nonumber \\
+\end{split}
+\end{equation}
+then
+\begin{align}
+f'(\mu) &= -M \psi (\mu M) + M \psi(M (1-\mu )) \nonumber \\
+f''(\mu) &= -M^2 \psi ' (\mu M) - M^2 \psi '(M (1-\mu )) <0 \nonumber \\
+\end{align}
+where $ \psi(\mu) $ is the Digamma function, and $ \psi'(\mu)= \frac{\partial \psi(\mu)}{\partial \mu}$ is the Trigamma function. As trigamma function $ \psi'(\mu) $ is positive, $ f''(\mu) $ is negative. Thus, $ f(\mu) $ is a concave function. We can approximate $ f(\mu) $ using first-order Taylor expansion around point $ \mu^{\circ} $, which is
+\begin{equation}
+\begin{split}
+%f(\mu) &\geq f(\mu_0) + f'(\mu_0) \cdot (\mu-\mu_0) \nonumber \\
+%&= \log\left( \frac{\Gamma(M)}{\Gamma(\mu_0 M) \Gamma(M (1-\mu_0 ))}\right) + \left( -M \psi (\mu_0 M) + M \psi(M (1-\mu_0 ))\right) \cdot (\mu-\mu_0)
+f(\mu) &\leq f(\mu^{\circ}) + f'(\mu^{\circ}) \cdot (\mu-\mu^{\circ}) \nonumber \\
+&= \log\left( \frac{\Gamma(M)}{\Gamma(\mu^{\circ} M) \Gamma(M (1-\mu^{\circ} ))}\right) + \left( -M \psi (\mu^{\circ} M) + M \psi(M (1-\mu^{\circ} ))\right) \cdot (\mu-\mu^{\circ}).
+\end{split}
+\end{equation}
+%
+A upper bound approximation for $ E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] $ around point $ \mu_j^{\circ} $ can be represented as
+\begin{equation}
+\begin{split}
+E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] &\leq \log\left( \frac{\Gamma(M_j)}{\Gamma(\mu_j^{\circ} M_j) \Gamma(M_j (1-\mu_j^{\circ} ))}\right) \\
+\quad &+ \left( -M_j \psi (\mu_j^{\circ} M_j) + M_j \psi(M_j (1-\mu_j^{\circ} ))\right) \cdot (E_q(\mu_j)-\mu_j^{\circ}).\nonumber
+\end{split}
+\end{equation}
+%
+The equality holds if and only if $ \mu_j^{\circ} =E_q(\mu_j) $. Therefore, at this particular point,
+\begin{equation}
+\begin{split}
+E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] &= \log\left( \frac{\Gamma(M_j)}{\Gamma(E_q(\mu_j) M_j) \Gamma(M_j (1-E_q(\mu_j) ))}\right).\nonumber
+\end{split}
+\end{equation}
+%
+Then
+\begin{equation}
+\begin{split}
+\label{M}
+\mathcal{L}_{{[M]}}
+&= \sum_{j=1}^{J} \log\left( \frac{\Gamma(M_j)}{\Gamma(E_q(\mu_j) M_j) \Gamma(M_j (1-E_q(\mu_j) ))}\right) \\
+&\quad + M_j \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] + \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+\end{split}
+\end{equation}
+%
+The partial derivative is
+\begin{equation}
+\begin{split}
+\frac{\partial \mathcal{L}_{{[M]}} }{\partial \ M_j}
+&= \psi(M_j) - E_q(\mu_j) \psi(E_q(\mu_j) M_j)
+- (1-E_q(\mu_j)) \psi((1-E_q(\mu_j)) M_j) \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right]
++ \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+\end{split}
+\end{equation}
+%
+the update for $ M_j $ can be numerically computed.
+
+\subsection{Variational Expectation Maximization (EM) Algorithm}
+Variational EM maximizes the ELBO on the true likelihood, by alternating between maximization over $q$ (the variational E-step) and maximization over $\phi$ (the variational M-step).
+
+\begin{algorithm}[ht]
+  \caption{RVD3 Variational Inference}
+
+  \begin{algorithmic}[1]
+
+  \State Initialize $ q(\theta, \mu) $ and $\hat{\phi}$
+
+  \Repeat
+
+	\Repeat
+	
+		\For {j = 1 to J}					
+			\For {i = 1 to N}				
+			\State Optimize $\mathcal{L}(q, \hat{\phi})$ over $q(\theta_{ji}; \delta_{ji}) = \text{Beta} (\delta_{ji})$				
+			\EndFor			
+		\EndFor
+		
+	
+		\For {j = 1 to J} 		
+			\State Optimize $\mathcal{L}(q, \hat{\phi})$ over $q(\mu_j; \gamma_j) = \text{Beta} (\gamma_j)$			
+		\EndFor
+	
+	\Until{change in $\mathcal{L}(q,\hat{\phi})$ is small}
+
+  \State Set $\hat{\phi} \leftarrow \arg \max\limits_{\phi}
+            \mathcal{L}(q,\phi)$
+  \Until {change in $\mathcal{L}(q,\hat{\phi})$ is small}
+
+  \end{algorithmic}
+
+\end{algorithm}
+
+
+
+\appendix
+
+%\bibliographystyle{apalike}
+%\bibliography{bioinfo}
+\end{document}
