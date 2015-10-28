@@ -16,7 +16,7 @@ Background
 
 Materials and Equipment
 ------------------------------
-The results files (HDF5 and VCF) are in folder "2015-09-28\_Run\_synthetic\_data\_set\_threshold\_delta\_gamma\_ELBO\_update".
+The results files (HDF5 and VCF) are in folder "2015-09-28_Run_rvd3_synthetic_data_set".
 
 Experimental Protocol
 ---------------------------

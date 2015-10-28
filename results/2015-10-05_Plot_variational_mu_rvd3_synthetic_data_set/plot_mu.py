@@ -9,8 +9,8 @@ from scipy.stats import beta
 import matplotlib.pyplot as plt
 
 def main():
-    control='../2015-09-28_Run_synthetic_data_set_threshold_delta_gamma_ELBO_update/hdf5/10/Control.hdf5'
-    case='../2015-09-28_Run_synthetic_data_set_threshold_delta_gamma_ELBO_update/hdf5/10/Case100_0.hdf5'
+    control='../22015-09-28_Run_rvd3_synthetic_data_set/hdf5/10/Control.hdf5'
+    case='../2015-09-28_Run_rvd3_synthetic_data_set/hdf5/10/Case100_0.hdf5'
     pos = [84,104,124,144,164,184,204,224,244,264,284,304,324,344]  
     for p in pos:
         #bayestest(case, control, p)

@@ -8,7 +8,7 @@ import scipy.stats as ss
 from scipy.stats import beta
 import matplotlib.pyplot as plt
 
-path = "../2015-09-28_Run_synthetic_data_set_threshold_delta_gamma_ELBO_update/hdf5"
+path = "../2015-09-28_Run_rvd3_synthetic_data_set/hdf5"
 
 def main():
     control_10000='%s/10000/Control.hdf5' %path
