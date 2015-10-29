@@ -35,6 +35,8 @@ Results
 
 ![](timing_var_mcmc.png)
 
+![](time_comp_table.png)
+
 Archived Samples
 -------------------------
 

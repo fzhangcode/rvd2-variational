@@ -24,7 +24,13 @@ Experimental Protocol
 
 Results
 ----------- 
+- Parallel: 60 processors are used.
+
 ![](time_3089X.png)
+
+- Single processor
+
+![](time_3089X_single.png)
 
 Archived Samples
 -------------------------

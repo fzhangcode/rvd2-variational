@@ -19,8 +19,8 @@ logging.basicConfig(level=logging.DEBUG,
 
 import rvd3
 
-##pool =None
-pool = mp.Pool(processes=60)
+pool =None
+#pool = mp.Pool(processes=60)
 tocfilename = "../2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data/synthetic_toc_p1_test_time.txt"
 toc = pd.read_table(tocfilename)
 
@@ -49,7 +49,7 @@ for dilution in np.unique(toc[toc.isRef=='N'].Dilution):
             time_all.extend([time_load_depth])
 
             casephi, caseq, time_ini_model_para, time_ini_var_para, time_ini_ELBO, time_opt_gam, time_opt_delta, time_conv, \
-            time_opt_mu0, time_opt_M0, time_opt_M, time_update_ELBO = rvd3.ELBO_opt(r, n, seed = 19860522, pool=60)
+            time_opt_mu0, time_opt_M0, time_opt_M, time_update_ELBO = rvd3.ELBO_opt(r, n, seed = 19860522, pool=None)
             
             time_all.extend([time_ini_model_para, time_ini_var_para, time_ini_ELBO, time_opt_gam, time_opt_delta, time_conv, \
                             time_opt_mu0, time_opt_M0, time_opt_M, time_update_ELBO])
@@ -64,5 +64,5 @@ for dilution in np.unique(toc[toc.isRef=='N'].Dilution):
             print time_all
 
             items = "load_depth, ini_model_para, ini_var_para, ini_ELBO, opt_gamma, opt_delta, conv, opt_mu0, opt_M0, opt_M, update_ELBO, save_model"
-            np.savetxt("time_400.csv", time_all, fmt="%.3f", delimiter=",", header = str(items))
+            np.savetxt("time_400_single.csv", time_all, fmt="%.3f", delimiter=",", header = str(items))
 
