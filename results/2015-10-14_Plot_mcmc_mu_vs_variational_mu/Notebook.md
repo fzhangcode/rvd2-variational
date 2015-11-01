@@ -76,7 +76,7 @@ Results
 - MCMC and Variational both call position 39 at 5584 read depth when VAF=0.1% as a false positive position.
 
 **Variational is successful to call true positive positions. MCMC call many false positive positions.**
-![](position_145_41449_mcmc_vs_var_mu.png)
+![](position_144_41449_mcmc_vs_var_mu.png)
 
 - MCMC called this position as a false positive, but Variational didn't call this. Variational has wider variance than MCMC.
  

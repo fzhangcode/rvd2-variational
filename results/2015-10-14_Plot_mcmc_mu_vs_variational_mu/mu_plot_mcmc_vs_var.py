@@ -16,16 +16,16 @@ import rvd3
 
 # Plot mu of true positive position (344, 84)
 # Plot mu of false positive position (38, 263)
-position = [144] 
-dsample = 10
+position = [84] #143
+dsample = 100
 
 path_mcmc = "../2015-10-09_Run_rvd2_with_without_chi2_for_comparison_with_rvd3_synthetic_data/hdf5"
 control_mcmc='%s/%d/Control.hdf5' %(path_mcmc, dsample)
-case_mcmc='%s/%d/Case0_1.hdf5' %(path_mcmc, dsample)
+case_mcmc='%s/%d/Case1_0.hdf5' %(path_mcmc, dsample)
 
 path_var = "../2015-09-28_Run_rvd3_synthetic_data_set/hdf5"
 control_var='%s/%d/Control.hdf5' %(path_var, dsample)
-case_var='%s/%d/Case0_1.hdf5' %(path_var, dsample)
+case_var='%s/%d/Case1_0.hdf5' %(path_var, dsample)
 
 
 def beta_mean(p):
@@ -66,7 +66,7 @@ def main():
     ## plot histogram
     num_bins = 25
     for i in xrange(len(position)):
-            fig = plt.figure(figsize=(12,8))
+            fig = plt.figure(figsize=(12,10))
 
             ########### Plot mu of MCMC (rvd2) vs Variational (rvd3) ##################
             # normed=True, the integral of the histogram will sum to 1.
@@ -79,7 +79,7 @@ def main():
             a, b = get_a_b(position, casegam, casephi['mu0'])
             cov_case = int(np.median(caseN))
             x_case = np.linspace(beta.ppf(0.001, a, b), beta.ppf(0.999, a, b), 100)
-            plt.plot(x_case, beta.pdf(x_case, a, b), 'b--', lw=4, alpha=1.0, label="Case (Variational)")
+            plt.plot(x_case, beta.pdf(x_case, a, b), 'b--', lw=6, alpha=1.0, label="Case (Variational)")
             r_case = beta.rvs(a, b, size=2000)
             #plt.hist(r_case, num_bins, normed=True, histtype='stepfilled', alpha=0.2, facecolor='r')
 
@@ -87,15 +87,16 @@ def main():
             controlgam = controlq['gam']    
             a, b = get_a_b(position, controlgam, controlphi['mu0'])
             x_control = np.linspace(beta.ppf(0.001, a, b), beta.ppf(0.999, a, b), 100)
-            plt.plot(x_control, beta.pdf(x_control, a, b), 'g--', lw=4, alpha=1.0, label='Control (Variational)')
+            plt.plot(x_control, beta.pdf(x_control, a, b), 'g--', lw=6, alpha=1.0, label='Control (Variational)')
             r_control = beta.rvs(a, b, size=2000)
             #plt.hist(r_control, num_bins, normed=True, histtype='stepfilled', alpha=0.2, facecolor='k')
 
-            plt.legend(loc='best', frameon=False)
-            #plt.xlim(0, 0.014)
-            plt.xlabel('$\mu_{%s}$' %(position[i]+1), fontsize = 20)
-            plt.xticks(rotation=25) 
-            plt.title('$\mu$ at position %s when median depth is %d' %((position[i]+1), cov_case), fontsize = 18)
+            plt.legend(loc='best', frameon=False) #, prop={'size':20})
+            #plt.xlim(0, 0.012)
+            plt.xlabel('$\mu_{%s}$' %(position[i]+1), fontsize = 25)
+            plt.xticks(rotation=25, fontsize = 18) 
+            plt.yticks(rotation=25, fontsize = 18) 
+            plt.title('$\mu$ at position %s when median depth is %d' %((position[i]+1), cov_case), fontsize = 25)
             plt.savefig('position_%s_%d_mcmc_vs_var_mu.png' %((position[i]+1), cov_case))
             plt.tight_layout()
 
