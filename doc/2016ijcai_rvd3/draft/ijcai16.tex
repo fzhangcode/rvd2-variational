@@ -44,11 +44,10 @@ We demonstrate our variational algorithm with higher sensitivity and specificity
 and more efficient at relative low median read depths of 10x and 100x.
 We apply our algorithm on a longitudinal anti-cancer drug resistance sequencing data set and identify XXX variants that XXX.
 We also show that our model with variational algorithm has an improved performance in XXX on a longitudinal clinical data set compared with the state of arts approaches.
-
-
 \end{abstract}
 
 \section{Introduction}
+Next-generation sequencing (NGS) data and single nucleotide variants (SNVs).
 xxx\\
 xxx\\
 xxx\\
@@ -57,6 +56,8 @@ xxx\\
 xxx\\
 xxx\\
 xxx\\
+
+Variants detection methods and problems.
 xxx\\
 xxx\\
 xxx\\
@@ -64,6 +65,17 @@ xxx\\
 xxx\\
 xxx\\
 xxx\\
+xxx\\
+
+Recently, some algorithms have been developed Bayesian models to identify SNVs in NGS data.
+The main computational problem for probabilistic Bayesian models is posterior inference.
+There are two popular ways to do posterior inference- Markov Chain Monte Carlo (MCMC) samplings, and variational algorithms.
+MCMC is a simple algorithm for sampling, which is easy to understand. The main problem of MCMC is that it is hard to diagnose convergence and handle nonconjugate events.
+The main idea of variational inference is propose a variational distribution over latent variables and optimize the variational parameters to make the proposal distribution close to the true posterior distribution. 
+So variational inference is more accurate to handle nonconjugate distirbutions and more efficient than MCMC. 
+RVD2 uses a hierarchical Bayesian model to estimate allele frequency and call variants by deriving a Metropolis-within-Gibbs sampling inference algorithm [cite RVD2].
+Generally speaking, this algorithm is able to accurately estimate variant allele frequencies (VAFs), but it shows a relatively low specificity when the variant allele frequency is low (less than 1.0$\%$) but the median read depth is very high (40000x).
+
 
 We show that we develop a variational expectation-maximization (EM) algorithm for our Bayesian statistical model to achieve sufficient accuracy and efficiency to identify variants in heterogeneous call samples. First, our variational EM algorithm is able to accurately approximate the posterior distribution of latent variables for a pair of samples- the sample of interest and a known reference sample. Then, a hypothesis test calls a variant by a significant difference between the key model parameters of this pair of samples. We compare the performance of variational inference algorithm to MCMC sampling method and several other variant detection methods. Finally, we demonstrate our variational algorithm on a longitudinal time-series DNA sequencing data to quantify the degree to which the variant modulates resistance to anti-cancer drug.
 
@@ -201,12 +213,21 @@ $\chi^2$ goodness-of-fit test for non-uniform base distribution is also used to 
 
 \section{Data Sets}
 \subsection{Synthetic DNA Sequence Data}
-xxx\\
-xxx\\
-xxx\\
-xxx\\
+We synthesized two random 400bp DNA dequences. One sample with 14 loci variants is taken as the case and the other without variants is taken as the control.
+Case and control samples were mixed to yield defined VAFs of $0.1\%$, $0.3\%$, $1.0\%$, $10.0\%$, and $100.0\%$.
+The details of the experimental protocal are available in [cite RVD].
+The synthetic DNA data were downsampled by 10x, 100x, 1,000x, and 10,000x using Picard.
+The final data set contains read pairs for 6 replicates for the control at different VAF levels.
 
 \subsection{Longitudinal Drug Resistance Data}
+xxx\\
+xxx\\
+xxx\\
+xxx\\
+xxx\\
+xxx\\
+xxx\\
+xxx\\
 xxx\\
 xxx\\
 xxx\\
@@ -216,11 +237,11 @@ xxx\\
 
 \section{Results}
 \subsection{Performance on Synthetic DNA Data}
-
-We use posterior distribution test with and without $\chi^2$ test to detect variants for a broad range of median read depths and different variant allele frequencies (VAFs).
 \subsubsection{Comparison of Sensitivity and Specificity}
+The posterior distribution over latent variables can be inferenced using either MCMC sampling method or variational algorithm.
 We compare the performance of variational algorithm and MCMC sampling method in the performance of sensitivity and specificity (Figure~\ref{tbl:statistics_mcmc_var}).
 For variational algorithm, ELBO is considered as converged when the increased ELBO percent is less than $0.1\%$.
+We use posterior distribution test with and without $\chi^2$ test to detect variants for a broad range of median read depths and different variant allele frequencies (VAFs).
 Variational algorithm with $\chi^2$ test works best compared with MCMC in sensitivity and specificity.
 %The specificity is getting a little worse when the median read depth increases from $4000X$ to $400000X$ in the events of $VAF=0.1\%$, $0.3\%$, and $1.0\%$.
 %The specificity is improved when tightening the stop criterion of ELBO update from $1.0\%$ to $0.1\%$.
@@ -230,9 +251,10 @@ Variational algorithm with $\chi^2$ test works best compared with MCMC in sensit
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-09-28_Run_rvd3_synthetic_data_set
 \begin{figure}[h]
 \centering
-\vspace{-10pt}
+\vspace{-5pt}
 \includegraphics[width=0.5\textwidth]{figs/statistics_mcmc_var.png}
 \caption{Sensitivity/Specificity comparison of variational algorithm with MCMC on the synthetic DNA data set.}
+\vspace{-10pt}
 \label{tbl:statistics_mcmc_var}
 \end{figure}
 
@@ -242,7 +264,9 @@ A true variant position 85 of sample of VAF=$1.0\%$ is taken as an example.
 Variational and MCMC both identify this position at median read depth of 5584 (Figure~\ref{tbl:posterior_mcmc_var_1}).
 The specificity of variational is higher than MCMC at the highest median read depth when VAF is $0.1\%$, $0.3\%$, and $1.0\%$ , which shows that MCMC calls more false positive positions.
 Here we show the approximated distribution of a false positive position 144 identified by MCMC, while it is not identified by variational algorithm (Figure~\ref{tbl:posterior_mcmc_var_3}).
-It is noticeable that the shape of variational distributions using Beta distribution is very close to Gaussian distribution.
+Here the variance of variational distributions is wider than that of MCMC sampling, which makes the difference of these two distributions are not significant enough to be called as a variant by variational algorithm. 
+It shows that variational algorithm gives a deterministic approximation of posterior distribution that is more accurate than stochastic sampling does.
+It is also noticeable that the shape of variational distributions using Beta distribution is very close to Gaussian distribution.
 
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-14_Plot_mcmc_mu_vs_variational_mu
 \begin{figure}[h]
@@ -286,16 +310,16 @@ Variational algorithm works faster than MCMC at low read depths (27x and 298x), 
 \label{tbl:timing_mcmc_var}
 \end{figure}
 
-Timing profile for each parts of variational algorithm is also given in Figure~\ref{tbl:timing_profile_all}.
+Timing profile for each parts of variational algorithm when median read depth is 3089x is also given in Figure~\ref{tbl:timing_profile_all}.
 Optimizing $\gamma$ function in E-step and optimizing $M$ in M-step takes most of the time because an integration is needed.
 
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-21_Timing_profile_rvd3_program
 \begin{figure*}{b}
 \centering
 \includegraphics[width=1.0\textwidth]{tables/time_3089X_all.png}
-\caption{Timing profile for one iteration of variational EM algorithm.
+\caption{Timing profile for one iteration of variational EM algorithm when median read depth is 3089x.
 Single and multiple processors are both tested for timing to estimate the model on the synthetic data set.}
-\vspace{-10pt}
+%\vspace{-10pt}
 \label{tbl:timing_profile_all}
 \end{figure*}
 
@@ -308,14 +332,7 @@ xxx\\
 xxx\\
 xxx\\
 xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
+
 
 \subsubsection{Comparison to the State of Arts Approaches}
 xxx\\
@@ -332,25 +349,13 @@ xxx\\
 xxx\\
 xxx\\
 xxx\\
+xxx\\
+xxx\\
 
 \subsection{Discussion}
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
-xxx\\
+1. Due to the absence of Bayesian conjugacy, we can also consider the Laplace approximation distribution as the proposal variational distribution for $\mu_j$.
+
+2. How to improve the efficiency or our variational algorithm?
 
 \section*{Acknowledgments}
 Funding:
