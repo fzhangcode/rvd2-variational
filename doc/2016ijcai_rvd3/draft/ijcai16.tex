@@ -240,28 +240,40 @@ xxx\\
 \subsubsection{Comparison of Sensitivity and Specificity}
 The posterior distribution over latent variables can be inferenced using either MCMC sampling method or variational algorithm.
 We compare the performance of variational algorithm and MCMC sampling method in the performance of sensitivity and specificity (Figure~\ref{tbl:statistics_mcmc_var}).
-For variational algorithm, ELBO is considered as converged when the increased ELBO percent is less than $0.1\%$.
-We use posterior distribution test with and without $\chi^2$ test to detect variants for a broad range of median read depths and different variant allele frequencies (VAFs).
-Variational algorithm with $\chi^2$ test works best compared with MCMC in sensitivity and specificity.
+We use posterior distribution test with $\chi^2$ test to detect variants for a broad range of median read depths and different variant allele frequencies (VAFs).
+Variational algorithm works best compared with MCMC in sensitivity and specificity.
+The converging process for estimating variational posterior for VAF=$100.0\%$ at median read depth of 30590x is shown in (Figure~\ref{tbl:converge_ELBO.png}). It takes 60 variational EM iterations to stop converging when the increased ELBO rate is less than $0.1\%$. 
+
 %The specificity is getting a little worse when the median read depth increases from $4000X$ to $400000X$ in the events of $VAF=0.1\%$, $0.3\%$, and $1.0\%$.
 %The specificity is improved when tightening the stop criterion of ELBO update from $1.0\%$ to $0.1\%$.
 
 %The specificity could be not ideal if the chosen initial values lead the variational distribution to a local optimum, which could be happened in the variational approximation algorithm. We can consider about randomly testing different initial values for $\delta$ and $\gamma$ to get rid of the local optimums results. %Threshold for $\delta$ update and $\gamma$ update is also set to guarantee its update.
 
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-09-28_Run_rvd3_synthetic_data_set
-\begin{figure}[h]
+\begin{table}[h]
 \centering
 \vspace{-5pt}
-\includegraphics[width=0.5\textwidth]{figs/statistics_mcmc_var.png}
+\includegraphics[width=0.6\textwidth]{tables/statistics_mcmc_var.pdf}
 \caption{Sensitivity/Specificity comparison of variational algorithm with MCMC on the synthetic DNA data set.}
 \vspace{-10pt}
 \label{tbl:statistics_mcmc_var}
+\end{table}
+
+% results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-11-05_Plot_ELBO_rvd3
+\begin{figure}[h]
+\centering
+\vspace{-5pt}
+\includegraphics[width=0.45\textwidth]{figs/converge_ELBO.png}
+\caption{Converging ELBO for estimating variational posterior in the event of VAF=$100.0\%$ at median read depth of 30590x.}
+\vspace{-10pt}
+\label{tbl:converge_ELBO.png}
 \end{figure}
+
 
 \subsubsection{Comparison of Approximated Posterior Distribution}
 We show the approximated posterior distribution of variational algorithm and exact samples of MCMC.
 A true variant position 85 of sample of VAF=$1.0\%$ is taken as an example.
-Variational and MCMC both identify this position at median read depth of 5584 (Figure~\ref{tbl:posterior_mcmc_var_1}).
+Variational and MCMC both identify this position at median read depth of 5584 (Figure~\ref{tbl:combine_posterior}).
 The specificity of variational is higher than MCMC at the highest median read depth when VAF is $0.1\%$, $0.3\%$, and $1.0\%$ , which shows that MCMC calls more false positive positions.
 Here we show the approximated distribution of a false positive position 144 identified by MCMC, while it is not identified by variational algorithm (Figure~\ref{tbl:posterior_mcmc_var_3}).
 Here the variance of variational distributions is wider than that of MCMC sampling, which makes the difference of these two distributions are not significant enough to be called as a variant by variational algorithm. 
@@ -272,10 +284,10 @@ It is also noticeable that the shape of variational distributions using Beta dis
 \begin{figure}[h]
 \centering
 \vspace{-10pt}
-\includegraphics[width=0.4\textwidth]{figs/position_85_5584_mcmc_vs_var_mu.png}
-\caption{Approximated posterior distribution by variational algorithm and MCMC for position 85 when median read depth is 5584.}
-\vspace{-10pt}
-\label{tbl:posterior_mcmc_var_1}
+\includegraphics[width=0.5\textwidth]{figs/combine_posterior.pdf}
+\caption{Approximated posterior distribution by variational algorithm and MCMC. Position 85 when median read depth is 5584 is a true variant. Position 144 when median read depth is 41449 is a false positive position that is identified by MCMC, while variational algorithm does not identify this as a variant.}
+\vspace{-5pt}
+\label{tbl:combine_posterior}
 \end{figure}
 
 %\begin{figure}[h]
@@ -287,13 +299,13 @@ It is also noticeable that the shape of variational distributions using Beta dis
 %\label{tbl:posterior_mcmc_var_2}
 %\end{figure}
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.4\textwidth]{figs/position_144_41449_mcmc_vs_var_mu.png}
-\caption{Approximated posterior distribution of position 144 when median read depth is 41449. This is a false positive position identified by MCMC, while variational algorithm does not identify this as a variant.}
-\vspace{-10pt}
-\label{tbl:posterior_mcmc_var_3}
-\end{figure}
+%\begin{figure}[!htbp]
+%\centering
+%\includegraphics[width=0.4\textwidth]{figs/position_144_41449_mcmc_vs_var_mu.png}
+%\caption{Approximated posterior distribution of position 144 when median read depth is 41449. This is a false positive position identified by MCMC, while variational algorithm does not identify this as a variant.}
+%\vspace{-10pt}
+%\label{tbl:posterior_mcmc_var_3}
+%\end{figure}
 
 \subsubsection*{Comparison of Timing}
 Time for approximating variational posterior distribution is increased by increasing the length of region of interest and the median read depth (Figure~\ref{tbl:timing_mcmc_var}).
@@ -302,7 +314,7 @@ Variational algorithm works faster than MCMC at low read depths (27x and 298x), 
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
 \begin{figure}[htbp]
 \centering
-\vspace{-10pt}
+%\vspace{-5pt}
 \includegraphics[width=0.5\textwidth]{tables/timing_var_mcmc.png}
 \caption{Timing figure for variational algorithm and MCMC method.
 60 processes are used to estimate the model on the synthetic data set.}
