@@ -21,14 +21,14 @@ sys.path.insert(0, rvddir)
 
 # Plot mu of true positive position (344, 84)
 # Plot mu of false positive position (38, 263)
-position = [263] 
-dsample = 10
+position = [299] 
+dsample = 10000
 
 path_mcmc = "../2015-10-09_Run_rvd2_with_without_chi2_for_comparison_with_rvd3_synthetic_data/hdf5"
 control_mcmc='%s/%d/Control.hdf5' %(path_mcmc, dsample)
 case_mcmc='%s/%d/Case0_1.hdf5' %(path_mcmc, dsample)
 
-path_var = "../2015-09-28_Run_rvd3_synthetic_data_set/hdf5_ELBOupdate_1"
+path_var = "../2015-09-28_Run_rvd3_synthetic_data_set/hdf5"
 control_var='%s/%d/Control.hdf5' %(path_var, dsample)
 case_var='%s/%d/Case0_1.hdf5' %(path_var, dsample)
 
@@ -78,7 +78,7 @@ def main():
             plt.plot(x_control, beta.pdf(x_control, a, b), 'k--', lw=4, alpha=1.0, label='Control (Variational)')
             r_control = beta.rvs(a, b, size=2000)
             plt.hist(r_control, num_bins, normed=True, histtype='stepfilled', alpha=0.2, facecolor='k')
-
+            plt.xlim(0, 0.012)
             plt.legend(loc='best', frameon=False)
             plt.xlabel('$\hat{\mu} = \mu-\mu_0$', fontsize = 20)
             plt.xticks(rotation=25) 

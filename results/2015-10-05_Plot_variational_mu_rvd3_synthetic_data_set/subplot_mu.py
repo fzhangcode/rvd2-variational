@@ -20,7 +20,7 @@ def main():
     case_100='%s/100/Case1_0.hdf5' %path
     case_10='%s/10/Case1_0.hdf5' %path
 
-    pos = [84] #[84,104,124,144,164,184,204,224,244,264,284,304,324,344]  
+    pos = [94] #[84,104,124,144,164,184,204,224,244,264,284,304,324,344]  
     for p in pos:
         plot(case_10000, case_1000, case_100, case_10, control_10000, control_1000, control_100, control_10, p)
 
