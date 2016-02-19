@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def f(t):
-    return np.exp(-t) * np.cos(2*np.pi*t)
 
 positions = [100,200,300,400]
 
@@ -30,20 +28,26 @@ time_10000 = [217.0/60, 375.87/60, 583.8/60, 717.3/60]
 time_mcmc =[443/60, 861.7/60, 1018.2/60, 1411.1/60]
 
 width = 3
-msize = 6
+msize = 10
 
-plt.title('Timing for approximating variational posterior distribution', fontsize = 15)
-plt.plot(positions, time_10000, marker='o', linestyle='-', color='g', lw = width, markersize = msize, label='27X Var') #'53X')
-plt.plot(positions, time_1000, marker='o', linestyle='-', color='b', lw = width, markersize = msize, label='298X Var')  #'535X')
-plt.plot(positions, time_100, marker='o', linestyle='-', color='r', lw = width, markersize = msize, label='3089X Var')  #'5584X')
-plt.plot(positions, time_10, marker='o', linestyle='-', color='c', lw = width, markersize = msize, label='30590X Var')  #'55489X')  
+fig = plt.figure(figsize=(8,6))
 
-plt.plot(positions, time_mcmc, marker='o', linestyle='--', color='k', lw = width, markersize = msize, label='MCMC')  #'55489X')  
+#plt.title('Timing for variational algorithm', fontsize = 20)
+plt.plot(positions, time_10000, marker='^', linestyle='-', color='g', lw = width, markersize = msize, alpha = 0.8, label='27x Variational') #'53X')
+plt.plot(positions, time_1000, marker='s', linestyle='-', color='b', lw = width, markersize = msize, alpha = 0.8, label='298x Variational')  #'535X')
+plt.plot(positions, time_100, marker='D', linestyle='-', color='r', lw = width, markersize = msize, alpha = 0.8, label='3089x Variational')  #'5584X')
+plt.plot(positions, time_10, marker='o', linestyle='-', color='c', lw = width, markersize = msize, alpha = 0.8, label='30590x Variational')  #'55489X')  
+
+plt.plot(positions, time_mcmc, marker='*', linestyle='--', color='k', lw = width, markersize = msize, alpha = 0.8, label='MCMC')  #'55489X')  
 
 plt.legend(loc='best')
-plt.xlabel('Length of region of interest (positions)', fontsize = 15)
-plt.ylabel('Time for converging (minutes)', fontsize = 15)
+plt.xlabel('Length of region of interest (positions)', fontsize = 20)
+plt.ylabel('Time for converging (minutes)', fontsize = 20)
 plt.xlim(80, 420)
+plt.setp(plt.gca().get_xticklabels(), fontsize=20)
+plt.setp(plt.gca().get_yticklabels(), fontsize=20)
+plt.tight_layout()
+            
 #yticks = np.arange(0, 101, 10)
 #plt.yticks(yticks)
 
