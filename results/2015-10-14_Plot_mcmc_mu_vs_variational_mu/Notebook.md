@@ -80,6 +80,11 @@ Results
 
 - MCMC called this position as a false positive, but Variational didn't call this. Variational has wider variance than MCMC.
  
+
+###Add these tow figs into RVD3 paper
+![](position_85_5584_mcmc_vs_var_mu_fig1.png)
+![](position_160_410_mcmc_vs_var_mu_fig2.png)
+
 Archived Samples
 -------------------------
 
