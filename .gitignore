@@ -3,12 +3,12 @@ tmp*
 *.hdf5
 *.mat
 *.pyc
-*.docx
+*.csv
 *.txt
 *.pileup
 *.xlsx
 *.jpg
-*.csv
+
 *.bam
 *.pileup
 *.dc
@@ -31,3 +31,6 @@ Thumbs.db
 *.blg
 *.fig
 *.pdf
+*.docx
+*.pptx
+
