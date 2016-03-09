@@ -438,11 +438,26 @@ Moreover, we identified the first emergence of this beneficial mutation as early
 Table~\ref{tbl:mutations} shows that we are able to detect many variants ($<$ 1.0\%) early in the evolutionary time course.
 Furthermore, we detected a variant on position 1015666 at generation 70 as 0.091\%, which is less than a 0.1\% fraction.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Influence of M0 on muj %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As an empirical Bayesian model, the global precision parameter $M_0$ could influence the estimation of $\mu_j$.
+We generated a figure to show the influence of different $M_0$ on $\mu_{1014740}$.
+Figure~\ref{tbl:M0} shows that $\hat{\mu}_{1014740}$ is getting close to the true $\mu_{1014740}$ (solid and green curve) as $M_0$ is getting smaller.
+
+\begin{figure}[htbp]
+\centering
+%\vspace{-10pt}
+\includegraphics[width=0.8\textwidth]{figs/diff_M0.png}
+\caption{Influence of $M_0$ on the estimation of $\mu_j$.
+Posterior distributions $\hat{\mu}_{1014740}$ with different $M_0$ are shown.}
+%\vspace{-10pt}
+\label{tbl:M0}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Concomitant variants  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We also identified a pair of concomitant variants, Chr04:1014740 in gene MTH1 and Chr12:200286 in gene ADE16, that increase in NRAF together in time (Figure~\ref{tbl:concomitant} A).
 The venn diagram shows the logical relation between the concomitant variants (Figure~\ref{tbl:concomitant} B).
 In generation 448, the minimum intersection of the concomitant variants in gene MTH1 and gene ADE16 is 98.49\%.
-In this pair of genes, gene MTH1 is a negative regulator of the glucose-sensing signal transduction pathway, and gene ADE16 is an enzyme of $\mathit{de novo}$ purine biosynthesis.
+In this pair of genes, gene MTH1 is a negative regulator of the glucose-sensing signal transduction pathway, and gene ADE16 is an enzyme of $\mathit{de \quad  novo}$ purine biosynthesis.
 Glucose sensing inducts gene expression to help yeast receive necessary nutrients, which could be a reason for this pair of genes to mutate together \citep{johnston1999feasting}.
 
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2016-01-12_Run_rvd3_Dan_data_regions
