@@ -1,5 +1,5 @@
 \documentclass[11pt,reqno]{amsart}
-\usepackage[top=1in, left=1in, right=1in, bottom=1in]{geometry}                
+\usepackage[top=1in, left=1in, right=1in, bottom=1in]{geometry}
 \geometry{letterpaper}                   % ... or a4paper or a5paper or ...
 
 \usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
@@ -45,8 +45,8 @@
 The detection of rare variants is significant to capture heterogeneity in clinical populations.
 Recently, next-generation sequencing (NGS) technologies have enabled the identification of single nucleotide variants (SNVs) in mixed samples.
 Yet, an accurate statistical method is still required to characterize genomic heterogeneity to interrogate the biological causes at the single nucleotide level.
-We propose a novel Bayesian statistical model and a variational expectation-maximization (EM) algorithm to estimate variant allele frequency (VAF) and identify SNVs in heterogeneous cell populations.
-We demonstrate that our variational algorithm has higher sensitivity and specificity than Markov Chain Monte Carlo (MCMC) sampling method for detecting rare variants with 0.1\% VAF in a synthetic data set,
+We propose a novel Bayesian statistical model and a variational expectation-maximization (EM) algorithm to estimate non-reference allele frequency (NRAF) and identify SNVs in heterogeneous cell populations.
+We demonstrate that our variational EM algorithm has higher sensitivity and specificity than Markov Chain Monte Carlo (MCMC) sampling method for detecting rare variants with 0.1\% NRAF in a synthetic data set,
 and is more computationally efficient on tests of low coverage (27$\times$ and 298$\times$) synthetic data.
 We show that our model with variational EM inference has higher specificity than some state-of-the-art algorithms.
 In an analysis of a directed longitudinal yeast data set, we are able to identify time-series trend in variant allele frequency and detect novel variants that have not yet been reported.
@@ -73,7 +73,7 @@ A major challenge is to distinguish true variants from sequencing errors in orde
 To overcome this problem, we developed an empirical Bayesian hierarchical model with a rare variant detection (RVD) algorithm to characterize a null hypothesis error rate distribution at each position using Beta-Binomial model to fit the reference sequence data. Using this, we call rare variants by comparing the error rate of the sample sequence data to the null distribution \citep{flaherty2011ultrasensitive}.
 RVD can identify mutant positions at a 0.1\% fraction in mixed samples using high read depth data.
 EBCall is another empirical Bayesian mutation calling method that models sequencing errors based on a Beta-Binomial distribution, where the parameters and latent variables are estimated from a set of non-paired normal sequencing samples \citep{shiraishi2013empirical}.
-EBCall is able to accurately call a variant with $<$10\% VAF within heterogeneous samples, but moderate-to-high allele frequencies are required.
+EBCall is able to accurately call a variant with $<$10\% NRAF within heterogeneous samples, but moderate-to-high allele frequencies are required.
 Similarly to EBCall, CRISP considers multiple signals to obtain sequencing errors by evaluating the probability of multiple non-reference sequences \citep{bansal2010statistical}.
 However, the bottleneck of CRISP is its low computational efficiency due to a calculation of a large amount of contingency tables.
 % Other Bayesian methods: MAQ, Mutect, and FamSeq
@@ -95,7 +95,7 @@ VarScan is an example of a heuristic method that compares between tumor and norm
 %VarScan is based on Fisher's exact test to estimate sample allele frequencies.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% RVD2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We previously developed a hierarchical Bayesian model, RVD2, to estimate VAF and call SNVs in heterogeneous samples from NGS data \citep{he2015rvd2}.
+We previously developed a hierarchical Bayesian model, RVD2, to estimate NRAF and call SNVs in heterogeneous samples from NGS data \citep{he2015rvd2}.
 In RVD2, we derived a Markov Chain Monte Carlo (MCMC) sampling algorithm for posterior inference.
 However, the main limitation of MCMC is that it is hard to diagnose convergence and handle nonconjugate events \citep{jordan1999introduction}.
 An alternative method is to use variational inference, which is based on a proposed variational distribution over latent variables \citep{jordan1999introduction}.
@@ -103,12 +103,12 @@ By optimizing variational parameters, it is potential to acquire an approximate 
 Variational inference is also more accurate to handle nonconjugate distributions and more efficient than MCMC sampling \citep{peterson1989explorations}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% RVD3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Here, we propose RVD3, a variational expectation-maximization algorithm for our Bayesian statistical model inference to detect SNVs in heterogeneous NGS data.
-We show than RVD3 improves accuracy and efficiency compared with RVD2 in a synthetic data set.
+Here, we propose a variational EM algorithm for our Bayesian statistical model inference to detect SNVs in heterogeneous NGS data.
+We show than variational EM algorithm improves accuracy and efficiency compared with MCMC in a synthetic data set.
 In section 2, we define the model structure.
 In section 3, we derive our variational EM algorithm to approximate the posterior distribution over latent variables, and call a variant by a posterior difference hypothesis test between the key model parameters of a pair of samples.
 In section 4, we compare our performance of variational inference algorithm to the MCMC sampling method and the state-of-the-art approaches using a synthetic data set.
-We also show that our variational algorithm is able to detect rare variants and estimate VAF in a longitudinal directed evolution experimental data set.
+We also show that our variational EM algorithm is able to detect rare variants and estimate NRAF in a longitudinal directed evolution experimental data set.
 
 \section{Model Structure}
 Our Bayesian statistical model is shown as a graphical representation in Figure~\ref{tbl:graphical_model}.
@@ -144,7 +144,7 @@ The model generative process is as follows:
 
 \section{Inference and Hypothesis Testing}
 \subsection{Variational Expectation Maximization (EM) Inference}
-RVD3 improves RVD2 in the way of deterministic posterior distribution inference.
+%RVD3 improves RVD2 in the way of deterministic posterior distribution inference.
 We developed a non-conjugate variational inference algorithm to approximate the posterior distribution,
 \begin{equation}
 	p(\mu, \theta | r, n; \phi)  = \frac{ p(\mu, \theta, r | n; \phi) } {p ( r | n; \phi)},
@@ -160,14 +160,14 @@ and $q(\theta_{ij})$ approximates the posterior distribution of $\theta_{ij}$, w
 \end{equation}
 
 \subsubsection{Evidence Lower Bound (ELBO)}
-The log-likelihood of the data is lower-bounded according to Jensen's inequality:
+The log-likelihood of the data is lower-bounded according to Jensen's inequality,
 \begin{equation}
 \begin{split}
 \log p \left( r | \phi \right) &= \log \int_\mu \int_\theta p\left(r,\mu,\theta \right) d\theta d\mu \\
 &= \log \int_\mu \int_\theta p\left(r,\mu,\theta \right)\frac{q\left(\mu,\theta \right) }{q\left(\mu,\theta \right) } d\theta d\mu \\
 &\geq \int_\mu \int_\theta q\left(\mu,\theta \right) \log \frac{ p\left(r,\mu,\theta \right)}{q\left(\mu,\theta \right)} d\theta d\mu \\
 &= E_q \left[ \log p\left(r,\mu,\theta \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
-&\triangleq \mathcal{L}(q, \phi).
+&\triangleq \mathcal{L}(q, \phi),
 \end{split}
 \end{equation}
 where $ \phi= \left( \mu_0, M_0, M \right) $.
@@ -176,32 +176,86 @@ The item $\mathcal{L}(q, \phi)$ is the evidence of lower bound (ELBO) of the log
 The goal of variational inference is maximizing the ELBO.
 Equivalently, $q$ is chosen by minimizing the Kullback-Liebler (KL) divergence between the variational distribution and the true posterior distribution.
 
+The ELBO is written out in this way:
+\begin{equation}
+\begin{split}
+\label{L}
+\mathcal{L}(q, \phi) &= E_q \left[ \log p\left(r,\mu,\theta | n; \phi \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
+&= E_q \left[ \log p\left(r | \theta, n \right)\right] + E_q \left[ \log p\left(\theta | \mu; M \right)\right] + E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]- E_q \left[ \log q\left(\mu \right)\right]- E_q \left[ \log q\left(\theta \right)\right] \\
+\end{split}
+\end{equation}
+We write out each component below.
+The detail of the derivation of each component is shown in \ref{appendix:ELBO}.
+\begin{equation}
+\begin{split}
+\label{r}
+E_q \left[ \log p\left(r | \theta, n \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log p \left( r_{ji} | \theta_{ji}, n_{ji} \right) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} \log \left( \frac{ \Gamma(n_{ji}+1) } { \Gamma(r_{ji}+1) \Gamma( n_{ji} - r_{ji} + 1 ) }\right)  \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace
+\end{split}
+\end{equation}
+%
+\begin{equation}
+\begin{split}
+\label{theta}
+E_q \left[ \log p\left(\theta | \mu; M \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q \left[ \log p\left(\theta_{ji} | \mu_j; M_j \right)\right] \\
+&= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace
+\end{split}
+\end{equation}
+%
+\begin{equation}
+\begin{split}
+\label{mu}
+E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] &= \sum_{j=1}^{J} E_q  \left[ \log p\left( \mu_j; \mu_0, M_0 \right) \right] \\
+&= J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace
+\end{split}
+\end{equation}
+
+Therefore, in order to compute ELBO, we need to compute the following expectations with respect to variational distribution:
+
+$ E_q \left[ \log \theta_{ji} \right] $, $ E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] $ , $ E_q  \left[ \log \mu_j \right] $ , $ E_q  \left[ \log (1 - \mu_j)\right] $, $ E_q \left[ \mu_j \right] $, and $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.
+
 \subsubsection{Variational Distributions}
 The posterior distribution of $\theta_{ij}$ is a Beta distribution,
 \begin{align}
-&p(\theta_{ji}|r_{ji},n_{ji},\mu_j,M_j)\\
-&\thicksim \text{Beta}(r_{ji}+M_j \mu_j, n_{ji}-r_{ji}+M_j(1-\mu_j)).
+&p(\theta_{ji}|r_{ji},n_{ji},\mu_j,M_j)
+\thicksim \text{Beta}(r_{ji}+M_j \mu_j, n_{ji}-r_{ji}+M_j(1-\mu_j)).
 \end{align}
 Therefore, we propose a Beta distribution with parameter vector $\delta_{ji}$ as variational distribution,
 \begin{align}
-\theta_{ji} &\thicksim \text{Beta}(\delta_{ji}) \nonumber
+\theta_{ji} &\thicksim \text{Beta}(\delta_{ji}) \nonumber.
 \end{align}
 %
-The posterior distribution of $\mu_j$ is given by its Markov blanket
+The posterior distribution of $\mu_j$ is given by its Markov blanket,
 \begin{align}
 p(\mu_j|\theta_{ji},M_j,\mu_0,M_0)\propto p(\mu_j|\mu_0,M_0)p(\theta_{ji}|\mu_j,M_j).
 \end{align}
 This is not in the form of any known distribution.
-Therefore, we propose Beta distribution with parameter vector $\gamma_{ji}$ as a variational distribution to simplify the variational derivation.
+Therefore, we propose Beta distribution with parameter vector $\gamma_{j}$ as a variational distribution to simplify the variational derivation,
 \begin{align}
-\mu_j &\thicksim \text{Beta}(\gamma_j) \nonumber
+\mu_j &\thicksim \text{Beta}(\gamma_j) \nonumber.
 \end{align}
+The detail of computing each component of ELBO using the variational distributions is shown in \ref{appendix:var}.
+There is no analytical representation for $  E_q  \left[ \log \Gamma(\mu_j M_j) \right] $ and $ E_q  \left[ \log \Gamma(M_j (1-\mu_j)) \right] $.
+Therefore, we propose to use trapezoidal numerical integration to approximate these two expectations.
 
 \subsubsection{Variational Expectation Maximization (EM) Algorithm}
-Variational EM maximizes the ELBO on the true likelihood, by alternating between maximization over $q$ (E-step) and maximization over $\phi$ (M-step).
+Variational EM maximizes the ELBO on the true likelihood, by alternating between maximization over $q$ (E-step) and maximization over $\phi= \left\{\mu_0, M_0, M \right\}$ (M-step).
+The derivation of optimizing model parameters $\phi $ is shown in \ref{appendix:para}.
+Optimizing $M$ (\ref{M}) takes more time because numerical integration is needed for calculation of $  E_q  \left[ \log \Gamma(\mu_j M_j) \right] $ and $ E_q  \left[ \log \Gamma(M_j (1-\mu_j)) \right] $.
+\begin{equation}
+\begin{split}
+\label{M}
+\mathcal{L}_{{[M]}}
+&= \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + M_j \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] + \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace. \\
+\end{split}
+\end{equation}
 
 \begin{algorithm}[h]
-  \caption{RVD3 Variational Inference}
+  \caption{Variational EM Inference}
 
   \begin{algorithmic}[1]
 
@@ -239,10 +293,10 @@ We use a $Z$-test based on the Gaussian distribution,
 %\begin{equation}
 \begin{align}
 \label{eq:test}
-& \mu_j^{\triangle} = \mu_j|r^{case}-\mu_j|r^{control}\\
-& \sigma_j^{\triangle} = \sqrt {var_q{[\mu_j|r^{case}]} + var_q{[\mu_j|r^{control}]}}\\
-& Z_j = \frac{\tau - \mu_j^{\triangle}}{{\sigma_j}^{\triangle}}\\
-& Pr(Z_j) < \alpha
+& \mu_j^{\triangle} = \mu_j|r^{case}-\mu_j|r^{control},\\
+& \sigma_j^{\triangle} = \sqrt {var_q{[\mu_j|r^{case}]} + var_q{[\mu_j|r^{control}]}},\\
+& Z_j = \frac{\tau - \mu_j^{\triangle}}{{\sigma_j}^{\triangle}},\\
+& Pr(Z_j) < \alpha.
 \end{align}
 %\end{equation}
 
@@ -259,10 +313,10 @@ By rejecting the null hypothesis that the distribution is uniform, we are able t
 \subsection{Data Sets}
 \subsubsection{Synthetic DNA Sequence Data}
 Two random 400bp DNA sequences were synthesized. One sample with 14 loci variants is taken as the case and the other without variants is taken as the control.
-Case and control samples were mixed to yield defined VAFs of $0.1\%$, $0.3\%$, $1.0\%$, $10.0\%$, and $100.0\%$.
+Case and control samples were mixed to yield defined NRAF of $0.1\%$, $0.3\%$, $1.0\%$, $10.0\%$, and $100.0\%$.
 The details of the experimental protocol are available in \citep{flaherty2011ultrasensitive}.
 The synthetic DNA data were downsampled by 10$\times$, 100$\times$, 1,000$\times$, and 10,000$\times$ using Picard.
-The final data set contains read pairs for 6 replicates for the control at different VAFs levels.
+The final data set contains read pairs for 6 replicates for the control at different NRAF levels.
 
 \subsubsection{Longitudinal Directed Evolution Data}
 The longitudinal yeast data comes from three strains of haploid S288c which were grown at $-80^{\circ }\textrm{C}$ for 448 generations under limited-glucose (0.08$\%$).
@@ -277,29 +331,29 @@ We ran our statistical method on the depth chart files to identify SNVs.
 
 \subsection{Performance on Synthetic DNA Data}
 \subsubsection{Comparison of Sensitivity and Specificity}
-We compared the performance of our variational algorithm and the MCMC sampling method in the performance of sensitivity and specificity (Table~\ref{tbl:statistics_mcmc_var}).
+We compared the performance of our variational EM algorithm and the MCMC sampling method in the performance of sensitivity and specificity (Table~\ref{tbl:statistics_mcmc_var}).
 We used posterior distribution test and $\chi^2$ test to detect variants for a broad range of median read depths and different variant allele frequencies.
-The variational algorithm works better than MCMC in sensitivity and specificity in the events when VAF is 0.1\%.
-When median read depth is 40000$\times$, the variational algorithm has higher specificity compared with MCMC at events of 0.3\% and 1.0\% VAF with a slight degradation in sensitivity due to false negatives.
+The variational EM algorithm works better than MCMC in sensitivity and specificity in the events when NRAF is 0.1\%.
+When median read depth is 40000$\times$, the variational EM algorithm has higher specificity compared with MCMC at events of 0.3\% and 1.0\% NRAF with a slight degradation in sensitivity due to false negatives.
 
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-09-28_Run_rvd3_synthetic_data_set
 \begin{table}[h]
 \centering
 %\vspace{-5pt}
 \includegraphics[width=0.8\textwidth]{tables/statistics_mcmc_var.pdf}
-\caption{Sensitivity/Specificity comparison of variational algorithm with MCMC on the synthetic DNA data set.}
+\caption{Sensitivity/Specificity comparison of variational EM algorithm with MCMC on the synthetic DNA data set.}
 %\vspace{-10pt}
 \label{tbl:statistics_mcmc_var}
 \end{table}
 
 \subsubsection{Comparison of Approximated Posterior Distribution}
-We showed the approximated posterior distribution of the variational algorithm and exact samples of MCMC.
-The variational and MCMC methods both identify all the variants when VAF is 10.0\% and 100.0\%.
+We showed the approximated posterior distribution of the variational EM algorithm and exact samples of MCMC.
+The variational and MCMC methods both identify all the variants when NRAF is 10.0\% and 100.0\%.
 One variant position 85 is taken as an example to show the comparison of approximated posteriors (Figure~\ref{tbl:compare1}).
-The variational method calls some false positive positions when VAFs are 0.1\% and 0.3\% for low median read depth (30$\times$ and 400$\times$) without a $\chi^2$ test.
+The variational method calls some false positive positions when NRAFs are 0.1\% and 0.3\% for low median read depth (30$\times$ and 400$\times$) without a $\chi^2$ test.
 Here, a non-mutated position that is called by variational while not called by MCMC (Figure~\ref{tbl:compare2}).
 The variance of MCMC posterior distribution is wider than that of the variational method. %, so that variational called it as a variant by a significant difference test.
-To increase the specificity of our variational algorithm, the $\chi^2$ test helps to filter this false positive position on a multinomial distribution over the non-reference bases.
+To increase the specificity of our variational EM algorithm, the $\chi^2$ test helps to filter this false positive position on a multinomial distribution over the non-reference bases.
 We tested 10 random initial posterior distributions and the approximated posterior distributions are the same.
 It is also noticeable that the shape of the variational distributions using Beta distribution is exactly displayed as a Gaussian distribution.
 
@@ -308,7 +362,7 @@ It is also noticeable that the shape of the variational distributions using Beta
 \centering
 %\vspace{-10pt}
 \includegraphics[width=0.7\textwidth]{figs/position_85_5584_mcmc_vs_var_mu_fig1.png}
-\caption{Approximated posterior distribution by the variational algorithm and MCMC methods on a true variant position 85 when the median read depth is 5584$\times$.}
+\caption{Approximated posterior distribution by the variational EM algorithm and MCMC methods on a true variant position 85 when the median read depth is 5584$\times$.}
 %\vspace{-10pt}
 \label{tbl:compare1}
 \end{figure}
@@ -317,23 +371,23 @@ It is also noticeable that the shape of the variational distributions using Beta
 \centering
 %\vspace{-10pt}
 \includegraphics[width=0.7\textwidth]{figs/position_160_410_mcmc_vs_var_mu_fig2.png}
-\caption{Approximated posterior distribution by the variational algorithm and MCMC methods on a false variant position 160 when the median read depth is 410$\times$.}
+\caption{Approximated posterior distribution by the variational EM algorithm and MCMC methods on a false variant position 160 when the median read depth is 410$\times$.}
 %\vspace{-5pt}
 \label{tbl:compare2}
 \end{figure}
 
 \subsubsection{Comparison to the State-of-the-Art Approaches}
-We compared the performance of our variational algorithm (RVD3) with the state-of-the-art variant detection approaches using synthetic DNA data set (Table~\ref{tbl:character_all}).
-Among all of the methods compared, RVD3 shows a high sensitivity and specificity for a broad range of read depths and variant allele frequencies.
-RVD3 also performs with higher specificity than all the other tested methods at very low VAF (0.1\%).
-RVD3 has a slightly lower specificity than RVD2 only when the median read depth is 4156$\times$ at 0.3\% VAF, and a slightly lower sensitivity than RVD2 only when the median read depth is 41472$\times$ at 0.3\% VAF, and a median read depth of 55489$\times$ at 1.0\%.
+We compared the performance of our variational EM algorithm with the state-of-the-art variant detection approaches using synthetic DNA data set (Table~\ref{tbl:character_all}).
+Among all of the methods compared, our variational EM algorithm shows a high sensitivity and specificity for a broad range of read depths and variant allele frequencies.
+Variational EM algorithm also performs with higher specificity than all the other tested methods at very low NRAF (0.1\%).
+Variational EM algorithm has a slightly lower specificity than MCMC only when the median read depth is 4156$\times$ at 0.3\% NRAF, and a slightly lower sensitivity than MCMC only when the median read depth is 41472$\times$ at 0.3\% NRAF, and a median read depth of 55489$\times$ at 1.0\%.
 He, $\mathit{et} \mathit{al}$, states the performance of other approaches in \citep{he2015rvd2}.
 
 \begin{table*}[htbp]
 \centering
 %\vspace{-10pt}
 \includegraphics[width=1.0\textwidth]{tables/character_all.png}
-\caption{Sensitivity/Specificity comparison of our variational algorithm (RVD3) with other variant detection approaches on synthetic DNA data.}
+\caption{Sensitivity/Specificity comparison of our variational EM algorithm with other variant detection approaches on synthetic DNA data.}
 \vspace{-5pt}
 \label{tbl:character_all}
 \end{table*}
@@ -341,30 +395,30 @@ He, $\mathit{et} \mathit{al}$, states the performance of other approaches in \ci
 \subsubsection{Comparison of Timing}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Timing comparison %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Time for approximating variational posterior distribution is increased by expanding the length of region of interest and the median read depth (Figure~\ref{tbl:timing_mcmc_var}).
-Our variational algorithm works faster than MCMC at low median read depths (27$\times$ and 298$\times$), while it shows the opposite at high median read depths (3089$\times$ and 30590$\times$).
+Our variational EM algorithm works faster than MCMC at low median read depths (27$\times$ and 298$\times$), while it shows the opposite at high median read depths (3089$\times$ and 30590$\times$).
 
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
 \begin{figure}[h]
 \centering
 %\vspace{-5pt}
 \includegraphics[width=0.6\textwidth]{figs/timing_var_mcmc.png}
-\caption{Timing figure for our variational algorithm and MCMC sampling.
+\caption{Timing figure for our variational EM algorithm and MCMC sampling.
 Parallel computational cores (60 processers) are used to estimate the model on the synthetic data set.}
 %\vspace{-10pt}
 \label{tbl:timing_mcmc_var}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Timing profile of variational %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The timing profile for each part of our variational algorithm when median read depth is 3089$\times$ is also shown in Table~\ref{tbl:timing_profile_all}.
-Optimizing $\gamma$ function in E-step and optimizing $M$ in M-step takes more than 95\% of the time of one variational iteration in a test of a single processor, as such a time consuming integration is needed.
+The timing profile for each part of our variational EM algorithm when median read depth is 3089$\times$ is also shown in Table~\ref{tbl:timing_profile_all}.
+Optimizing $\delta$ function in E-step and optimizing $M$ in M-step takes more than 95\% of the time of one variational iteration in a test of a single processor, as such a time consuming integration is needed.
 
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-21_Timing_profile_rvd3_program
 \begin{table*}[htbp]
 \centering
 \vspace{10pt}
 \includegraphics[width=1.0\textwidth]{tables/time_3089X_all_update.png}
-\caption{Timing profile of 4 significant figures for one iteration of variational algorithm when median read depth is 3089$\times$.
-Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ function in E-step and optimizing $M$ in M-step is highlighted in percentage.}
+\caption{Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is 3089$\times$.
+Single and multiple processors are both tested to estimate timing. Time for optimizing $\delta$ function in E-step and optimizing $M$ in M-step is highlighted in percentage.}
 %\vspace{-10pt}
 \label{tbl:timing_profile_all}
 \end{table*}
@@ -374,58 +428,73 @@ Single and multiple processors are both tested to estimate timing. Time for opti
 We applied our method on the MTH1 gene, region of 1302bp, on Chr04:1014401-1015702, which is the most frequently observed mutated gene \citep{kvitek2013whole}.
 Our method detected the same variants that were found by Kvitek and Sherlock, 2013 and marked as blue in Table~\ref{tbl:mutations}.
 Additionally, we detected 81 novel variants in 8 timepoints that the original publication missed.
-In Table~\ref{tbl:mutations}, G7 is the baseline VAF as the control sample when comparing with G70, G133, G266, G322, G385, and G448 in the respective hypotheses testing.
-The corresponding VAFs of called variants in different time points are given by the estimation of the latent variable $\mu_j$.
+In Table~\ref{tbl:mutations}, G7 is the baseline NRAF as the control sample when comparing with G70, G133, G266, G322, G385, and G448 in the respective hypotheses testing.
+The corresponding NRAF of called variants in different time points are given by the estimation of the latent variable $\mu_j$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Beneficial variant and early identification %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-All of these variants, except variant in position 1014740, decrease in VAF following a maximum and eventually become extinct.
+All of these variants, except variant in position 1014740, decrease in NRAF following a maximum and eventually become extinct.
 Allele on position 1014740 is a beneficial variant that arises in frequency to 99.603\% at generation 448 within a constant glucose-limited environment.
 Moreover, we identified the first emergence of this beneficial mutation as early as 0.522\% in generation 133.
 Table~\ref{tbl:mutations} shows that we are able to detect many variants ($<$ 1.0\%) early in the evolutionary time course.
 Furthermore, we detected a variant on position 1015666 at generation 70 as 0.091\%, which is less than a 0.1\% fraction.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Influence of M0 on muj %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As an empirical Bayesian model, the global precision parameter $M_0$ could influence the estimation of $\mu_j$.
+We generated a figure to show the influence of different $M_0$ on $\mu_{1014740}$.
+Figure~\ref{tbl:M0} shows that $\hat{\mu}_{1014740}$ is getting close to the true $\mu_{1014740}$ (solid and green curve) as $M_0$ is getting smaller.
+
+\begin{figure}[htbp]
+\centering
+%\vspace{-10pt}
+\includegraphics[width=0.8\textwidth]{figs/diff_M0.png}
+\caption{Influence of $M_0$ on the estimation of $\mu_j$.
+Posterior distributions $\hat{\mu}_{1014740}$ with different $M_0$ are shown.}
+%\vspace{-10pt}
+\label{tbl:M0}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Concomitant variants  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We also identified a pair of concomitant variants, Chr04:1014740 in gene MTH1 and Chr12:200286 in gene ADE16, that increase in VAF together in time (Figure~\ref{tbl:concomitant} A).
+We also identified a pair of concomitant variants, Chr04:1014740 in gene MTH1 and Chr12:200286 in gene ADE16, that increase in NRAF together in time (Figure~\ref{tbl:concomitant} A).
 The venn diagram shows the logical relation between the concomitant variants (Figure~\ref{tbl:concomitant} B).
 In generation 448, the minimum intersection of the concomitant variants in gene MTH1 and gene ADE16 is 98.49\%.
-In this pair of genes, gene MTH1 is a negative regulator of the glucose-sensing signal transduction pathway, and gene ADE16 is an enzyme of $\mathit{de novo}$ purine biosynthesis.
+In this pair of genes, gene MTH1 is a negative regulator of the glucose-sensing signal transduction pathway, and gene ADE16 is an enzyme of $\mathit{de \quad  novo}$ purine biosynthesis.
 Glucose sensing inducts gene expression to help yeast receive necessary nutrients, which could be a reason for this pair of genes to mutate together \citep{johnston1999feasting}.
 
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2016-01-12_Run_rvd3_Dan_data_regions
 \begin{table*}[htbp]
 \centering
 \includegraphics[width=1.0\textwidth]{tables/mutations_MTH1.png}
-\caption{Identified variants and corresponding VAF in gene MTH1 on Chromosome 4.
-The blank means no variant is identified in one event.
+\caption{Identified variants and corresponding NRAF in gene MTH1 on Chromosome 4.
+A blank cell indicates that the position of that time point is not called significantly different than G7.
 Positions marked as blue were also identified by Kvitek, 2013.
 Other positions are 81 novel identified variants in 8 timepoints.}
 \label{tbl:mutations}
 \end{table*}
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.8\textwidth]{figs/concomitant_figure.png}
-\caption{A. The VAF trend of concomitant variants in gene MTH1 and ADE16.
-The 95\% Bayesian credible interval are shown.
-B. The venn diagram shows the logical relation between the concomitant variants in generation 448.}
+\includegraphics[width=0.65\textwidth]{figs/concomitant.png}
+\caption{A. The NRAF trend of concomitant variants in gene MTH1 and ADE16.
+The 95\% Bayesian credible interval are shown.}
 %\vspace{-10pt}
 \label{tbl:concomitant}
 \end{figure}
 
 \section{Discussion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Brief summary of RVD3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In this article, we propose a Bayesian statistical model, called RVD3, to estimate the VAF by approximating posterior distributions for latent variables.
+In this article, we propose a variational EM algorithm to estimate the NRAF by approximating posterior distributions for latent variables.
 We derived a variational expectation maximization algorithm to calculate the intractable integration of our Bayesian model.
-Our results shows that RVD3
+Our results shows that the variational EM algorithm
 (i) is able to identify rare variants at a 0.1\% fraction level with improved sensitivity and specificity in comparison to a MCMC sampling algorithm;
 (ii) has a higher specificity in comparison with some state-of-the-art algorithms in a broad range of mixed samples;
-and (iii) detects SNVs early in the evolutionary time course, as well as track the VAF in a longitudinal data set.
+and (iii) detects SNVs early in the evolutionary time course, as well as track the NRAF in a longitudinal data set.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Potential problems of variational EM and alternative strategies %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-However, the application of RVD3 on an interested gene region suggests that our variational EM algorithm yields a accurate and efficient result.
+However, the application on an interested gene region suggests that our variational EM algorithm yields a accurate and efficient result.
 It is possible that the Beta variational distribution we have selected to address the non-conjugate prior issue will not yield the speed improvements we expect.
 In that event, we will instead use a straightforward interpolation scheme to compute the necessary integral for the expectation step.
 The Beta function in the integral kernel is relatively smooth and has a bounded domain.
 This favorable property can be leveraged to implement a cubic spline interpolation method to approximate the necessary integral \citep{mckinley1998cubic}.
+Here we aim to guarantee accuracy rather than efficiency, so we calculate the numerical integration without using cost-effective methods.
 Another strategy is to consider a Laplace approximation for the proposal variational distribution, as we and others have done previously \citep{saddiki2014glad, wang2013variational}.
 
 As a local optimization methodology, variational EM is possible to fall in a local maximum of the variational function.
@@ -436,7 +505,7 @@ MCMC is computationally slower, but is easily deployed to multiple computational
 Thus, we will be able to analyze the sequencing data using Amazon Elastic Compute Cloud (EC2) resource, which will increase computation efficiency.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Future work %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-RVD3 discovers many novel variants in the application of an interested region of the longitudinal yeast data set.
+The variational EM algorithm discovers many novel variants in the application of an interested region of the longitudinal yeast data set.
 These discovered variants drive us to extend our statistical method to the whole genome, whole population yeast sequence data with guaranteed accuracy and efficiency.
 By doing this, we can uncover the dynamics of arising variants at the genome-wide scale to show the genetic basis of clonal interference.
 Our method is also can be extended to study drug resistance by characterizing tumor heterogeneity in targeted anti-cancer chemotherapy samples.
@@ -445,10 +514,216 @@ We will be able to find the causative variants that lead to drug resistance and 
 \section*{Acknowledgments}
 Funding:
 
-
 \appendix
+\section{Derivation of Variational Inference}
+\subsection{Evidence Lower Bound (ELBO)}
+\label{appendix:ELBO}
+The ELBO is written out in this way,
+\begin{equation}
+\begin{split}
+\label{L}
+\mathcal{L}(q, \phi) &= E_q \left[ \log p\left(r,\mu,\theta | n; \phi \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
+&= E_q \left[ \log p\left(r | \theta, n \right)\right] + E_q \left[ \log p\left(\theta | \mu; M \right)\right] + E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]- E_q \left[ \log q\left(\mu \right)\right]- E_q \left[ \log q\left(\theta \right)\right].
+\end{split}
+\end{equation}
+We write out each component.
+Recall that $r_{ij}|n_{ij}\thicksim \text{Binomial}(\theta_{ij}, n _{ji})$,
+\begin{equation}
+\begin{split}
+\label{r}
+E_q \left[ \log p\left(r | \theta, n \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log p \left( r_{ji} | \theta_{ji}, n_{ji} \right) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N}  E_q  \left[ \log \left( \frac{ \Gamma(n_{ji}+1) } { \Gamma(r_{ji}+1) \Gamma( n_{ji} - r_{ji} + 1 ) } \theta_{ji}^{r_{ji}} (1 - \theta_{ji})^{n_{ji} - r_{ji}} \right) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} \log \left( \frac{ \Gamma(n_{ji}+1) } { \Gamma(r_{ji}+1) \Gamma( n_{ji} - r_{ji} + 1 ) }\right)  \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N}  E_q  \left[ r_{ji} \log \theta_{ji} + (n_{ji} - r_{ji}) \log (1 - \theta_{ji}) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} \log \left( \frac{ \Gamma(n_{ji}+1) } { \Gamma(r_{ji}+1) \Gamma( n_{ji} - r_{ji} + 1 ) }\right)  \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace. \\
+\end{split}
+\end{equation}
+Recall that $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$,
+\begin{equation}
+\begin{split}
+\label{theta}
+E_q \left[ \log p\left(\theta | \mu; M \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q \left[ \log p\left(\theta_{ji} | \mu_j; M_j \right)\right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N}  E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) } \theta_{ji}^{M_j\mu_j -1} (1 - \theta_{ji})^{M_j ( 1 - \mu_j) - 1} \right) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N}  E_q  \left[ \log \left( \theta_{ji}^{M_j\mu_j -1} (1 - \theta_{ji})^{M_j ( 1 - \mu_j) - 1} \right) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right]  \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \left( M_j\mu_j -1 \right) \log \theta_{ji} \right] + E_q \left[ \left( M_j ( 1 - \mu_j) - 1 \right) \log \left( 1 - \theta_{ji} \right) \right]\right\rbrace \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+&= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace. \\
+\end{split}
+\end{equation}
+Recall that $\mu_j \thicksim \text{Beta}(\mu_0, M_0)$,
+\begin{equation}
+\begin{split}
+\label{mu}
+E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] &= \sum_{j=1}^{J} E_q  \left[ \log p\left( \mu_j; \mu_0, M_0 \right) \right] \\
+&= \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0)) } \mu_j^{M_0\mu_0 -1} (1 - \mu_j)^{M_0 ( 1 - \mu_0) - 1} \right) \right] \\
+&= \sum_{j=1}^{J} \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace  \\
+&= J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
+\end{split}
+\end{equation}
+Therefore, in order to compute ELBO, we need to compute the following expectations with respect to variational distribution:
+
+$ E_q \left[ \log \theta_{ji} \right] $, $ E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] $ , $ E_q  \left[ \log \mu_j \right] $ , $ E_q  \left[ \log (1 - \mu_j)\right] $, $ E_q \left[ \mu_j \right] $, and $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.
+
+\subsection{Variational Distributions}
+\label{appendix:var}
+Given the variational distributions, we have
+\begin{align}
+E_q \left[ \log \theta_{ji} \right] &= \psi(\delta_{ji1}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber, \\
+E_q \left[ \log \left( 1 - \theta_{ji}\right) \right]&= \psi(\delta_{ji2}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber, \\
+E_q \left[ \mu_j \right] &= \frac{\gamma_{j1}}{\gamma_{j1} + \gamma_{j2}} \nonumber, \\
+E_q  \left[ \log \mu_j \right] &= \psi(\gamma_{j1}) - \psi(\gamma_{j1}+\gamma_{j2}) \nonumber, \\
+E_q  \left[ \log (1 - \mu_j)\right] &= \psi(\gamma_{j2}) - \psi(\gamma_{j1}+\gamma_{j2})\nonumber. \\
+\end{align}
+There is no analytical representation for $  E_q  \left[ \log \Gamma(\mu_j M_j) \right] $ and $ E_q  \left[ \log \Gamma(M_j (1-\mu_j)) \right] $.
+Therefore, we propose to use trapezoidal numerical integration to approximate these two expectations.
+
+Moreover, according to the entropy of beta distribution random variable,
+\begin{equation}
+\begin{split}
+E_q \left[ \log q\left(\mu \right)\right] &= \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right] \\
+&= -\sum_{j=1}^{J} \left\lbrace \log (B(\gamma_{j1},\gamma_{j2}))-(\gamma_{j1}-1)\psi(\gamma_{j1})-(\gamma_{j2}-1)\psi(\gamma_{j2})
++ (\gamma_{j1}+\gamma_{j2}-2)\psi(\gamma_{j1}+\gamma_{j2})\right\rbrace;
+\end{split}
+\end{equation}
+\begin{equation}
+\begin{split}
+E_q \left[ \log q\left(\theta \right)\right] &= \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right] \\
+&= -\sum_{j=1}^{J}\sum_{i=1}^{N} \\
+&\quad \left\lbrace \log (B(\delta_{ji1},\delta_{ji2}))-(\delta_{ji1}-1)\psi(\delta_{ji1})-(\delta_{ji2}-1)\psi(\delta_{ji2})
++ (\delta_{ji1}+\delta_{ji2}-2)\psi(\delta_{ji1}+\delta_{ji2})\right\rbrace.
+\end{split}
+\end{equation}
+
+\subsection{Optimizing Model Parameters} % $ \phi = \left\lbrace \mu_0, M_0, M \right\rbrace  $}
+\label{appendix:para}
+% Optimizing mu0
+\subsubsection{Optimizing $ \mu_0 $}
+The ELBO with respect to $ \mu_0 $ is
+\begin{equation}
+\begin{split}
+\label{mu_0}
+\mathcal{L}_{[\mu_0]}
+&= -J*\log  \Gamma(\mu_0 M_0) - J*\log \Gamma(M_0 (1-\mu_0))
++ M_0\mu_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
+- E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace . \\
+\end{split}
+\end{equation}
+Take the derivative with respect to $ \mu_0 $ and set it equal to zero,
+\begin{equation}
+\begin{split}
+\label{mu_0}
+\mathcal{L}_{[\mu_0]}'
+&= -J*M_0 \psi(\mu_0 M_0) + J*M_0 \psi(M_0 (1-\mu_0))
++ M_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
+- E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace =0 , \\
+\end{split}
+\end{equation}
+the update for $ \mu_0 $ can be numerically computed.
+% Optimizing M0
+\subsubsection{Optimizing $ M_0 $}
+The ELBO with respect to $ M_0 $ is
+\begin{equation}
+\begin{split}
+\label{M_0}
+\mathcal{L}_{[M_0]}
+&=J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}
++ M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
+\end{split}
+\end{equation}
+Take the derivative with respect to $ M_0 $ and set it equal to zero,
+\begin{equation}
+\begin{split}
+\label{M_0}
+\mathcal{L}_{[M_0]}'
+&= \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}
++ M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace  \\
+&= \psi(M_0)  - \mu_0 \psi(\mu_0 M_0) - (1-\mu_0) \psi(M_0 (1-\mu_0))  \\
+\quad &+ \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace \\
+&=0, \\
+\end{split}
+\end{equation}
+the update for $ M_0 $ can be numerically computed.
+% Optimizing M
+\subsubsection{Optimizing $ M $}
+\begin{equation}
+\begin{split}
+%\label{M}
+\mathcal{L}_{{[M]}}
+&= \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + M_j \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] + \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+\end{split}
+\end{equation}
+Suppose
+\begin{equation}
+\begin{split}
+f(\mu) &= \log\left( \frac{\Gamma(M)}{\Gamma(\mu M) \Gamma(M (1-\mu ))}\right) \nonumber, \\
+\end{split}
+\end{equation}
+then
+\begin{align}
+f'(\mu) &= -M \psi (\mu M) + M \psi(M (1-\mu )) \nonumber \\
+f''(\mu) &= -M^2 \psi ' (\mu M) - M^2 \psi '(M (1-\mu )) <0 \nonumber, \\
+\end{align}
+where $ \psi(\mu) $ is the Digamma function, and $ \psi'(\mu)= \frac{\partial \psi(\mu)}{\partial \mu}$ is the Trigamma function. As trigamma function $ \psi'(\mu) $ is positive, $ f''(\mu) $ is negative.
+Thus, $ f(\mu) $ is a concave function.
+We can approximate $ f(\mu) $ using first-order Taylor expansion around point $ \mu^{\circ} $, which is
+\begin{equation}
+\begin{split}
+%f(\mu) &\geq f(\mu_0) + f'(\mu_0) \cdot (\mu-\mu_0) \nonumber \\
+%&= \log\left( \frac{\Gamma(M)}{\Gamma(\mu_0 M) \Gamma(M (1-\mu_0 ))}\right) + \left( -M \psi (\mu_0 M) + M \psi(M (1-\mu_0 ))\right) \cdot (\mu-\mu_0)
+f(\mu) &\leq f(\mu^{\circ}) + f'(\mu^{\circ}) \cdot (\mu-\mu^{\circ}) \nonumber \\
+&= \log\left( \frac{\Gamma(M)}{\Gamma(\mu^{\circ} M) \Gamma(M (1-\mu^{\circ} ))}\right) + \left( -M \psi (\mu^{\circ} M) + M \psi(M (1-\mu^{\circ} ))\right) \cdot (\mu-\mu^{\circ}).
+\end{split}
+\end{equation}
+%
+A upper bound approximation for $ E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] $ around point $ \mu_j^{\circ} $ can be represented as
+\begin{equation}
+\begin{split}
+E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] &\leq \log\left( \frac{\Gamma(M_j)}{\Gamma(\mu_j^{\circ} M_j) \Gamma(M_j (1-\mu_j^{\circ} ))}\right) \\
+\quad &+ \left( -M_j \psi (\mu_j^{\circ} M_j) + M_j \psi(M_j (1-\mu_j^{\circ} ))\right) \cdot (E_q(\mu_j)-\mu_j^{\circ}).\nonumber
+\end{split}
+\end{equation}
+%
+The equality holds if and only if $ \mu_j^{\circ} =E_q(\mu_j) $.
+Therefore, at this particular point,
+\begin{equation}
+\begin{split}
+E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] &= \log\left( \frac{\Gamma(M_j)}{\Gamma(E_q(\mu_j) M_j) \Gamma(M_j (1-E_q(\mu_j) ))}\right).\nonumber
+\end{split}
+\end{equation}
+%
+Then
+\begin{equation}
+\begin{split}
+%\label{M}
+\mathcal{L}_{{[M]}}
+&= \sum_{j=1}^{J} \log\left( \frac{\Gamma(M_j)}{\Gamma(E_q(\mu_j) M_j) \Gamma(M_j (1-E_q(\mu_j) ))}\right) \\
+&\quad + M_j \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] + \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace. \\
+\end{split}
+\end{equation}
+%
+The partial derivative is
+\begin{equation}
+\begin{split}
+\frac{\partial \mathcal{L}_{{[M]}} }{\partial \ M_j}
+&= \psi(M_j) - E_q(\mu_j) \psi(E_q(\mu_j) M_j)
+- (1-E_q(\mu_j)) \psi((1-E_q(\mu_j)) M_j) \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right]
++ \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace, \\
+\end{split}
+\end{equation}
+%
+the update for $ M_j $ can be numerically computed.
+
 
 \bibliographystyle{named}
 \bibliography{ref}
 
-\end{document}
+\end{document} 

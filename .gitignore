@@ -3,12 +3,12 @@ tmp*
 *.hdf5
 *.mat
 *.pyc
-*.docx
+*.csv
 *.txt
 *.pileup
 *.xlsx
 *.jpg
-*.csv
+
 *.bam
 *.pileup
 *.dc
@@ -31,4 +31,10 @@ Thumbs.db
 *.blg
 *.fig
 *.pdf
+<<<<<<< HEAD
+*.docx
+*.pptx
+
+=======
 doc/2016rvd3_draft/.texpadtmp
+>>>>>>> a32afb303e0fbad1f76819f5325843683057a6b4
