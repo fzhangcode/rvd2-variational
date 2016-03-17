@@ -69,25 +69,37 @@ These methods can be roughly categorized as probabilitic or heuristic or some co
 Among all of the current probabilistic methods, the Bayesian probabilistic framework has been increasingly used to calculate the unobserved quantities such as variant allele frequency given the observed genomic sequencing data.
 GATK \citep{mckenna2010genome} and SAMTools \citep{li2009sequence} use a naive Bayesian decision rule to call variants.
 EBCall models sequencing errors based on a Beta-Binomial distribution, where the parameters and latent variables are estimated from a set of non-paired normal sequencing samples \citep{shiraishi2013empirical}.
-EBCall is able to accurately call a variant with $<$10\% NRAF within heterogeneous samples, but moderate-to-high allele frequencies are required. 
+EBCall is able to accurately call a variant with $<$10\% NRAF within heterogeneous samples, but moderate-to-high allele frequencies are required.
 % TODO: What does ``moderate-to-high allele frequency mean?
+% I am sorry that I made a mistake here. Can we delete this sentence and add a new one?
+% Correction: However, the error rate of normal sequencing samples could be unmatched with the error rate of the target samples, which may cause a problem of making false negatives calls \citep{wang2013detecting}.
 Similarly to EBCall, CRISP considers multiple signals to obtain sequencing errors by evaluating the probability of multiple non-reference sequences \citep{bansal2010statistical}.
 % TODO: What do you mean by ''signals``?
+% Here signals indicate "reads": 1) the frequency of the reads of a variant position should be similar across different pools; 2) the number of reads of a variant position should be significantly greater than the sequencing error rate.
+% Correction: Similarly to EBCall, CRISP obtains sequencing errors by evaluating the probability of multiple non-reference sequences \citep{bansal2010statistical}.
 However, the bottleneck of CRISP is its low computational efficiency due to a calculation of a large amount of contingency tables.
 % Other Bayesian methods: MAQ, Mutect, and FamSeq
 
 % Joint distribution %
 The above methods test a variant by comparing the sequencing data sets between a matched tumor and normal pair.
 % TODO: Don't say ``above''. List the methods specifically. I don't think this is even true.
+% Here I am trying to distinguish the independent and joint analysis of samples. Can we delete this sentence? Because JointSNVmix is also using tumour-normal data sets.
 In contrast to independently analyzing tumour-normal data sets, JointSNVMix introduces two Bayesian probabilistic models to jointly analyze a tumour-normal paired allelic count of NGS data \citep{roth2012jointsnvmix}.
 % TODO: I have no idea what you're trying to say here. What does ``independently'' and ``jointly'' mean?
+% Independently: identify a genotype of each sample at every location and subtract the results.
+% Jointly: identify a joint-genotype of the samples at every location.
+% JointSNVMix is built to approximate the genotypes of both tumor and normal samples simultaneously.
+% JointSNVMix models diploid samples. G={AA,AB,BB} GxG={(G_normal, G_treatment)}. Somatic: P(AA,AB)+P(AA,BB); Germline:P(AB,AB+P(BB,BB).
 JointSNVMix derives an expectation maximization (EM) algorithm to calculate maximum a-posteriori (MAP) estimate of latent variables in a particular probabilistic graphical model.
 Additionally, Strelka \citep{saunders2012strelka} and SomaticSniper \citep{larson2012somaticsniper} are built to model the joint probabilistic distribution and then call variants in analyzing tumour-normal paired sequence data.
 % TODO: What specificallly about the joint model? Replace ``analyzing'' and ``call'' with specific words.
+% Correction: Similarly, SomaticSniper \citep{larson2012somaticsniper} models the joint diploid genotype likelihoods for both tumour and normal samples.
+% Correction: Additionally, Strelka \citep{saunders2012strelka} models the joint allele frequencies for both tumour and normal samples (P(f_tumour, f_normal), which is demonstrated to be more accurate compared with the methods based on the estimated allele frequency tests between tumour and normal samples.
 
 % Frequentist %
-SNVer focuses on a frequentist method that is able to calclate $P$-values, but as a frequentist approach it fails to model sampling bias and error that will reduce the power of detecting true rare variants \citep{wei2011snver}.
+SNVer focuses on a frequentist method that is able to calculate $P$-values, but as a frequentist approach it fails to model sampling bias and error that will reduce the power of detecting true rare variants \citep{wei2011snver}.
 % TODO: This doesn't make any sense to me. What makes it a frequentist method? Why is the fact that it being a frequentist method causes it to fail to model sampling bias and error? I disagree with these assertions and I suspect they're wrong. Please clarify.
+% SNVer focuses on a frequentist method that is able to calculate $P$-values, but SNVer does not model sampling bias and error that may reduce the power of detecting true rare variants \citep{wei2011snver}.
 Furthermore, \citet{roth2012jointsnvmix} compares the performance of two frequentist statistical methods (independent Fisher and joint Fisher) with JointSNVMix.
 They showed that SNVer has a lower specificity than JointSNVMix.
 
@@ -98,7 +110,7 @@ VarScan is an example of a heuristic method that compares tumor and normal sampl
 %VarScan is based on Fisher's exact test to estimate sample allele frequencies.
 
 % RVD2 %
-In previous work, we developed a Beta-Binomial model to characterize a null hypothesis error rate distribution at each position. 
+In previous work, we developed a Beta-Binomial model to characterize a null hypothesis error rate distribution at each position.
 Using this, we call rare variants by comparing the error rate of the sample sequence data to a null distribution obtained from sequencing a known reference sample \citep{flaherty2011ultrasensitive}.
 RVD can identify mutant positions at a 0.1\% fraction in mixed samples using high read depth data.
 
@@ -252,9 +264,8 @@ E_q  \left[ \log (1 - \mu_j)\right] &= \psi(\gamma_{j2}) - \psi(\gamma_{j1}+\gam
 %
 There is no analytical representation for $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.
 To approximate this expectation, we propose to use quadrature numerical integration that is computing expensive,
-\begin{equation}
+\begin{equation}\label{eqn:integration}
 \begin{split}
-\label{integration}
 E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] & = \int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}logB(\frac{\Gamma (M_j)}{\Gamma (\mu_jM_j)\Gamma ((1-\mu_j)M_j)})d\mu\\
 &=\int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}log\int_{0}^{1}t^{\mu_jM_j}(1-t)^{(1-\mu_j)M_j}dtd\mu.
 \end{split}
@@ -281,20 +292,18 @@ Thus, the ELBO is computed based on the previous computation of each component.
 \subsection{Variational EM Algorithm}
 Variational EM algorithm maximizes the ELBO on the true likelihood by alternating between maximization over $q$ (E-step) and maximization over $\phi= \left\{\mu_0, M_0, M \right\}$ (M-step).
 \subsubsection{Update the variational distributions}
-We update the variational distribution $q(\theta_{ji})$ using the partial ELBO depending on $\delta_{ji}$ from replicate $i$ position $j$ (equation \ref{partial_theta}).
-\begin{equation}
+We update the variational distribution $q(\theta_{ji})$ using the partial ELBO depending on $\delta_{ji}$ from replicate $i$ position $j$ \eqref{eqn:partial_theta}.
+\begin{equation}\label{eqn:partial_theta}
 \begin{split}
-\label{partial_theta}
 \mathcal{L}_{{[q(\theta_{ji})]}}
 & = \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace\\
 & +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
 & - \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right]
 \end{split}
 \end{equation}
-We update the variational distribution $q(\mu_j)$ using the partial ELBO depending on $\gamma_j$ from each position $j$ (equation \ref{partial_mu}).
-\begin{equation}
+We update the variational distribution $q(\mu_j)$ using the partial ELBO depending on $\gamma_j$ from each position $j$ \eqref{eqn:partial_mu}.
+\begin{equation}\label{eqn:partial_mu}
 \begin{split}
-\label{partial_mu}
 \mathcal{L}_{{[q(\mu_j)]}}
 & = N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
 &\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
@@ -305,15 +314,14 @@ We update the variational distribution $q(\mu_j)$ using the partial ELBO dependi
 \end{equation}
 Since we can not calculate each model parameter explicitly, we take the problem of updating each variational distribution as an optimization problem.
 We solve the optimization problem of maximizing the ELBO function with respect to each variational distribution using Sequential Least SQuares Programming (SLSQP) \citep{kraft1988software}.
-Based on equation \ref{partial_mu}, the time complexity is high for optimizing $q(\mu_j)$ because of the quadrature integration of $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $ using equation \ref{integration}.
+Based on \eqref{eqn:partial_mu}, the time complexity is high for optimizing $q(\mu_j)$ because of the quadrature integration of $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $ using \eqref{eqn:integration}.
 \subsubsection{Update the model parameters}
 We update each model parameter using the partial ELBO.
 
 % Optimizing mu0
 The ELBO with respect to $ \mu_0 $ is
-\begin{equation}
+\begin{equation}\label{eqn:mu_0}
 \begin{split}
-\label{mu_0}
 \mathcal{L}_{[\mu_0]}
 &= -J*\log  \Gamma(\mu_0 M_0) - J*\log \Gamma(M_0 (1-\mu_0))
 + M_0\mu_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
@@ -322,9 +330,8 @@ The ELBO with respect to $ \mu_0 $ is
 \end{equation}
 % Optimizing M0
 The ELBO with respect to $ M_0 $ is
-\begin{equation}
+\begin{equation}\label{eqn:M_0}
 \begin{split}
-\label{M_0}
 \mathcal{L}_{[M_0]}
 &=J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}
 + M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
@@ -332,20 +339,19 @@ The ELBO with respect to $ M_0 $ is
 \end{equation}
 % Optimizing M
 The ELBO with respect to $ M $ is
-\begin{equation}
+\begin{equation}\label{eqn:M}
 \begin{split}
-\label{M}
 \mathcal{L}_{{[M]}}
 &= \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
 &\quad + M_j \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] + \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace. \\
 \end{split}
 \end{equation}
 We also use SLSQP to optimize the ELBO function with respect to each parameter $\mu_0$, $M_0$, and $M$.
-It is computationally easy to optimize $\mu_0$ and $M_0$ (equation \ref{mu_0} and \ref{M_0}).
-It is costly for optimizing $M$ (equation \ref{M}) because the quadrature numerical integration is needed for calculation of $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $ using equation \ref{integration}.
+It is computationally easy to optimize $\mu_0$ \eqref{eqn:mu_0} and $M_0$ \eqref{eqn:M_0}.
+It is costly for optimizing $M$ \eqref{eqn:M} because the quadrature numerical integration is needed for calculation of $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $ using \eqref{eqn:integration}.
 
 The variational EM algorithm is summarized using pseudocode in Algorithm 1.
-\begin{algorithm}[h]
+\begin{algorithm}[ht]
   \caption{Variational EM Inference}
 
   \begin{algorithmic}[1]
@@ -383,7 +389,6 @@ Variational inference provides variational distributions for $q(\mu_j|r^{control
 We do the posterior distribution test using a $Z$-test based on the Gaussian distribution,
 %\begin{equation}
 \begin{align}
-\label{eq:test}
 & \mu_j^{\triangle} = \mu_j|r^{case}-\mu_j|r^{control},\\
 & \sigma_j^{\triangle} = \sqrt {var_q{[\mu_j|r^{case}]} + var_q{[\mu_j|r^{control}]}},\\
 & Z_j = \frac{\tau - \mu_j^{\triangle}}{{\sigma_j}^{\triangle}},\\
@@ -423,12 +428,10 @@ We used posterior distribution test and $\chi^2$ test to detect variants for a b
 The variational EM algorithm works better than MCMC in sensitivity and specificity in the events when NRAF is 0.1\%.
 When median read depth is 40000$\times$, the variational EM algorithm has higher specificity compared with MCMC at events of 0.3\% and 1.0\% NRAF with a slight degradation in sensitivity due to false negatives.
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-09-28_Run_rvd3_synthetic_data_set
-\begin{table}[h]
+\begin{table}[ht]
 \centering
-%\vspace{-5pt}
 \includegraphics[width=0.8\textwidth]{tables/statistics_mcmc_var.pdf}
 \caption{Sensitivity/Specificity comparison of variational EM algorithm with MCMC on the synthetic DNA data set.}
-%\vspace{-10pt}
 \label{tbl:statistics_mcmc_var}
 \end{table}
 \subsubsection{Comparison of Approximated Posterior Distribution}
@@ -444,18 +447,14 @@ It is also noticeable that the shape of the variational distributions using Beta
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-14_Plot_mcmc_mu_vs_variational_mu
 \begin{figure}[htbp]
 \centering
-%\vspace{-10pt}
 \includegraphics[width=0.7\textwidth]{figs/position_85_5584_mcmc_vs_var_mu_fig1.png}
 \caption{Approximated posterior distribution by the variational EM algorithm and MCMC methods on a true variant position 85 when the median read depth is 5584$\times$.}
-%\vspace{-10pt}
 \label{tbl:compare1}
 \end{figure}
 \begin{figure}[htbp]
 \centering
-%\vspace{-10pt}
 \includegraphics[width=0.7\textwidth]{figs/position_160_410_mcmc_vs_var_mu_fig2.png}
 \caption{Approximated posterior distribution by the variational EM algorithm and MCMC methods on a false variant position 160 when the median read depth is 410$\times$.}
-%\vspace{-5pt}
 \label{tbl:compare2}
 \end{figure}
 \subsubsection{Comparison to the State-of-the-Art Approaches}
@@ -466,7 +465,6 @@ Variational EM algorithm has a slightly lower specificity than MCMC only when th
 He, $\mathit{et} \mathit{al}$, states the performance of other approaches in \citep{he2015rvd2}.
 \begin{table*}[htbp]
 \centering
-%\vspace{-10pt}
 \includegraphics[width=1.0\textwidth]{tables/character_all.png}
 \caption{Sensitivity/Specificity comparison of our variational EM algorithm with other variant detection approaches on synthetic DNA data.}
 \vspace{-5pt}
@@ -477,13 +475,11 @@ He, $\mathit{et} \mathit{al}$, states the performance of other approaches in \ci
 Time for approximating variational posterior distribution is increased by expanding the length of region of interest and the median read depth (Figure~\ref{tbl:timing_mcmc_var}).
 Our variational EM algorithm works faster than MCMC at low median read depths (27$\times$ and 298$\times$), while it shows the opposite at high median read depths (3089$\times$ and 30590$\times$).
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
-%\vspace{-5pt}
 \includegraphics[width=0.6\textwidth]{figs/timing_var_mcmc.png}
 \caption{Timing figure for our variational EM algorithm and MCMC sampling.
 Parallel computational cores (60 processers) are used to estimate the model on the synthetic data set.}
-%\vspace{-10pt}
 \label{tbl:timing_mcmc_var}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Timing profile of variational %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -496,7 +492,6 @@ Optimizing $\delta$ function in E-step and optimizing $M$ in M-step takes more t
 \includegraphics[width=1.0\textwidth]{tables/time_3089X_all_update.png}
 \caption{Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is 3089$\times$.
 Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ function in E-step and optimizing $M$ in M-step is highlighted in percentage.}
-%\vspace{-10pt}
 \label{tbl:timing_profile_all}
 \end{table*}
 \subsection{Variant Detection on the Longitudinal Directed Evolution Data}
@@ -531,11 +526,9 @@ It also reveals that the estimation of $\mu_j$ does not much depend on the chang
 Here $M_0$ equals to 1.752 in this application.
 \begin{figure}[htbp]
 \centering
-%\vspace{-10pt}
 \includegraphics[width=0.8\textwidth]{figs/diff_M0.png}
 \caption{Influence of $M_0$ on the estimation of $\mu_j$.
 Posterior distributions $\hat{\mu}_{1014740}$ with different $M_0$ are shown.}
-%\vspace{-10pt}
 \label{tbl:M0}
 \end{figure}
 
@@ -549,7 +542,6 @@ Glucose sensing inducts gene expression to help yeast receive necessary nutrient
 \includegraphics[width=0.65\textwidth]{figs/concomitant.png}
 \caption{A. The NRAF trend of concomitant variants in gene MTH1 and ADE16.
 The 95\% Bayesian credible interval are shown.}
-%\vspace{-10pt}
 \label{tbl:concomitant}
 \end{figure}
 \section{Discussion}
@@ -588,18 +580,9 @@ Funding:
 %
 \appendix
 \section{Derivation of the components in ELBO}
+\label{appendix:ELBO}
 %\section{Derivation of Variational Inference}
 %\subsection{Evidence Lower Bound (ELBO)}
-\label{appendix:ELBO}
-%The ELBO is written out in this way,
-%\begin{equation}
-%\begin{split}
-%\label{L}
-%\mathcal{L}(q, \phi) &= E_q \left[ \log p\left(r,\mu,\theta | n; \phi \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
-%&= E_q \left[ \log p\left(r | \theta, n \right)\right] + E_q \left[ \log p\left(\theta | \mu; M \right)\right] + E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]- E_q \left[ \log q\left(\mu \right)\right]- E_q \left[ \log q\left(\theta \right)\right].
-%\end{split}
-%\end{equation}
-%We write out each component.
 Recall that $r_{ij}|n_{ij}\thicksim \text{Binomial}(\theta_{ij}, n _{ji})$,
 \begin{equation}
 \begin{split}
