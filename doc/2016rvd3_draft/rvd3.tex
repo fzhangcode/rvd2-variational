@@ -73,11 +73,11 @@ However, the bottleneck of CRISP is its low computational efficiency due to a ca
 % Other Bayesian methods: MAQ, Mutect, and FamSeq
 
 % Joint distribution %
-Generally, independent analysis models the tumour and normal samples separately and then look for the difference between them.
-In contrast to independently analyzing a tumour-normal pair, joint analysis models a joint-genotype of the tumour and normal samples simultaneously.
+Generally, independent modeling method models the genotypes of tumour and normal samples separately and then looks for the difference between them.
+In contrast to independently analyzing a tumour-normal pair, joint modeling method models a joint-genotype of the tumour and normal samples simultaneously.
 JointSNVMix introduces two Bayesian probabilistic models (JointSNVMix1 and JointSNVMix2) to jointly analyze a tumour-normal paired allelic count of NGS data ~\citep{roth2012jointsnvmix}.
 JointSNVMix derives an expectation maximization (EM) algorithm to calculate maximum a-posteriori (MAP) estimate of latent variables in a particular probabilistic graphical model.
-Furthermore, \citet{roth2012jointsnvmix} reveals that the joint modeling method, JointSNVMix1, observed 80-fold reduction of false positives compared with its independent analogue (SNVMix1).
+Furthermore, \citet{roth2012jointsnvmix} reveals that the joint modeling method, JointSNVMix1, observes 80-fold reduction of false positives compared with its independent analogue (SNVMix1).
 SomaticSniper ~\citep{larson2012somaticsniper} models the joint diploid genotype likelihoods for both tumour and normal samples.
 Additionally, Strelka \citet{saunders2012strelka} models the joint probabilistic distribution of allele frequencies for both tumour and normal samples, which is demonstrated to be more accurate compared with the methods based on the estimated allele frequency tests between tumour and normal samples.
 
