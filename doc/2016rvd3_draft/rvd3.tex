@@ -111,35 +111,45 @@ In section 4, we compare the performance of the variational inference algorithm 
 We also show that our variational EM algorithm is able to detect rare variants and estimate NRAF in a longitudinal directed evolution experimental data set.
 
 \section{Model Structure}
-Our Bayesian statistical model is shown as a graphical representation in Figure~\ref{tbl:graphical_model}.
+Our Bayesian statistical model is shown as a graphical model in Figure~\ref{tbl:graphical_model}.
 In the model, $r_{ji}$ is the number of reads with a non-reference base at location $j$ in experimental replicate $i$; $n_{ji}$ is the total number of reads at location $j$ in experimental replicate $i$.
-The hyperparameters are:
-$\mu_0$, a global error rate that estimates the error rate across all the positions;
-$M_0$, a global precision that estimates the variation of the error rate across positions in a sequence;
-$ \mu_j $, a local error rate that estimates the error rate at position $j$ across different replicates;
-and $M_j$, a local precision that estimates the variation of the error rate at position $j$ across different replicates.
+The model parameters are:
+\begin{description}[noitemsep]
+  \item[$\mu_0$] a global non-reference read rate that captures the error rate across all the positions,
+  \item[$M_0$] a global precision that captures the variation of the error rate across positions in a sequence,
+  \item[$M_j$] a local precision that captures the variation of the error rate at position $j$ across different replicates.
+\end{description}
+The latent variables are:
+\begin{description}[noitemsep]
+  \item[$\mu_j \sim \text{Beta}(\mu_0)$] position-specific non-reference read rate for position $j$,
+  \item[$\theta_{ji} \sim \text{Multi}(1, \mu_j)$] the non-reference read rate for position $j$ in replicate $i$.
+\end{description}
+
+
 \begin{figure}[htpb]
 \centering
 %\vspace{-10pt}
 \includegraphics[width=0.5\textwidth]{figs/rvd3_model.png}
-\caption{A. Graphical model representation of our Bayesian model.
-B. Graphical model representation of the variational distribution used to approximate the posterior.
+\caption{A. Graphical model representation of the model.
+B. Graphical model representation of the variational approximation  to approximate the posterior distribution.
 Observed random variables are shown as shaded nodes and latent random variables are unshaded.
 The object of inference for the variational EM algorithm is the joint distribution $p(\mu, \theta|r, n)$.}
 \label{tbl:graphical_model}
 \end{figure}
 The model generative process is as follows:
 \begin{enumerate}[noitemsep]
-    \item For each location $j$:
+    \item For each location $j \in [1, \ldots, J]$:
 	\begin{enumerate}
 		\item Draw an error rate $\mu_j \thicksim \text{Beta}(\mu_0, M_0)$
-		\item For each replicate $i$:
+		\item For each replicate $i \in [1, \ldots, N]$:
 		\begin{enumerate}
 			\item Draw $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$
 			\item Draw $r_{ji} | n_{ji} \thicksim \text{Binomial}(\theta_{ji}, n_{ji})$
 		\end{enumerate}
 	\end{enumerate}
 \end{enumerate}
+
+
 \section{Variational Expectation Maximization (EM) Inference}
 %RVD3 improves RVD2 in the way of deterministic posterior distribution inference.
 We developed a non-conjugate variational inference algorithm to approximate the posterior distribution,
