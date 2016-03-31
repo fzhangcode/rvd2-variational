@@ -251,9 +251,9 @@ E_q  \left[ \log (1 - \mu_j)\right] &= \psi(\gamma_{j2}) - \psi(\gamma_{j1}+\gam
 \end{align}
 %
 Since is no analytical representation for $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $, we must resort to numerical integration,
-% TODO: Can you discuss this with me? I need to understand this algebra.
+
 % TODO: You must define B here.
-% I give the detailed algebra here. For a beta distribution, the expected value integral gives:
+% TODO: Should use gammaln - http://docs.scipy.org/doc/scipy/reference/generated/scipy.special.gammaln.html
 \begin{equation}\label{eqn:integration}
 \begin{split}
 E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] &= \int_{0}^{1} q(\mu_j;\gamma_1, \gamma_2) \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right) d\mu_j \\
@@ -340,8 +340,6 @@ The ELBO with respect to $ M_0 $ is
 
 
 % Optimizing M
-% TODO: Since all of the M_j's are independent, why not write out as a function of M_j? Did you optimize each M_j independently?
-% Yes, I optimized each M_j independently. Sorry that I made a mistake in writing this equation. I corrected it.
 The ELBO with respect to $M_j$ is
 \begin{equation}\label{eqn:M}
 \begin{split}
@@ -389,25 +387,45 @@ The variational EM algorithm is summarized using pseudocode in Algorithm 1.
 \section{Hypothesis Testing}
 %\subsection{Posterior Distribution Test}
 % Z-test
-The variational inference algorithm provides variational distributions for $q(\mu_j|r^{control})$ and $q(\mu_j|r^{case})$, which are approximated to the true posterior distributions for $p(\mu_j|r^{control})$ and $p(\mu_j|r^{case})$.
-We do the posterior distribution test using a $Z$-test based on the Gaussian distribution,
-%\begin{equation}
+The posterior distribution over $\mu_j^{\triangle} \mid r^{case}, r^{control} \triangleq \mu_j|r^{case} - \mu_j|r^{control}$ is the distribution over the change in the non-reference read rate at position $j$ between a case and control sample.
+However, we cannot compute the posterior distribution, $\mu_j^{\triangle} | r^{case}, r^{control}$, because we do not have access to the component posterior distributions $\mu_j|r^{case}$ and $\mu_j|r^{case}$.
+But, by approximating the distribution of $\mu_j|r^{case}$ and $\mu_j|r^{control}$ as Gaussians with moments matched to the variational posterior distributions, the distribution of $\mu_j^{\triangle} | r^{case}, r^{control}$ can be approximated as a Gaussian.
+
+Under the variational approximation,
 \begin{align}
-& \mu_j^{\triangle} = \mu_j|r^{case}-\mu_j|r^{control},\\
-& \sigma_j^{\triangle} = \sqrt {var_q{[\mu_j|r^{case}]} + var_q{[\mu_j|r^{control}]}},\\
-& Z_j = \frac{\tau - \mu_j^{\triangle}}{{\sigma_j}^{\triangle}},\\
-& Pr(Z_j) < \alpha,
+  E_q[\mu_j|r^{case}] &= \frac{\gamma_{j1}^{case}}{\gamma_{j1}^{case} + \gamma_{j2}^{case}}
+  \\
+  \text{Var}_q[\mu_j|r^{case}] &= \frac{\gamma_{j1}^{case} \gamma_{j2}^{case}}{(\gamma_{j1}^{case} + \gamma_{j2}^{case} + 1)(\gamma_{j1}^{case} + \gamma_{j2}^{case})^2}
 \end{align}
-%\end{equation}
-where $\tau$ is a detection threshold and $\alpha$ is a significance level.
-We set $\tau = 0$ and $\alpha = 0.05$.
-Here $\mu_j|r^{case}$ and $\mu_j|r^{control}$ are means of distributions;
-and $var_q{[\mu_j|r^{case}]}$ and  $var_q{[\mu_j|r^{control}]}$ are variances of distributions.
-A position is identified as a variant when the p-value is less than the significant level $\alpha$.
+for $\mu_j|r^{case}$ and likewise for $\mu_j|r^{control}$.
+W e approximate the posterior for the case sample as
+\begin{equation}
+  \mu_j | r^{case} \sim \mathcal{N}(E_q[\mu_j|r^{case}], \text{Var}_q[\mu_j|r^{case}])
+\end{equation}
+and likewise for the control.
+Then,
+\begin{equation}
+  \mu_j^{\triangle} \mid r^{case}, r^{control} \sim \mathcal{N}(E_q[\mu_j|r^{case}] - E_q[\mu_j|r^{control}], \text{Var}_q[\mu_j|r^{case}] + \text{Var}_q[\mu_j|r^{control}])
+\end{equation}
+
+Now, we can approximate the posterior probability of interest,
+\begin{equation}
+  \Pr( \mu_j^{\triangle} \geq \tau \mid r^{case}, r^{control} ),
+\end{equation}
+that is, the posterior probability that the difference in the non-reference read rate is greater than a fixed effect size $\tau$ (e.g. zero) for a one sided test.
+For a two sided test, we compute the approximate probability
+\begin{equation}
+  \Pr( | \mu_j^{\triangle} | \geq \tau \mid r^{case}, r^{control}).
+\end{equation}
+A position is called a \textit{provisional variant} if $\Pr( | \mu_j^{\triangle} | \geq \tau \mid r^{case}, r^{control}) \geq 1-\alpha/2$, where the probability is approximated as described.
 
 % Chi-square test
-A $\chi^2$ goodness-of-fit test for non-uniform base distribution is also used to distinguish a scenario of a true variant from a scenario of a random sequencing error ~\citep{efron2010large, he2015rvd2}.
-By rejecting the null hypothesis that the distribution is uniform, we are able to select a variant that represents a true mutant in the cell population.
+It is possible that a position is called a variant due to a differential non-reference read count, but no particular alternative base is more frequently observed than the others.
+In this case, the likely case is a sequencing error that indiscriminately incorporates a non-reference base at the position.
+To discriminate this non-biological cause from the interesting true variants we use a $\chi^2$ goodness-of-fit test for non-uniform base distribution~\citep{efron2010large, he2015rvd2}.
+For each provisional variant, if we reject the null hypothesis that the distribution is uniform, we promote the position to a called variant.
+
+
 \section{Results}
 \subsection{Data Sets}
 \subsubsection{Synthetic DNA Sequence Data}
