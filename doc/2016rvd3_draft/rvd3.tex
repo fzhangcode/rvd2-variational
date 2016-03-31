@@ -385,25 +385,30 @@ The variational EM algorithm is summarized using pseudocode in Algorithm 1.
 \section{Hypothesis Testing}
 %\subsection{Posterior Distribution Test}
 % Z-test
-The variational inference algorithm provides variational distributions for $q(\mu_j|r^{control})$ and $q(\mu_j|r^{case})$, which are approximated to the true posterior distributions for $p(\mu_j|r^{control})$ and $p(\mu_j|r^{case})$.
-We do the posterior distribution test using a $Z$-test based on the Gaussian distribution,
+Given data from a case sample and a control sample, the variational inference algorithm provides variational distributions for $q(\mu_j|r^{control})$ and $q(\mu_j|r^{case})$, which are approximated to the true posterior distributions for $p(\mu_j|r^{control})$ and $p(\mu_j|r^{case})$.
+We can test for a difference between the posterior $\mu_j|r^{control}$ and the posterior $\mu_j|r^{case}$ using a Gaussian approximation,
 %\begin{equation}
 \begin{align}
-& \mu_j^{\triangle} = \mu_j|r^{case}-\mu_j|r^{control},\\
-& \sigma_j^{\triangle} = \sqrt {var_q{[\mu_j|r^{case}]} + var_q{[\mu_j|r^{control}]}},\\
+& \mu_j^{\triangle} = \mu_j|r^{case} - \mu_j|r^{control},\\
+& \sigma_j^{\triangle} = \sqrt {\text{Var}_q{[\mu_j|r^{case}]} + \text{Var}_q{[\mu_j|r^{control}]}},\\
 & Z_j = \frac{\tau - \mu_j^{\triangle}}{{\sigma_j}^{\triangle}},\\
 & Pr(Z_j) < \alpha,
 \end{align}
+%TODO: how to you compute the mean and variance? Using the beta parameters I hope.
+%TODO: Write the mean and variances as functions of their beta parameters.
+%TODO: I don't understand tau - how does that work?
 %\end{equation}
 where $\tau$ is a detection threshold and $\alpha$ is a significance level.
 We set $\tau = 0$ and $\alpha = 0.05$.
-Here $\mu_j|r^{case}$ and $\mu_j|r^{control}$ are means of distributions;
-and $var_q{[\mu_j|r^{case}]}$ and  $var_q{[\mu_j|r^{control}]}$ are variances of distributions.
-A position is identified as a variant when the p-value is less than the significant level $\alpha$.
+A position is called a \textit{provisional variant} if the $|Z_j| \geq \Phi(1-\alpha/2)$ where $\Phi$ is the cumulative distribution function for a Gaussian distribution.
 
 % Chi-square test
-A $\chi^2$ goodness-of-fit test for non-uniform base distribution is also used to distinguish a scenario of a true variant from a scenario of a random sequencing error ~\citep{efron2010large, he2015rvd2}.
-By rejecting the null hypothesis that the distribution is uniform, we are able to select a variant that represents a true mutant in the cell population.
+It is possible that a position is called a variant due to a differential non-reference read count, but no particular alternative base is more frequently observed than the others.
+In this case, the likely case is a sequencing error that indiscriminately incorporates a non-reference base at the position.
+To discriminate this non-biological cause from the interesting true variants we use a $\chi^2$ goodness-of-fit test for non-uniform base distribution~\citep{efron2010large, he2015rvd2}.
+For each provisional variant, if we reject the null hypothesis that the distribution is uniform, we promote the position to a called variant.
+
+
 \section{Results}
 \subsection{Data Sets}
 \subsubsection{Synthetic DNA Sequence Data}
