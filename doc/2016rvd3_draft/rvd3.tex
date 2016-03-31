@@ -63,7 +63,6 @@ Thus, there is a need for accurate and scalable statistical methods to uncover S
 % Probabilistic methods: Bayesian %
 A number of computational methods have been developed to detect SNVs in large scale genomic data sets.
 These methods can be roughly categorized as probabilitic or heuristic or some combination.
-
 Among all of the current probabilistic methods, the Bayesian probabilistic framework has been increasingly used to calculate the unobserved quantities such as variant allele frequency given the observed genomic sequencing data.
 GATK ~\citep{mckenna2010genome} and SAMTools ~\citep{li2009sequence} use a naive Bayesian decision rule to call variants.
 EBCall models sequencing errors based on a Beta-Binomial distribution, where the parameters and latent variables are estimated from a set of non-paired normal sequencing samples ~\citep{shiraishi2013empirical}.
@@ -166,23 +165,22 @@ and $q(\theta_{ji})$ approximates the posterior distribution of $\theta_{ji}$, w
   \label{eq:vardist}
 \end{equation}
 \subsection{Evidence Lower Bound (ELBO)}
-The log-likelihood of the data is lower-bounded according to Jensen's inequality,
+Given the variational distribution, $q$, the log-likelihood of the data is lower-bounded according to Jensen's inequality,
 \begin{equation}
 \begin{split}
 \log p \left( r | \phi \right) &= \log \int_\mu \int_\theta p\left(r,\mu,\theta \right) d\theta d\mu \\
 &= \log \int_\mu \int_\theta p\left(r,\mu,\theta \right)\frac{q\left(\mu,\theta \right) }{q\left(\mu,\theta \right) } d\theta d\mu \\
 &\geq \int_\mu \int_\theta q\left(\mu,\theta \right) \log \frac{ p\left(r,\mu,\theta \right)}{q\left(\mu,\theta \right)} d\theta d\mu \\
 &= E_q \left[ \log p\left(r,\mu,\theta \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
-&\triangleq \mathcal{L}(q, \phi),
+&\triangleq \mathcal{L}(q, \phi).
 \end{split}
 \end{equation}
-where $ \phi= \left( \mu_0, M_0, M \right) $.
 
-The item $\mathcal{L}(q, \phi)$ is the evidence of lower bound (ELBO) of the log-likelihood of the data, which is the sum of $q$-expected complete log-likelihood and the entropy of the variational distribution $q$.
-The goal of variational inference is maximizing the ELBO.
+The function $\mathcal{L}(q, \phi)$ is the evidence of lower bound (ELBO) of the log-likelihood of the data, which is the sum of $q$-expected complete log-likelihood and the entropy of the variational distribution $q$.
+The goal of variational inference is to maximize the ELBO.
 Equivalently, $q$ is chosen by minimizing the Kullback-Liebler (KL) divergence between the variational distribution and the true posterior distribution.
 
-The ELBO is written out in this way:
+The ELBO can be expanded as
 \begin{equation}
 \begin{split}
 \label{L}
@@ -191,7 +189,7 @@ The ELBO is written out in this way:
 \end{split}
 \end{equation}
 We write out each component below.
-The detail of the derivation of $E_q \left[ \log p\left(r | \theta, n \right)\right]$, $E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]$, and $E_q \left[ \log p\left(\theta | \mu; M \right)\right]$ is shown in \ref{appendix:ELBO}.
+The detail of the derivation of $E_q \left[ \log p\left(r | \theta, n \right)\right]$, $E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]$, and $E_q \left[ \log p\left(\theta | \mu; M \right)\right]$ is shown in Appendix~\ref{appendix:ELBO}.
 \begin{equation}
 \begin{split}
 \label{r}
@@ -221,15 +219,17 @@ E_q \left[ \log p\left(\theta | \mu; M \right)\right] &= \sum_{j=1}^{J} \sum_{i=
 Therefore, we need to compute the following expectations with respect to the variational distribution:
 %
 $ E_q \left[ \log \theta_{ji} \right] $, $ E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] $ , $ E_q  \left[ \log \mu_j \right] $ , $ E_q  \left[ \log (1 - \mu_j)\right] $, $ E_q \left[ \mu_j \right] $, and $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.
+We select the functional forms for the variational distributions $q(\theta)$ and $q(\mu)$ to facilitate these expected value computations.
+
 \subsection{Variational Distributions}
-The posterior distribution of $\theta_{ji}$ is a Beta distribution,
+Since $\theta$ and $r$ are conjugate pairs, the posterior distribution of $\theta_{ji}$ is a Beta distribution,
 \begin{align}
 &p(\theta_{ji}|r_{ji},n_{ji},\mu_j,M_j)
 \thicksim \text{Beta}(r_{ji}+M_j \mu_j, n_{ji}-r_{ji}+M_j(1-\mu_j)).
 \end{align}
 Therefore, we propose a Beta distribution with parameter vector $\delta_{ji}$ as variational distribution,
 \begin{align}
-\theta_{ji} &\thicksim \text{Beta}(\delta_{ji}) \nonumber.
+\theta_{ji} &\thicksim \text{Beta}(\delta_{ji1}, \delta_{ji2}) \nonumber.
 \end{align}
 %
 The posterior distribution of $\mu_j$ is given by its Markov blanket,
@@ -237,11 +237,11 @@ The posterior distribution of $\mu_j$ is given by its Markov blanket,
 p(\mu_j|\theta_{ji},M_j,\mu_0,M_0)\propto p(\mu_j|\mu_0,M_0)p(\theta_{ji}|\mu_j,M_j).
 \end{align}
 This is not in the form of any known distribution.
-Therefore, we propose Beta distribution with parameter vector $\gamma_{j}$ as a variational distribution to simplify the variational derivation,
+But, since the support of $\mu_j$ is $[0,1]$, we propose Beta distribution with parameter vector $\gamma_{j}$ as a variational distribution,
 \begin{align}
-\mu_j &\thicksim \text{Beta}(\gamma_j) \nonumber.
+\mu_j &\thicksim \text{Beta}(\gamma_{j1}, \gamma_{j2}) \nonumber.
 \end{align}
-Given the variational distributions, we have
+Given these variational distributions, we have
 \begin{align}
 E_q \left[ \log \theta_{ji} \right] &= \psi(\delta_{ji1}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber \\
 E_q \left[ \log \left( 1 - \theta_{ji}\right) \right]&= \psi(\delta_{ji2}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber \\
@@ -250,16 +250,18 @@ E_q  \left[ \log \mu_j \right] &= \psi(\gamma_{j1}) - \psi(\gamma_{j1}+\gamma_{j
 E_q  \left[ \log (1 - \mu_j)\right] &= \psi(\gamma_{j2}) - \psi(\gamma_{j1}+\gamma_{j2})\nonumber. \\
 \end{align}
 %
-There is no analytical representation for $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.
-To approximate this expectation, we propose to use quadrature numerical integration that is computing expensive,
+Since is no analytical representation for $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $, we must resort to numerical integration,
 \begin{equation}\label{eqn:integration}
 \begin{split}
-E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] & = \int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}logB(\frac{\Gamma (M_j)}{\Gamma (\mu_jM_j)\Gamma ((1-\mu_j)M_j)})d\mu\\
-&=\int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}log\int_{0}^{1}t^{\mu_jM_j}(1-t)^{(1-\mu_j)M_j}dtd\mu.
+E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] & = \int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}\log B(\frac{\Gamma (M_j)}{\Gamma (\mu_jM_j)\Gamma ((1-\mu_j)M_j)})d\mu\\
+&=\int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}\log \int_{0}^{1} t^{\mu_jM_j} (1-t)^{(1-\mu_j)M_j} dt d\mu.
 \end{split}
 \end{equation}
+% TODO: Can you discuss this with me? I need to understand this algebra.
+% TODO: You must define B here.
+Unfortunately, this numerical integration step is computationally expensive.
 %
-Moreover, according to the entropy of beta distribution random variable,
+Finally, the entropy terms can be computed as follows,
 \begin{equation}
 \begin{split}
 E_q \left[ \log q\left(\mu \right)\right] &= \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right] \\
@@ -267,6 +269,7 @@ E_q \left[ \log q\left(\mu \right)\right] &= \sum_{j=1}^{J} E_q \left[ \log q(\m
 + (\gamma_{j1}+\gamma_{j2}-2)\psi(\gamma_{j1}+\gamma_{j2})\right\rbrace;
 \end{split}
 \end{equation}
+and
 \begin{equation}
 \begin{split}
 E_q \left[ \log q\left(\theta \right)\right] &= \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right] \\
@@ -275,12 +278,12 @@ E_q \left[ \log q\left(\theta \right)\right] &= \sum_{j=1}^{J}\sum_{i=1}^{N} E_q
 + (\delta_{ji1}+\delta_{ji2}-2)\psi(\delta_{ji1}+\delta_{ji2})\right\rbrace.
 \end{split}
 \end{equation}
-Thus, the ELBO is computed based on the previous computation of each component.
+% TODO: clean up these equations so they fit on a line.
 %
 \subsection{Variational EM Algorithm}
 Variational EM algorithm maximizes the ELBO on the true likelihood by alternating between maximization over $q$ (E-step) and maximization over $\phi= \left\{\mu_0, M_0, M \right\}$ (M-step).
-\subsubsection{Update the variational distributions}
-We update the variational distribution $q(\theta_{ji})$ using the partial ELBO depending on $\delta_{ji}$ from replicate $i$ position $j$ \eqref{eqn:partial_theta}.
+\subsubsection{(E-step): Updating the variational distributions}
+The terms in the ELBO that depend on $q(\theta_{ji} | \delta_{ji1}, \delta_{ji2})$ are
 \begin{equation}\label{eqn:partial_theta}
 \begin{split}
 \mathcal{L}_{{[q(\theta_{ji})]}}
@@ -289,22 +292,26 @@ We update the variational distribution $q(\theta_{ji})$ using the partial ELBO d
 & - \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right]
 \end{split}
 \end{equation}
+
+We update the variational parameters by numerically optimizing $\hat{\delta}_{ij1}, \hat{\delta}_{ij2} = \arg \max_{\delta_{ij1}, \delta_{ij2}} \mathcal{L}_{{[q(\theta_{ji})]}}$ subject to the constraints that $\delta_{ij1} \geq 0$ and $\delta_{ij2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using Sequential Least SQuares Programming (SLSQP) ~\citep{kraft1988software}.
+
 We update the variational distribution $q(\mu_j)$ using the partial ELBO depending on $\gamma_j$ from each position $j$ \eqref{eqn:partial_mu}.
 \begin{equation}\label{eqn:partial_mu}
 \begin{split}
 \mathcal{L}_{{[q(\mu_j)]}}
-& = N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+& = N \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
 &\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
-& + J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+& + J \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
 &\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace\\
 & - \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right]
 \end{split}
 \end{equation}
-Since each model parameter can not be calculated explicitly, we take the problem of updating each variational distribution as an optimization problem.
-We solve the optimization problem of maximizing the ELBO function with respect to each variational distribution using Sequential Least SQuares Programming (SLSQP) ~\citep{kraft1988software}.
-Based on \eqref{eqn:partial_mu}, the time complexity is high for optimizing $q(\mu_j)$ because of the quadrature integration of $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $ using \eqref{eqn:integration}.
-\subsubsection{Update the model parameters}
-We update each model parameter using the partial ELBO.
+Again, we update the variational parameters by numerically optimizing $\hat{\gamma}_{j1}, \hat{\gamma}_{j2} = \arg \max_{\gamma_{j1}, \gamma_{j2}} \mathcal{L}_{{[q(\mu_{i})]}}$ subject to the constraints that $\gamma_{j1} \geq 0$ and $\gamma_{j2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using Sequential Least SQuares Programming (SLSQP) ~\citep{kraft1988software}.
+The computational cost of optimizing \ref{eqn:partial_mu} is high because of the quadrature integration of $E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right]$ in \eqref{eqn:integration}.
+
+
+\subsubsection{(M-step): Updating the model parameters}
+We can write out the ELBO as a function of each model parameter $\mu_0$, $M_0$, and $M_j$ as follows.
 
 % Optimizing mu0
 The ELBO with respect to $ \mu_0 $ is
@@ -316,6 +323,8 @@ The ELBO with respect to $ \mu_0 $ is
 - E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace . \\
 \end{split}
 \end{equation}
+
+
 % Optimizing M0
 The ELBO with respect to $ M_0 $ is
 \begin{equation}\label{eqn:M_0}
@@ -325,8 +334,11 @@ The ELBO with respect to $ M_0 $ is
 + M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
 \end{split}
 \end{equation}
+
+
 % Optimizing M
-The ELBO with respect to $ M $ is
+% TODO: Since all of the M_j's are independent, why not write out as a function of M_j? Did you optimize each M_j independently?
+The ELBO with respect to $M$ is
 \begin{equation}\label{eqn:M}
 \begin{split}
 \mathcal{L}_{{[M]}}
@@ -344,7 +356,7 @@ The variational EM algorithm is summarized using pseudocode in Algorithm 1.
 
   \begin{algorithmic}[1]
 
-  \State Initialize $ q(\theta, \mu) $ and $\hat{\phi}$
+  \State Initialize $q(\theta, \mu)$ and $\hat{\phi}$
 
   \Repeat
 
@@ -363,8 +375,8 @@ The variational EM algorithm is summarized using pseudocode in Algorithm 1.
     \Until{change in $\mathcal{L}(q,\hat{\phi})$ is small}
 
     \State Set $\hat{\phi} \leftarrow \arg \max\limits_{\phi}
-            \mathcal{L}(q,\phi)$
-  \Until {change in $\mathcal{L}(q,\hat{\phi})$ is small}
+            \mathcal{L}(\hat{q},\phi)$
+  \Until {change in $\mathcal{L}(\hat{q},\phi)$ is small}
 
   \end{algorithmic}
 
