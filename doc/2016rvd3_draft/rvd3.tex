@@ -251,14 +251,17 @@ E_q  \left[ \log (1 - \mu_j)\right] &= \psi(\gamma_{j2}) - \psi(\gamma_{j1}+\gam
 \end{align}
 %
 Since is no analytical representation for $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $, we must resort to numerical integration,
-\begin{equation}\label{eqn:integration}
-\begin{split}
-E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] & = \int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}\log B(\frac{\Gamma (M_j)}{\Gamma (\mu_jM_j)\Gamma ((1-\mu_j)M_j)})d\mu\\
-&=\int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}\log \int_{0}^{1} t^{\mu_jM_j} (1-t)^{(1-\mu_j)M_j} dt d\mu.
-\end{split}
-\end{equation}
 % TODO: Can you discuss this with me? I need to understand this algebra.
 % TODO: You must define B here.
+% I give the detailed algebra here. For a beta distribution, the expected value integral gives:
+\begin{equation}\label{eqn:integration}
+\begin{split}
+E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] &= \int_{0}^{1} q(\mu_j;\gamma_1, \gamma_2) \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right) d\mu_j \\
+&= \int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}\log \left( \frac{\Gamma (M_j)}{\Gamma (\mu_jM_j)\Gamma ((1-\mu_j)M_j)}\right) d\mu_j\\
+&=\int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}\log \frac{1}{\int_{0}^{1} t^{\mu_jM_j} (1-t)^{(1-\mu_j)M_j} dt} d\mu_j.
+\end{split}
+\end{equation}
+$B$ is the beta function that is a normalization constant to make the total probability integrates to 1.
 Unfortunately, this numerical integration step is computationally expensive.
 %
 Finally, the entropy terms can be computed as follows,
@@ -338,11 +341,12 @@ The ELBO with respect to $ M_0 $ is
 
 % Optimizing M
 % TODO: Since all of the M_j's are independent, why not write out as a function of M_j? Did you optimize each M_j independently?
-The ELBO with respect to $M$ is
+% Yes, I optimized each M_j independently. Sorry that I made a mistake in writing this equation. I corrected it.
+The ELBO with respect to $M_j$ is
 \begin{equation}\label{eqn:M}
 \begin{split}
-\mathcal{L}_{{[M]}}
-&= \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+\mathcal{L}_{{[M_j]}}
+&= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
 &\quad + M_j \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] + \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace. \\
 \end{split}
 \end{equation}
