@@ -250,38 +250,35 @@ E_q  \left[ \log \mu_j \right] &= \psi(\gamma_{j1}) - \psi(\gamma_{j1}+\gamma_{j
 E_q  \left[ \log (1 - \mu_j)\right] &= \psi(\gamma_{j2}) - \psi(\gamma_{j1}+\gamma_{j2})\nonumber. \\
 \end{align}
 %
-Since is no analytical representation for $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $, we must resort to numerical integration,
+Since there is no analytical representation for $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $, we must resort to numerical integration,
 
-% TODO: You must define B here.
-% TODO: Should use gammaln - http://docs.scipy.org/doc/scipy/reference/generated/scipy.special.gammaln.html
 \begin{equation}\label{eqn:integration}
 \begin{split}
-E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] &= \int_{0}^{1} q(\mu_j;\gamma_1, \gamma_2) \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right) d\mu_j \\
-&= \int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}\log \left( \frac{\Gamma (M_j)}{\Gamma (\mu_jM_j)\Gamma ((1-\mu_j)M_j)}\right) d\mu_j\\
-&=\int_{0}^{1}\frac{\mu_j^{\gamma_1-1}(1-\mu_j)^{\gamma_2-1}}{B(\gamma_1,\gamma_2)}\log \frac{1}{\int_{0}^{1} t^{\mu_jM_j} (1-t)^{(1-\mu_j)M_j} dt} d\mu_j.
+E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] &= \int_{0}^{1} q(\mu_j;\gamma_{j1}, \gamma_{j2}) \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right) d\mu_j.
+%&= \int_{0}^{1}\frac{\mu_j^{\gamma_{j1}-1}(1-\mu_j)^{\gamma_{j2}-1}}{B(\gamma_{j1},\gamma_{j2})}\log \left( \frac{\Gamma (M_j)}{\Gamma (\mu_jM_j)\Gamma ((1-\mu_j)M_j)}\right) d\mu_j\\
+%&=\int_{0}^{1}\frac{\mu_j^{\gamma_{j1}-1}(1-\mu_j)^{\gamma_{j2}-1}}{B(\gamma_{j1},\gamma_{j2})}\log \frac{1}{\int_{0}^{1} t^{\mu_jM_j} (1-t)^{(1-\mu_j)M_j} dt} d\mu_j.
 \end{split}
 \end{equation}
-$B$ is the beta function that is a normalization constant to make the total probability integrates to 1.
+Here $q(\mu_j;\gamma_{j1}, \gamma_{j2})$ is the probability density function of the Beta distribution that is calculated using the Python built-in function \textit{scipy.stats.beta.pdf $ (\mu_j, \gamma_{j1}, \gamma_{j2})$ };
+and $\log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)$ is calculated using the Python built-in function \textit{scipy.stats.betaln $ (\mu_j M_j, (1-\mu_j)M_j )$ }.
 Unfortunately, this numerical integration step is computationally expensive.
 %
 Finally, the entropy terms can be computed as follows,
 \begin{equation}
 \begin{split}
 E_q \left[ \log q\left(\mu \right)\right] &= \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right] \\
-&= -\sum_{j=1}^{J} \left\lbrace \log (B(\gamma_{j1},\gamma_{j2}))-(\gamma_{j1}-1)\psi(\gamma_{j1})-(\gamma_{j2}-1)\psi(\gamma_{j2})
-+ (\gamma_{j1}+\gamma_{j2}-2)\psi(\gamma_{j1}+\gamma_{j2})\right\rbrace;
+&= -\sum_{j=1}^{J} \left\lbrace \log (B(\gamma_{j1},\gamma_{j2})) -(\gamma_{j1}-1)\psi(\gamma_{j1}) \right\rbrace \\
+& + \sum_{j=1}^{J} \left\lbrace -(\gamma_{j2}-1)\psi(\gamma_{j2}) + (\gamma_{j1}+\gamma_{j2}-2)\psi(\gamma_{j1}+\gamma_{j2})\right\rbrace;
 \end{split}
 \end{equation}
 and
 \begin{equation}
 \begin{split}
 E_q \left[ \log q\left(\theta \right)\right] &= \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right] \\
-&= -\sum_{j=1}^{J}\sum_{i=1}^{N} \\
-&\quad \left\lbrace \log (B(\delta_{ji1},\delta_{ji2}))-(\delta_{ji1}-1)\psi(\delta_{ji1})-(\delta_{ji2}-1)\psi(\delta_{ji2})
-+ (\delta_{ji1}+\delta_{ji2}-2)\psi(\delta_{ji1}+\delta_{ji2})\right\rbrace.
+&= -\sum_{j=1}^{J}\sum_{i=1}^{N} \left\lbrace \log (B(\delta_{ji1},\delta_{ji2}))-(\delta_{ji1}-1)\psi(\delta_{ji1}) \right\rbrace \\
+& + \sum_{j=1}^{J}\sum_{i=1}^{N} \left\lbrace -(\delta_{ji2}-1)\psi(\delta_{ji2}) + (\delta_{ji1}+\delta_{ji2}-2)\psi(\delta_{ji1}+\delta_{ji2})\right\rbrace.
 \end{split}
 \end{equation}
-% TODO: clean up these equations so they fit on a line.
 %
 \subsection{Variational EM Algorithm}
 Variational EM algorithm maximizes the ELBO on the true likelihood by alternating between maximization over $q$ (E-step) and maximization over $\phi= \left\{\mu_0, M_0, M \right\}$ (M-step).
@@ -398,7 +395,7 @@ Under the variational approximation,
   \text{Var}_q[\mu_j|r^{case}] &= \frac{\gamma_{j1}^{case} \gamma_{j2}^{case}}{(\gamma_{j1}^{case} + \gamma_{j2}^{case} + 1)(\gamma_{j1}^{case} + \gamma_{j2}^{case})^2}
 \end{align}
 for $\mu_j|r^{case}$ and likewise for $\mu_j|r^{control}$.
-W e approximate the posterior for the case sample as
+We approximate the posterior for the case sample as
 \begin{equation}
   \mu_j | r^{case} \sim \mathcal{N}(E_q[\mu_j|r^{case}], \text{Var}_q[\mu_j|r^{case}])
 \end{equation}
@@ -435,7 +432,7 @@ The details of the experimental protocol are available in ~\citep{flaherty2011ul
 The synthetic DNA data were downsampled by 10$\times$, 100$\times$, 1,000$\times$, and 10,000$\times$ using Picard.
 The final data set contains read pairs for 6 replicates for the control at different NRAF levels.
 \subsubsection{Longitudinal Directed Evolution Data}
-The longitudinal yeast data comes from three strains of haploid S288c which were grown at $-80^{\circ }\textrm{C}$ for 448 generations under limited-glucose (0.08$\%$).
+The longitudinal yeast data comes from three strains of haploid S288c which were grown for 448 generations under limited-glucose (0.08$\%$).
 The Illumina sequencing data are available on NCBI with number SRA054922.
 The wild-type ancestral strain GSY1136 was sequenced as a reference.
 Aliquots were taken about every 70 generations and sequenced.
