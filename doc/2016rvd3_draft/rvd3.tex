@@ -430,7 +430,7 @@ Two random 400bp DNA sequences were synthesized. One sample with 14 loci variant
 Case and control samples were mixed to yield defined NRAF of $0.1\%$, $0.3\%$, $1.0\%$, $10.0\%$, and $100.0\%$.
 The details of the experimental protocol are available in ~\citep{flaherty2011ultrasensitive}.
 The synthetic DNA data were downsampled by 10$\times$, 100$\times$, 1,000$\times$, and 10,000$\times$ using Picard.
-The final data set contains read pairs for 6 replicates for the control at different NRAF levels.
+The final data set contains read pairs for 6 replicates for the control and cases at different NRAF levels.
 \subsubsection{Longitudinal Directed Evolution Data}
 The longitudinal yeast data comes from three strains of haploid S288c which were grown for 448 generations under limited-glucose (0.08$\%$).
 The Illumina sequencing data are available on NCBI with number SRA054922.
@@ -459,11 +459,11 @@ We showed the approximated posterior distribution of the variational EM algorith
 One variant position 85 is taken as an example to show the comparison of the approximated posteriors (Figure~\ref{tbl:compare1}).
 The variational and MCMC algorithms both identify all the variants when NRAF is 10.0\% and 100.0\%.
 The variational EM algorithm calls some false positive positions without a $\chi^2$ test when NRAFs are 0.1\% and 0.3\% for low median read depth (30$\times$ and 400$\times$).
-Here, a non-mutated position that is called by the variational algorithm while not called by the MCMC algorithm (Figure~\ref{tbl:compare2}).
+Here, a non-mutated position that is called by the variational algorithm while not called by the MCMC algorithm is shown in Figure~\ref{tbl:compare2}.
 The variance of MCMC posterior distribution is wider than that of the variational algorithm.
-To increase the specificity of our variational EM algorithm, the $\chi^2$ test helps to filter this false positive position on a multinomial distribution over the non-reference bases.
-We tested 10 random initial values for the posterior distributions and the approximated posterior distributions are the same.
-It is also noticeable that the shape of the variational distributions using Beta distribution is exactly displayed as a Gaussian distribution.
+To increase the specificity of our variational EM algorithm, the $\chi^2$ test is used to filter this false positive position with an uniform base distribution over the non-reference bases.
+We tested 10 random initial values for the posterior distributions and the approximated posterior distributions by the variational EM algorithm are the same.
+It is noticeable that the shape of the proposed Beta variational distribution is exactly displayed as a Gaussian distribution.
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-14_Plot_mcmc_mu_vs_variational_mu
 \begin{figure}[htbp]
 \centering
@@ -477,11 +477,11 @@ It is also noticeable that the shape of the variational distributions using Beta
 \caption{Approximated posterior distribution by the variational EM and MCMC algorithms on a false variant position 160 when the median read depth is 410$\times$.}
 \label{tbl:compare2}
 \end{figure}
-\subsubsection{Comparison to the State-of-the-Art Approaches}
+\subsubsection{Comparison to the State-of-the-Art Methods}
 We compared the performance of our variational EM inference algorithm with the state-of-the-art variant detection methods using synthetic DNA data set (Table~\ref{tbl:character_all}).
 Among all of the methods compared, our variational inference algorithm shows a high sensitivity and specificity for a broad range of read depths and NRAFs.
-Variational inference algorithm also performs with higher specificity than all the other tested methods at a very low NRAF (0.1\%).
-Variational inference algorithm has a slightly lower specificity than the MCMC algorithm only when the median read depth is 4156$\times$ at 0.3\% NRAF, and a slightly lower sensitivity than the MCMC algorithm only when the median read depth is 41472$\times$ at 0.3\% NRAF, and a median read depth of 55489$\times$ at 1.0\% NRAF.
+Variational inference algorithm also performs higher specificity than all the other tested methods at a very low NRAF (0.1\%) level.
+Variational inference algorithm has a slightly lower specificity than the MCMC algorithm only when the median read depth is 4156$\times$ at 0.3\% NRAF, and a slightly lower sensitivity than the MCMC algorithm only when the median read depth is 41472$\times$ at 0.3\% NRAF and a median read depth of 55489$\times$ at 1.0\% NRAF.
 The performance of other methods is stated in detail in ~\citep{he2015rvd2}.
 \begin{table*}[htbp]
 \centering
@@ -492,8 +492,8 @@ The performance of other methods is stated in detail in ~\citep{he2015rvd2}.
 \end{table*}
 \subsubsection{Comparison of Timing}
 % Timing comparison
-Time for approximating variational posterior distribution is increased by expanding the length of region of interest and the median read depth (Figure~\ref{tbl:timing_mcmc_var}).
-Our variational EM algorithm works faster than the MCMC algorithm at low median read depths (27$\times$ and 298$\times$), while it shows the opposite at high median read depths (3089$\times$ and 30590$\times$).
+Time for approximating variational posterior distribution is increased by expanding the length of region and the median read depth (Figure~\ref{tbl:timing_mcmc_var}).
+Our variational EM algorithm works faster than the MCMC algorithm at the low median read depths of 27$\times$ and 298$\times$, while it shows the opposite at the high median read depths of 3089$\times$ and 30590$\times$.
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
 \begin{figure}[ht]
 \centering
@@ -503,8 +503,8 @@ Parallel computational cores (60 processers) are used to estimate the model on t
 \label{tbl:timing_mcmc_var}
 \end{figure}
 % Timing profile of variational
-The timing profile for each part of our variational EM algorithm when median read depth is 3089$\times$ is also shown in Table~\ref{tbl:timing_profile_all}.
-Optimizing $\gamma$ function in E-step and optimizing $M$ in M-step takes more than 95\% of the time of one variational iteration in a test of a single processor, as such a time consuming integration \eqref{eqn:partial_mu} is needed.
+Furthermore, we show the timing profile for each part of our variational EM algorithm when median read depth is 3089$\times$ (Table~\ref{tbl:timing_profile_all}).
+Optimizing $\gamma$ function \eqref{eqn:partial_mu} in E-step and optimizing $M$ \eqref{eqn:M} in M-step take more than 95\% of the time of one variational iteration in a test of a single processor, as such a time consuming integration \eqref{eqn:integration} is needed.
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-21_Timing_profile_rvd3_program
 \begin{table*}[htbp]
 \centering
@@ -516,8 +516,8 @@ Single and multiple processors are both tested to estimate timing. Time for opti
 \end{table*}
 \subsection{Variant Detection on the Longitudinal Directed Evolution Data}
 % Generally describe detected variants
-We applied our variational inference algorithm on the MTH1 gene, region of 1302bp, on Chr04:1014401-1015702, which is the most frequently observed mutated gene ~\citep{kvitek2013whole}.
-Our algorithm detected the same variants that were found by Kvitek and Sherlock, 2013 and marked as blue in Table~\ref{tbl:mutations}.
+We applied our variational inference algorithm on the MTH1 gene on Chr04:1014401-1015702, region of 1302bp, which is the most frequently observed mutated gene ~\citep{kvitek2013whole}.
+Our variational algorithm detected the same variants that were found by Kvitek and Sherlock, 2013 and marked as blue in Table~\ref{tbl:mutations}.
 Additionally, we detected 81 novel variants in 8 timepoints that the original publication missed.
 In Table~\ref{tbl:mutations}, G7 is the baseline NRAF as the control sample when comparing with G70, G133, G266, G322, G385, and G448 in the respective hypotheses testing.
 The corresponding NRAFs of called variants in different time points are given by the estimation of the latent variable $\mu_j$.
@@ -525,7 +525,7 @@ The corresponding NRAFs of called variants in different time points are given by
 \begin{table*}[htbp]
 \centering
 \includegraphics[width=1.0\textwidth]{tables/mutations_MTH1.png}
-\caption{Identified variants and corresponding NRAF in gene MTH1 on Chromosome 4.
+\caption{Identified variants and corresponding NRAFs in gene MTH1 on Chromosome 4.
 A blank cell indicates that the position of that time point is not called significantly different than G7.
 Positions marked as blue were also identified by Kvitek, 2013.
 Other positions are 81 novel identified variants in 8 timepoints.}
@@ -540,7 +540,7 @@ Furthermore, we detected a variant on position 1015666 at generation 70 as 0.091
 
 % Influence of M0 on muj
 As an empirical Bayesian model, the global precision parameter $M_0$ could influence the estimation of $\mu_j$.
-We generated a figure to show the influence of different $M_0$ on $\mu_{1014740}$.
+We generated a figure to show the influence of different $M_0$ on variant position 1014740 $\mu_{1014740}$.
 Figure~\ref{tbl:M0} shows that $\hat{\mu}_{1014740}$ is getting bigger as $M_0$ is getting smaller.
 It also reveals that the estimation of $\mu_j$ does not much depend on the changes of $M_0$.
 Here $M_0$ equals to 1.752 in this application.
@@ -548,7 +548,7 @@ Here $M_0$ equals to 1.752 in this application.
 \centering
 \includegraphics[width=0.8\textwidth]{figs/diff_M0.png}
 \caption{Influence of $M_0$ on the estimation of $\mu_j$.
-Posterior distributions $\hat{\mu}_{1014740}$ with different $M_0$ are shown.}
+Posterior distributions of variant position 1014740 $\hat{\mu}_{1014740}$ with different $M_0$ are shown.}
 \label{tbl:M0}
 \end{figure}
 
