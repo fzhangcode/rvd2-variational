@@ -34,7 +34,7 @@ def main():
     AF_all[7], err_all[7] = read('./hdf5/E1/c4-47_MTH1_198605220525.hdf5', loc[0]) 	
     
     #rects1 = ax.bar(ind, AF_all, width, color='r', yerr=err_all, ecolor='k')
-    plt.plot(ind, AF_all, linestyle='-', linewidth=12, marker='o', markersize=16, color='b', label='MTH1')
+    plt.plot(ind, AF_all, linestyle='-', linewidth=12, marker='o', markersize=16, color='b', label='Chr04:1014740')
     plt.errorbar(ind, AF_all, yerr=err_all, linestyle='None', linewidth=4, marker = 'None', elinewidth=3, capsize=18, color='b')
     
 
@@ -49,7 +49,7 @@ def main():
     AF_all[7], err_all[7] = read('./hdf5/E1/c4-47_ADE16_200286.hdf5', loc[1]) 	
 
     #rects2 = ax.bar(ind+width, AF_all, width, color='b', yerr=err_all, ecolor='g')
-    plt.plot(ind, AF_all, linestyle='-', linewidth=12, marker='o', markersize=16, color='r', label='ADE16')
+    plt.plot(ind, AF_all, linestyle='-', linewidth=12, marker='o', markersize=16, color='r', label='Chr12:200286')
     plt.errorbar(ind, AF_all, yerr=err_all, linestyle='None', linewidth=4, marker = 'None',  elinewidth=3, capsize=18, color='r', alpha = 0.5)
     
     
@@ -78,10 +78,10 @@ def main():
     
     #ax.text(5, 80, r'A pair of concomitant mutations', fontsize=30)
 
-    plt.setp(plt.gca().get_xticklabels(), fontsize=40)
-    plt.setp(plt.gca().get_yticklabels(), fontsize=42)
-    plt.xlabel('Time (generation)', fontsize=45)
-    plt.ylabel('Variant Allele Frequency (%)', fontsize=50)
+    plt.setp(plt.gca().get_xticklabels(), fontsize=35)
+    plt.setp(plt.gca().get_yticklabels(), fontsize=35)
+    plt.xlabel('Time (generation)', fontsize=35)
+    plt.ylabel('Estimate of $\mu_j$(%)', fontsize=35)
     plt.show()
     #plt.savefig('E1_venn.pdf')
 	
