@@ -37,22 +37,21 @@ def main():
     n.fill(1000)
     
     phi = {'M0':100, 'mu0':0.1, 'M':[1000]*J}
-    (r, theta, mu) = generate_sample(phi, N, J, n, seedint=19891129)
+    (r, theta, mu) = generate_sample(phi, N, J, n, seedint=20150928)
 
     ## model optimization  
-    (phiHat, qHat) = ELBO_opt(r, n, seed = 19891129, pool = 40)
+    (phiHat, qHat) = ELBO_opt(r, n, seed = 20150928, pool = 60)
 
     ## save the parameters.
     save_model('case_model.hdf5', r, n, phiHat, qHat)
 
+    (r, theta, mu) = generate_sample(phi, N, J, n, seedint=20150928)
 
-    # (r, theta, mu) = generate_sample(phi, N, J, n, seedint=19900906)
+    ## model optimization  
+    (phiHat, qHat) = ELBO_opt(r, n, seed = 20150928, pool = 60)
+    save_model('control_model.hdf5', r, n, phiHat, qHat)
 
-    # ## model optimization  
-    # (phiHat, qHat) = ELBO_opt(r, n, seed = 19900906, pool = 40)
-    # save_model('control_model.hdf5', r, n, phiHat, qHat)
-
-    # test('case_model.hdf5','control_model.hdf5')
+    test('case_model.hdf5','control_model.hdf5')
 
 
 def test(caseHDF5Name, controlHDF5Name, alpha=0.05, tau=0, chi2=False, outputFile=None):
@@ -80,8 +79,6 @@ def test(caseHDF5Name, controlHDF5Name, alpha=0.05, tau=0, chi2=False, outputFil
         p = ss.norm.cdf(z)
         # pdb.set_trace()
         bayescall.append(p[0]<alpha)
-    # logging.debug(call)
-    # pdb.set_trace()
 
     ## combine the chi2 goodness of fit test
     if chi2:
@@ -89,7 +86,6 @@ def test(caseHDF5Name, controlHDF5Name, alpha=0.05, tau=0, chi2=False, outputFil
         call = np.logical_and(bayescall,chi2call)
     else:
         call = bayescall
-    # pdb.set_trace()
 
     if outputFile is not None:
 
@@ -193,29 +189,6 @@ def write_dualvcf(outputFile, loc, call, refb, controlR=None, controlN=None, cas
                 
     vcfF.close()
 
-    '''print("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT", file=vcfF)
-
-    for i in xrange(J):
-        # pdb.set_trace()
-        if call[i]:           
-            # restore R
-            actg = ['A','C','G','T']
-
-            idx = actg.index(refb[i])
-            caseR4 = np.zeros(4)
-            controlR4 = np.zeros(4)
-            caseR4[idx] = np.median(caseN[:,i])-np.sum(caseR[i,:])
-            controlR4[idx] = np.median(controlN[:,i])-np.sum(controlR[i,:])
-            for d in xrange(idx):
-                caseR4[d] = caseR[i,d]
-                controlR4[d] = controlR[i,d]
-            for d in xrange(3-idx):
-                caseR4[d+idx+1] = caseR[i,d+idx]
-                controlR4[d+idx+1] = controlR[i,d+idx]
-
-            print ("chr%s\t%d\t.\t%s\t.\t.\tPASS\t.\tAU:CU:GU:TU" % (chrom[i], pos[i], refb[i]), file=vcfF)
-                
-    vcfF.close()'''
 
 def chi2combinetest(R, N, bayescall = 1, pvalue = 0.05):
 
@@ -234,7 +207,8 @@ def chi2combinetest(R, N, bayescall = 1, pvalue = 0.05):
     if nbayescall < 1:
         nbayescall = 1
 
-    if np.median(N) > 500: #Benjamini-Hochberg method FWER control
+	#Benjamini-Hochberg method FWER control
+    if np.median(N) > 500: 
         chi2call = chi2P < pvalue/nbayescall
     else:
         chi2call = chi2P < pvalue
@@ -312,15 +286,6 @@ def Eqlog1_Theta(delta):
 
 def EqMu(gam):
     return gam[0] / (np.sum(gam)) # eps?
-
-    # with warnings.catch_warnings():
-    #     warnings.filterwarnings('error')
-    #     # pdb.set_trace()
-    #     try:
-    #         x = gam[0] / (np.sum(gam)) # eps?
-    #     except RuntimeWarning: 
-    #         # print 'Raised!'
-    #         pdb.set_trace()
 
 
 def EqlogMu(gam):
@@ -408,7 +373,7 @@ def ELBO(r, n, M, mu0, M0, delta, gam):
         EqlogQmu -= BetaEntropy(gam[j,:])
 
     return EqlogPr + EqlogPtheta + EqlogPmu - EqlogQtheta - EqlogQmu
-    # return EqlogPr + EqlogPtheta + EqlogPmu
+
 
 def ELBO_delta_ij(r, n, M, delta, gam):
     ## partial ELBO from replicate i position j
@@ -458,11 +423,9 @@ def opt_delta(r, n, M, delta, gam, pool = None):
     if np.ndim(r) == 1: N, J = (1, np.shape(r)[0])
     elif np.ndim(r) == 2: N, J = np.shape(r)
 
-    # pdb.set_trace()
     st = time.time()
     if pool is not None:
         for i in xrange(N):
-            # pdb.set_trace()
             args = zip (r[i,:], n[i,:], M, delta[i,:], gam)
             temp  = pool.map(opt_delta_ij, args)
             delta[i,:] = np.array(temp)
@@ -473,7 +436,7 @@ def opt_delta(r, n, M, delta, gam, pool = None):
                 logging.debug('Optimizing position %d of %d and replicate %d of %d' % (j,J,i,N))
                 args = (r[i,j], n[i,j], M[j], delta[i,j,:], gam[j,:])
                 delta[i,j,:] = opt_delta_ij(args)
-                # logging.debug(delta[i,j
+
     logging.debug('Delta update elapsed time is %0.3f sec for %d samples %d replicates.' % (time.time() - st, J, N))
     return delta
 
@@ -618,7 +581,7 @@ def neg_ELBO_M_j(logM, delta, gam):
 def opt_M_j(args):
 
     (M, delta, gam) = args
-    #bnds = np.array([[-1, 11]]) # limit delta to [0.0001, 10000]
+    # bnds = np.array([[-1, 11]]) # limit delta to [0.0001, 10000]
     # limit delta to [0.0001, 10000], np.log(delta) is [-9.21, 9.21]
     bnds = np.array([[-10, 10]]) 
     M = np.array(M)
@@ -657,7 +620,6 @@ def opt_par(func, x, args, bnds, parlabel):
     # res = so.minimize(func, x, 
     #     args=args, bounds=bnds, 
     #     method='Newton-CG') 
-
 
     # logging.debug("Inside of optimize function. got res")
     # Nelder-Mead is the simplest way to minimize a fairly well-behaved function. 
@@ -747,7 +709,6 @@ def ELBO_opt(r, n, phi = None, q = None, seed = None, pool = None, vaf = None):
     M = phi['M']
 
     ## Initialize the variational parameters
-   
     if q is None:
         #delta = np.random.uniform(low = 0.1, high = 100, size = (N,J,2))
         #gam = np.random.uniform(low=0.1, high=100, size = (J,2))
