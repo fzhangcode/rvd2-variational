@@ -427,48 +427,61 @@ For each provisional variant, if we reject the null hypothesis that the distribu
 
 
 \section{Results}
+
 \subsection{Data Sets}
+
 \subsubsection{Synthetic DNA Sequence Data}
+
 Two random 400bp DNA sequences were synthesized. One sample with 14 loci variants is taken as the case and the other without variants is taken as the control.
 Case and control samples were mixed to yield defined NRAF of $0.1\%$, $0.3\%$, $1.0\%$, $10.0\%$, and $100.0\%$.
-The details of the experimental protocol are available in ~\citep{flaherty2011ultrasensitive}.
-The synthetic DNA data were downsampled by 10$\times$, 100$\times$, 1,000$\times$, and 10,000$\times$ using Picard v1.96.
-The final data set contains read pairs for 6 replicates for the control and cases at different NRAF levels.
+The details of the experimental protocol are available in \citet{flaherty2011ultrasensitive}.
+The synthetic DNA data were downsampled by 10$\times$, 100$\times$, 1,000$\times$, and 10,000$\times$ using \texttt{picard} (v 1.96).
+The final data set contains read pairs for six replicates for the control and cases at different NRAF levels.
+
 \subsubsection{Longitudinal Directed Evolution Data}
+
 The longitudinal yeast data comes from three strains of haploid S288c which were grown for 448 generations under limited-glucose (0.08$\%$).
 The wild-type ancestral strain GSY1136 was sequenced as a reference.
 Aliquots were taken about every 70 generations and sequenced.
-The detail of library sequencing is described in ~\citep{kvitek2013whole, kao2008molecular}.
-The Illumina sequencing data are available on the NCBI Sequence Read Archive (with the number SRA054922) ~\citep{kvitek2013whole}.
-However, we received the original BAM files from the author, Daniel Kvitek.
+The detail of library sequencing is described in \citet{kvitek2013whole}, \citet{bansal2010statistical}, and \citet{ao2008molecular}.
+The Illumina sequencing data are available on the NCBI Sequence Read Archive (SRA054922)~\citep{kvitek2013whole}.
+For this study, we received the original BAM files from one of the authors.
 The aligned BAM files have 266-1,046$\times$ coverage.
-We used samtools 1.1 version to run samtools -mpileup -C50 to convert BAM files to pileup files.
-Then we generated depth chart files, which are tab-delimited text files recording the count of the number of nucleotides in columns and genomic positions in rows.
+We used \texttt{samtools} (v 1.1) with \texttt{-mpileup -C50} flags to convert BAM files to pileup files.
+Then, we generated depth chart files, which are tab-delimited text files recording the count of the number of nucleotides in columns and genomic positions in rows.
 We ran our variational inference algorithm on the depth chart files to identify SNVs.
+
 \subsection{Performance on Synthetic DNA Data}
+
 \subsubsection{Comparison of Sensitivity and Specificity}
+
 We compared the performance of our variational EM algorithm and the MCMC sampling algorithm in terms of sensitivity and specificity (Table~\ref{tbl:statistics_mcmc_var}).
 We used the posterior distribution test and $\chi^2$ test to detect variants for a broad range of median read depths and NRAFs.
 The variational EM algorithm shows higher sensitivity and specificity than the MCMC algorithm in the events when NRAF is 0.1\%.
 The variational EM algorithm has a higher specificity compared with the MCMC algorithm for a median read depth of 41,472$\times$ at 0.3\% NRAF and 55,489 $\times$ at 1.0\% NRAF, but the sensitivity is slightly lower due to false negatives.
-% results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-09-28_Run_rvd3_synthetic_data_set
+% results in results\2015-09-28_Run_rvd3_synthetic_data_set
+%
 \begin{table}[ht]
 \centering
 \includegraphics[width=0.7\textwidth]{tables/statistics_mcmc_var.png}
 \caption{Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.}
 \label{tbl:statistics_mcmc_var}
 \end{table}
+
 \subsubsection{Comparison of Approximated Posterior Distribution}
+
 Figure~\ref{tbl:compare1} shows the approximate posterior distribution of the variational EM algorithm and samples of the MCMC algorithm.
 One variant position, 85, is taken as an example to show the comparison of the approximated posteriors.
 The variational and MCMC algorithms both identify all the variants when NRAF is 10.0\% and 100.0\%.
 The variational EM algorithm calls 90 false positive positions without a $\chi^2$ test when NRAFs are 0.1\% and 0.3\% for low median read depth (30$\times$ and 400$\times$).
-Here, a false positive, a non-mutated position that is called by the variational algorithm but not called by the MCMC algorithm, is shown in Figure~\ref{tbl:compare2}.
-The variance of MCMC posterior distribution is wider than that of the variational algorithm.
-To increase the specificity of our variational EM algorithm, the $\chi^2$ test is used to filter this false positive position with an uniform base distribution over the non-reference bases.
-We tested 10 random initial values for the posterior distributions and found the approximate posterior distributions from the variational EM algorithm are essentially independent from the starting point.
+This is to be expected because it is highly unlikely to correctly identify a variant base with a population frequency of $1$ in $1000$ with less than a $1,000\times$ read depth.
+
+A false positive, a non-mutated position that is called by the variational algorithm but not called by the MCMC algorithm, is shown in Figure~\ref{tbl:compare2}.
+The variance of MCMC posterior estimate is higher than that of the variational posterior estimate.
+We tested 10 random initial values variational inference algorithm and found the approximate posterior distributions from the variational EM algorithm are essentially equivalent for all random initializations.
 It is notable that the shape of the proposed Beta variational distribution is well approximated by a Gaussian.
-% results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-14_Plot_mcmc_mu_vs_variational_mu
+
+% results in results\2015-10-14_Plot_mcmc_mu_vs_variational_mu
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.7\textwidth]{figs/position_85_5584_mcmc_vs_var_mu_fig1.png}
@@ -486,7 +499,7 @@ We compared the performance of our variational EM inference algorithm with the s
 Among all of the methods compared, our variational inference algorithm has a higher sensitivity and specificity for a broad range of read depths and NRAFs.
 Our variational inference algorithm shows higher specificity than all the other tested methods at a very low NRAF (0.1\%) level.
 However, our algorithm has a slightly lower specificity than the MCMC algorithm when the median read depth is 4,156$\times$ at 0.3\% NRAF, and a slightly lower sensitivity than the MCMC algorithm when the median read depth is 41,472$\times$ at 0.3\% NRAF and a median read depth of 55,489$\times$ at 1.0\% NRAF.
-The performance of other methods is stated in detail in ~\citep{he2015rvd2}.
+The performance of other methods is stated in detail in \citet{he2015rvd2}.
 \begin{table*}[htbp]
 \centering
 \includegraphics[width=1.0\textwidth]{tables/character_all.png}
@@ -494,9 +507,11 @@ The performance of other methods is stated in detail in ~\citep{he2015rvd2}.
 \vspace{-5pt}
 \label{tbl:character_all}
 \end{table*}
+
+
 \subsubsection{Comparison of Timing}
 % Timing comparison
-The computational time for approximating variational posterior distribution is increased by expanding the length of region and the median read depth (Figure~\ref{tbl:timing_mcmc_var}).
+The computational time for approximating the variational posterior distribution is increased by expanding the length of region and the median read depth (Figure~\ref{tbl:timing_mcmc_var}).
 Our variational EM algorithm is faster than the MCMC algorithm at the low median read depths of 27$\times$ and 298$\times$, and slower for the high median read depths of 3,089$\times$ and 30,590$\times$.
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
 \begin{figure}[ht]
@@ -542,17 +557,18 @@ Moreover, we identified the first emergence of this beneficial variant as early 
 Table~\ref{tbl:mutations} shows that we are able to detect many variants (NRAF $<$ 1.0\%) early in the evolutionary time course.
 Furthermore, we detected a variant at position Chr04:1015666 at generation 70 as 0.091\% NRAF, which is less than a 0.1\% fraction.
 
+
 % Influence of M0 on muj
-As an empirical Bayesian model, the global precision parameter $\hat{M_0}$ could influence the estimate of $\mu_j$.
-We show the influence of different $\hat{M_0}$ on variant position Chr04:1014740, $q(\mu_{1014740}|r)$.
-Figure~\ref{tbl:M0} shows that $\hat{\mu}_{1014740}$ is increasing as $\hat{M_0}$ is decreasing.
-It also reveals that the estimate of $\mu_j$ does not greatly depend on $\hat{M_0}$.
+The global precision parameter $\hat{M_0}$ could influence the estimate of $\mu_j$ due to its regularization effect.
+We show the influence of different $\hat{M_0}$ on variant position Chr04:1014740, $q(\mu_{1014740}|r)$ in Figure~\ref{tbl:M0}.
+We see that as we decrease the prior precision parameter $\hat{M_0}$, $\hat{\mu}_{1014740}$ increases as expected.
+But the effect of changing $\hat{M_0}$ over several orders of magnitude does not change $\mu_j$ greatly.
 Here $\hat{M_0} = 1.752$ in this dataset.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{figs/diff_M0.png}
 \caption{Influence of $M_0$ on the estimation of $\mu_j$.
-Posterior distributions of the variant at position Chr04:1014740, $\hat{\mu}_{1014740}$, with different $M_0$ are shown.}
+Posterior distributions of the variant at position Chr04:1014740, $\hat{\mu}_{1014740}$, with different $\hat{M_0}$ are shown.}
 \label{tbl:M0}
 \end{figure}
 
@@ -560,8 +576,10 @@ Posterior distributions of the variant at position Chr04:1014740, $\hat{\mu}_{10
 We identified a pair of variants, Chr04:1014740 in gene MTH1 and Chr12:200286 in gene ADE16, that increase in NRAF together in time (Figure~\ref{tbl:concomitant}).
 We hypotheses that the variants are concomitant in the same strain.
 In this pair of genes, gene MTH1 is a negative regulator of the glucose-sensing signal transduction pathway, and gene ADE16 is an enzyme of $\mathit{de\, novo}$ purine biosynthesis.
-Glucose sensing induces gene expression to help yeast receive necessary nutrients, which could be a reason for this pair of genes to mutate together ~\citep{johnston1999feasting}.
-% results are under folder \fzhang\Research\rvd3-variational-notebook\results\2016-01-12_Run_rvd3_Dan_data_regions
+Glucose sensing induces gene expression changes to help yeast receive necessary nutrients, which could be a reason for this pair of genes to mutate together ~\citep{johnston1999feasting}.
+Further experimental validation of this hypothesis would be required to definitively show that the mutations are concommitent.
+
+% results in results\2016-01-12_Run_rvd3_Dan_data_regions
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.6\textwidth]{figs/concomitant.png}
@@ -571,7 +589,7 @@ The 95\% Bayesian credible intervals are shown.}
 \end{figure}
 \section{Discussion}
 % Brief summary of RVD3
-In this article, we propose a variational EM algorithm to estimate the non-reference allele frequency in the RVD2 model.
+In this article, we propose a variational EM algorithm to estimate the non-reference allele frequency in the RVD2 model to identify rare nucleotide variants in heterogeneous pools.
 We derived a variational expectation maximization algorithm to avoid an intractable integration in our Bayesian model.
 Our results show that the variational EM algorithm
 (i) is able to identify rare variants at a 0.1\% NRAF level with comparable sensitivity and specificity to a MCMC sampling algorithm;
@@ -580,35 +598,41 @@ and (iii) detects SNVs early in the evolutionary time course, as well as track N
 
 % Potential problems of variational EM and alternative strategies
 %However, the application on an interested gene region suggests that our variational EM algorithm yields an accurate identification of rare SNVs in sufficient efficiency.
-It is possible that the Beta variational distribution we have selected to address the non-conjugate prior issue will not yield the speed improvements as we expect.
-In that event, we will instead use a straightforward interpolation scheme to compute the necessary integral for the expectation step.
-The Beta function in the integral kernel is relatively smooth and has a bounded domain.
-This favorable property can be leveraged to implement a cubic spline interpolation method to approximate the necessary integral ~\citep{mckinley1998cubic}.
-Here we aim to guarantee accuracy rather than efficiency, so we calculate the numerical integration without using cost-effective methods.
+We have chosen parametric forms for the variational distributions.
+This choice has left us with a complex integral in our variational optimization problem.
+In future work, we plan to explore other approximations of the variational distributions that render the integral easier to compute.
+One could use cubic splines to numerically approximate the function and then integrate that surrogate~\citet{mckinley1998cubic}.
 Another strategy is to consider a Laplace approximation for the proposal variational distribution, as we and others have done previously ~\citep{saddiki2014glad, wang2013variational}.
 
-As a local optimization methodology, variational EM is possible to fall in a local maximum.
-It could be that the accuracy is not sufficient to identify variants with statistical confidence.
-If so, we will generate different random initialized parameters to restart the algorithm.
-We can also consider using RVD2 for more accurate posterior approximation, which is implemented by MCMC sampling algorithm.
-MCMC is computationally slower, but is easily deployed to multiple computational cores in parallel.
-Thus, we will be able to analyze the sequencing data using Amazon Elastic Compute Cloud (EC2) resource, which will increase computational efficiency.
+%As a local optimization methodology, variational EM can converge to local maximum.
+%It could be that the accuracy is not sufficient to identify variants with statistical confidence.
+%If so, we will generate different random initialized parameters to restart the algorithm.
+%We can also consider using RVD2 for more accurate posterior approximation, which is implemented by MCMC sampling algorithm.
+%MCMC is computationally slower, but is easily deployed to multiple computational cores in parallel.
+%Thus, we will be able to analyze the sequencing data using Amazon Elastic Compute Cloud (EC2) resource, which will increase computational efficiency.
 
 % Future work
-The variational EM algorithm discovers many novel variants in the application of an interested region of the longitudinal yeast data set.
-These discovered variants drive us to extend our statistical method to the whole genome, whole population yeast sequence data with guaranteed accuracy and efficiency.
-By doing this, we can uncover the dynamics of arising variants at the genome-wide scale to show the genetic basis of clonal interference.
-Our method is also can be extended to study drug resistance by characterizing tumor heterogeneity in targeted anti-cancer chemotherapy samples.
+Improving the speed of the estimating algorithm enables us to interrogate whole-genome sequencing data.
+By doing this, we hope to reveal the dynamics of arising variants at the genome-wide scale to show the genetic basis of clonal interference.
+Our method can also can be extended to study drug resistance by characterizing tumor heterogeneity in targeted anti-cancer chemotherapy samples.
 We will be able to find the causative variants that lead to drug resistance and understand the causes of resistance at the single nucleotide level.
+
+
 \section{Acknowledgments}
 F.Z. and P.F. were supported by PhRMA Foundation Informatics Grant 2013080079.
+We would like to thank Dan Kvitek for kindly sharing the data set used for the longitudinal yeast evolution analysis.
 %
 \appendix
 \section{Derivation of the components in ELBO}
 \label{appendix:ELBO}
+
 %\section{Derivation of Variational Inference}
 %\subsection{Evidence Lower Bound (ELBO)}
-Recall that $r_{ij}|n_{ij}\thicksim \text{Binomial}(\theta_{ij}, n _{ji})$,
+
+Here we derive the requisite expectations with respect to the variational distribution for the ELBO.
+%
+Recall that $r_{ij}|n_{ij}\thicksim \text{Binomial}(\theta_{ij}, n _{ji})$.
+Then we can write,
 \begin{equation}
 \begin{split}
 %\label{r}
@@ -620,7 +644,9 @@ E_q \left[ \log p\left(r | \theta, n \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}
 &\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace. \\
 \end{split}
 \end{equation}
-Recall that $\mu_j \thicksim \text{Beta}(\mu_0, M_0)$,
+%
+%
+Since $\mu_j \thicksim \text{Beta}(\mu_0, M_0)$,
 \begin{equation}
 \begin{split}
 %\label{mu}
@@ -632,7 +658,9 @@ E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] &= \sum_{j=1}^{J} E_q  \l
 &\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.
 \end{split}
 \end{equation}
-Recall that $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$,
+%
+%
+Finally, since $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$,
 \begin{equation}
 \begin{split}
 %\label{theta}
