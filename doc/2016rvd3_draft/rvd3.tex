@@ -620,13 +620,19 @@ We will be able to find the causative variants that lead to drug resistance and 
 
 \section{Acknowledgments}
 F.Z. and P.F. were supported by PhRMA Foundation Informatics Grant 2013080079.
+We would like to thank Dan Kvitek for kindly sharing the data set used for the longitudinal yeast evolution analysis.
 %
 \appendix
 \section{Derivation of the components in ELBO}
 \label{appendix:ELBO}
+
 %\section{Derivation of Variational Inference}
 %\subsection{Evidence Lower Bound (ELBO)}
-Recall that $r_{ij}|n_{ij}\thicksim \text{Binomial}(\theta_{ij}, n _{ji})$,
+
+Here we derive the requisite expectations with respect to the variational distribution for the ELBO.
+%
+Recall that $r_{ij}|n_{ij}\thicksim \text{Binomial}(\theta_{ij}, n _{ji})$.
+Then we can write,
 \begin{equation}
 \begin{split}
 %\label{r}
@@ -638,7 +644,9 @@ E_q \left[ \log p\left(r | \theta, n \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}
 &\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace. \\
 \end{split}
 \end{equation}
-Recall that $\mu_j \thicksim \text{Beta}(\mu_0, M_0)$,
+%
+%
+Since $\mu_j \thicksim \text{Beta}(\mu_0, M_0)$,
 \begin{equation}
 \begin{split}
 %\label{mu}
@@ -650,7 +658,9 @@ E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] &= \sum_{j=1}^{J} E_q  \l
 &\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.
 \end{split}
 \end{equation}
-Recall that $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$,
+%
+%
+Finally, since $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$,
 \begin{equation}
 \begin{split}
 %\label{theta}
