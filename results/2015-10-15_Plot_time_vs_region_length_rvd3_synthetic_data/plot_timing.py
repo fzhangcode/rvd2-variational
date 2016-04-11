@@ -42,7 +42,7 @@ plt.plot(positions, time_mcmc, marker='*', linestyle='--', color='k', lw = width
 
 plt.legend(loc='best')
 plt.xlabel('Length of region of interest (positions)', fontsize = 20)
-plt.ylabel('Time for converging (minutes)', fontsize = 20)
+plt.ylabel('Time for convergence (minutes)', fontsize = 20)
 plt.xlim(80, 420)
 plt.setp(plt.gca().get_xticklabels(), fontsize=20)
 plt.setp(plt.gca().get_yticklabels(), fontsize=20)
