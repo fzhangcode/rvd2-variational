@@ -89,10 +89,10 @@ def plot(f2HDF5Name, f1HDF5Name, f3HDF5Name, f4HDF5Name, position):
     for label in legend.get_texts():
         label.set_fontsize(38)	
 	
-    ax.set_xlabel('$\hat{\mu}_{1014740}$', fontsize = 40)
+    ax.set_xlabel('$\hat{\mu}_{1,014,740}$', fontsize = 38)
     ax.set_xlim([0.95, 1])    
-    plt.setp(plt.gca().get_xticklabels(), fontsize=38)
-    plt.setp(plt.gca().get_yticklabels(), fontsize=38)	
+    plt.setp(plt.gca().get_xticklabels(), fontsize=35)
+    plt.setp(plt.gca().get_yticklabels(), fontsize=35)	
 
     plt.show()
 
