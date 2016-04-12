@@ -17,7 +17,6 @@
 \usepackage{algpseudocode}
 \usepackage{graphicx}
 \usepackage{times}
-
 %\usepackage{epstopdf}
 %\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
@@ -65,7 +64,7 @@ Thus, there is a need for accurate and scalable statistical methods to uncover S
 % Classes of Methods %
 % Probabilistic methods: Bayesian %
 A number of computational methods have been developed to detect SNVs in large scale genomic data sets.
-These methods can be roughly categorized as probabilitic or heuristic or some combination.
+These methods can be roughly categorized as probabilistic or heuristic or some combination.
 Among all of the current probabilistic methods, the Bayesian probabilistic framework has been increasingly used to calculate the unobserved quantities such as variant allele frequency given the observed genomic sequencing data.
 GATK ~\citep{mckenna2010genome} and SAMTools ~\citep{li2009sequence} use a naive Bayesian decision rule to call variants.
 EBCall models sequencing errors based on a Beta-Binomial distribution, where the parameters and latent variables are estimated from a set of non-paired normal sequencing samples ~\citep{shiraishi2013empirical}.
@@ -86,17 +85,17 @@ Additionally, Strelka ~\citep{saunders2012strelka} models the joint probabilisti
 % Frequentist %
 SNVer focuses on a frequentist method that is able to calculate $P$-values, but the author pointed out that this approach fails to model sampling bias that will reduce the power of detecting true rare variants ~\citep{wei2011snver}.
 % Heuristic %
-An alternative strategy to probabilistic methods are heuristic methods, use a set of criteria to select variant positions instead of modeling the data using probabilistic distributions.
+An alternative strategy to probabilistic methods are heuristic methods that use a set of criteria to select variant positions instead of modeling the data using probabilistic distributions.
 %By setting thresholds of the rules, heuristic algorithms can find a good solution, but optimum is not guaranteed.
 VarScan is an example of a heuristic method that compares tumour and normal samples by satisfying some lower bounds, such as a certain variant allele frequency and a number of allele counts ~\citep{koboldt2012varscan}.
 %VarScan is based on Fisher's exact test to estimate sample allele frequencies.
 
 % RVD2 %
 In previous work, we developed a Beta-Binomial model to characterize a null hypothesis error rate distribution at each position.
-Using this, we call rare variants by comparing the error rate of the sample sequence data to a null distribution obtained from sequencing a known reference sample ~\citep{flaherty2011ultrasensitive}.
+Using this rare variant detection (RVD) model, we call rare variants by comparing the error rate of the sample sequence data to a null distribution obtained from sequencing a known reference sample ~\citep{flaherty2011ultrasensitive}.
 RVD can identify mutant positions at a 0.1\% fraction in mixed samples using high read depth data.
 
-We improved upon that work in, RVD2, by using hierarchical priors to tie parameters across positions~\citep{he2015rvd2}.
+We improved upon that work, RVD2, by using hierarchical priors to tie parameters across positions~\citep{he2015rvd2}.
 We derived a Markov Chain Monte Carlo (MCMC) sampling algorithm for posterior inference.
 However, the main limitation of MCMC is that it is hard to diagnose convergence and may be slow to converge~\citep{jordan1999introduction}.
 An alternative method, that we explore here, is to use variational inference, which is based on a proposed variational distribution over latent variables.
@@ -216,12 +215,15 @@ E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] &= \sum_{j=1}^{J} E_q  \l
 \label{theta}
 E_q \left[ \log p\left(\theta | \mu; M \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q \left[ \log p\left(\theta_{ji} | \mu_j; M_j \right)\right] \\
 &= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
-&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace
 \end{split}
 \end{equation}
+
 Therefore, we need to compute the following expectations with respect to the variational distribution:
 %
 $ E_q \left[ \log \theta_{ji} \right] $, $ E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] $ , $ E_q  \left[ \log \mu_j \right] $ , $ E_q  \left[ \log (1 - \mu_j)\right] $, $ E_q \left[ \mu_j \right] $, and $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.
+
 We select the functional forms for the variational distributions $q(\theta)$ and $q(\mu)$ to facilitate these expected value computations.
 
 \subsection{Variational Distributions}
@@ -271,7 +273,7 @@ Finally, the entropy terms can be computed as follows,
 \begin{split}
 E_q \left[ \log q\left(\mu \right)\right] &= \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right] \\
 &= -\sum_{j=1}^{J} \left\lbrace \log (B(\gamma_{j1},\gamma_{j2})) -(\gamma_{j1}-1)\psi(\gamma_{j1}) \right\rbrace \\
-& + \sum_{j=1}^{J} \left\lbrace -(\gamma_{j2}-1)\psi(\gamma_{j2}) + (\gamma_{j1}+\gamma_{j2}-2)\psi(\gamma_{j1}+\gamma_{j2})\right\rbrace;
+&\quad  + \sum_{j=1}^{J} \left\lbrace -(\gamma_{j2}-1)\psi(\gamma_{j2}) + (\gamma_{j1}+\gamma_{j2}-2)\psi(\gamma_{j1}+\gamma_{j2})\right\rbrace;
 \end{split}
 \end{equation}
 and
@@ -279,7 +281,7 @@ and
 \begin{split}
 E_q \left[ \log q\left(\theta \right)\right] &= \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right] \\
 &= -\sum_{j=1}^{J}\sum_{i=1}^{N} \left\lbrace \log (B(\delta_{ji1},\delta_{ji2}))-(\delta_{ji1}-1)\psi(\delta_{ji1}) \right\rbrace \\
-& + \sum_{j=1}^{J}\sum_{i=1}^{N} \left\lbrace -(\delta_{ji2}-1)\psi(\delta_{ji2}) + (\delta_{ji1}+\delta_{ji2}-2)\psi(\delta_{ji1}+\delta_{ji2})\right\rbrace.
+&\quad + \sum_{j=1}^{J}\sum_{i=1}^{N} \left\lbrace -(\delta_{ji2}-1)\psi(\delta_{ji2}) + (\delta_{ji1}+\delta_{ji2}-2)\psi(\delta_{ji1}+\delta_{ji2})\right\rbrace.
 \end{split}
 \end{equation}
 %
@@ -291,12 +293,12 @@ The terms in the ELBO that depend on $q(\theta_{ji} | \delta_{ji1}, \delta_{ji2}
 \begin{split}
 \mathcal{L}_{{[q(\theta_{ji})]}}
 & = \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace\\
-& +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
-& - \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right]
+&\quad  +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
+&\quad - \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right]
 \end{split}
 \end{equation}
 
-We update the variational parameters by numerically optimizing $\hat{\delta}_{ij1}, \hat{\delta}_{ij2} = \arg \max_{\delta_{ij1}, \delta_{ij2}} \mathcal{L}_{{[q(\theta_{ji})]}}$ subject to the constraints that $\delta_{ij1} \geq 0$ and $\delta_{ij2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using Sequential Least SQuares Programming (SLSQP) ~\citep{kraft1988software}.
+We update the variational parameters by numerically optimizing $\hat{\delta}_{ji1}, \hat{\delta}_{ji2} = \arg \max_{\delta_{ji1}, \delta_{ji2}} \mathcal{L}_{{[q(\theta_{ji})]}}$ subject to the constraints that $\delta_{ji1} \geq 0$ and $\delta_{ji2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using Sequential Least SQuares Programming (SLSQP) ~\citep{kraft1988software}.
 
 We update the variational distribution $q(\mu_j)$ using the partial ELBO depending on $\gamma_j$ from each position $j$ \eqref{eqn:partial_mu}.
 \begin{equation}\label{eqn:partial_mu}
@@ -304,9 +306,9 @@ We update the variational distribution $q(\mu_j)$ using the partial ELBO dependi
 \mathcal{L}_{{[q(\mu_j)]}}
 & = N \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
 &\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
-& + J \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + J \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
 &\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace\\
-& - \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right]
+&\quad - \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right]
 \end{split}
 \end{equation}
 Again, we update the variational parameters by numerically optimizing $\hat{\gamma}_{j1}, \hat{\gamma}_{j2} = \arg \max_{\gamma_{j1}, \gamma_{j2}} \mathcal{L}_{{[q(\mu_{i})]}}$ subject to the constraints that $\gamma_{j1} \geq 0$ and $\gamma_{j2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using SLSQP ~\citep{kraft1988software}.
@@ -521,6 +523,7 @@ Our variational EM algorithm is faster than the MCMC algorithm at the low median
 Sixty processers are used to estimate the model on the synthetic data set.}
 \label{tbl:timing_mcmc_var}
 \end{figure}
+
 % Timing profile of variational
 Table~\ref{tbl:timing_profile_all} shows the timing profile for each part of our variational EM algorithm when median read depth is $3,089\times$.
 Optimizing $\gamma$ in the E-step \eqref{eqn:partial_mu} and optimizing $M_j$ in the M-step \eqref{eqn:M} takes more than 95\% of the time of one variational iteration in a test of a single processor, since the integration \eqref{eqn:integration} is needed.
@@ -549,6 +552,7 @@ The positions highlighted as blue were also identified by Kvitek, 2013.
 The other 81 positions are novel identified variants in 8 timepoints.}
 \label{tbl:mutations}
 \end{table*}
+
 % Beneficial variant and early identification
 All of these variants, except the variant at position Chr04:1,014,740, decrease in NRAF following a maximum.
 The allele at position Chr04:1,014,740 is a beneficial variant that arises in NRAF to 99.603\% at generation 448 within a constant glucose-limited environment.
@@ -566,7 +570,7 @@ Here $\hat{M_0} = 1.752$ in this dataset.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{figs/diff_M0.png}
-\caption{Influence of $M_0$ on the estimation of $\mu_j$.
+\caption{Influence of $M_0$ on the estimate of $\mu_j$.
 Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{1,014,740}$, with different $\hat{M_0}$ are shown.}
 \label{tbl:M0}
 \end{figure}
@@ -616,7 +620,6 @@ By doing this, we hope to reveal the dynamics of arising variants at the genome-
 Our method can also be extended to study drug resistance by characterizing tumor heterogeneity in targeted anti-cancer chemotherapy samples.
 We will be able to find the causative variants that lead to drug resistance and understand the causes of resistance at the single nucleotide level.
 
-
 \section{Acknowledgments}
 F.Z. and P.F. were supported by PhRMA Foundation Informatics Grant 2013080079.
 We would like to thank Dan Kvitek for kindly sharing the data set used for the longitudinal yeast evolution analysis.
@@ -638,9 +641,11 @@ E_q \left[ \log p\left(\theta | \mu; M \right)\right] &= \sum_{j=1}^{J} \sum_{i=
 &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right]  \\
 &\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \left( M_j\mu_j -1 \right) \log \theta_{ji} \right] + E_q \left[ \left( M_j ( 1 - \mu_j) - 1 \right) \log \left( 1 - \theta_{ji} \right) \right]\right\rbrace \\
 &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
-&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
 &= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
-&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace.
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace
 \end{split}
 \end{equation}
 %
