@@ -126,7 +126,7 @@ The latent variables are:
   \item[$\theta_{ji} \sim \text{Beta}(\mu_j, M_j)$] the non-reference read rate for position $j$ in replicate $i$.
 \end{description}
 
-In Figure~\ref{tbl:graphical_model}B, $\gamma$ is the proposal variational distribution for latent variable $\mu$, 
+In Figure~\ref{tbl:graphical_model}B, $\gamma$ is the proposal variational distribution for latent variable $\mu$,
 and $\delta$ is the proposal variational distribution for latent variable $\theta$.
 
 \begin{figure}[htpb]
@@ -318,7 +318,7 @@ We update the variational distribution $q(\mu_j)$ using the partial ELBO dependi
 &\quad - \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right]
 \end{split}
 \end{equation}
-Again, we update the variational parameters by numerically optimizing $\hat{\gamma}_{j1}, \hat{\gamma}_{j2} = \arg \max_{\gamma_{j1}, \gamma_{j2}} \mathcal{L}_{{[q(\mu_{i})]}}$ subject to the constraints that $\gamma_{j1} \geq 0$ and $\gamma_{j2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using SLSQP ~\citep{kraft1988software}.
+Again, we update the variational parameters by numerically optimizing $\hat{\gamma}_{j1}, \hat{\gamma}_{j2} = \arg \max_{\gamma_{j1}, \gamma_{j2}} \mathcal{L}_{{[q(\mu_{j})]}}$ subject to the constraints that $\gamma_{j1} \geq 0$ and $\gamma_{j2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using SLSQP ~\citep{kraft1988software}.
 The computational cost of optimizing \eqref{eqn:partial_mu} is high because of the quadrature of $E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right]$ in \eqref{eqn:integration}.
 
 
@@ -370,12 +370,12 @@ The variational EM algorithm is summarized using pseudocode in Algorithm 1.
   \State Initialize $q(\theta, \mu)$ and $\hat{\phi}$
 
   \State // M-step
-   
-  \Repeat 
-  
-    \State // E-step  
-     
-	\Repeat 
+
+  \Repeat
+
+    \State // E-step
+
+	\Repeat
 
 		\For {j = 1 to J}
 			\For {i = 1 to N}
