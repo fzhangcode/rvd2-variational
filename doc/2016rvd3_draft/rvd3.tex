@@ -132,7 +132,7 @@ and $\delta$ is the proposal variational distribution for latent variable $\thet
 \begin{figure}[htpb]
 \centering
 %\vspace{-10pt}
-\includegraphics[width=0.5\textwidth]{figs/rvd3_model.png}
+\includegraphics[width=0.5\textwidth]{rvd3_model.png}
 \caption{A. Graphical model representation of the model.
 B. Graphical model representation of the variational approximation  to approximate the posterior distribution.
 Observed random variables are shown as shaded nodes and latent random variables are unshaded.
@@ -476,7 +476,7 @@ The variational EM algorithm has a higher specificity compared with the MCMC alg
 %
 \begin{table}[ht]
 \centering
-\includegraphics[width=0.7\textwidth]{tables/statistics_mcmc_var.png}
+\includegraphics[width=0.7\textwidth]{statistics_mcmc_var.png}
 \vspace{5pt}
 \caption{Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.}
 \label{tbl:statistics_mcmc_var}
@@ -498,13 +498,13 @@ It is notable that the shape of the proposed Beta variational distribution is we
 % results in results\2015-10-14_Plot_mcmc_mu_vs_variational_mu
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figs/position_85_5584_mcmc_vs_var_mu_fig1.png}
+\includegraphics[width=0.7\textwidth]{position_85_5584_mcmc_vs_var_mu_fig1.png}
 \caption{Approximated posterior distributions by the variational EM and MCMC algorithms on a true variant position 85 when the median read depth is $5,584\times$.}
 \label{tbl:compare1}
 \end{figure}
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{figs/position_160_410_mcmc_vs_var_mu_fig2.png}
+\includegraphics[width=0.7\textwidth]{position_160_410_mcmc_vs_var_mu_fig2.png}
 \caption{Approximated posterior distribution by the variational EM and MCMC algorithms on a false variant position 160 when the median read depth is $410\times$.}
 \label{tbl:compare2}
 \end{figure}
@@ -516,7 +516,7 @@ However, our algorithm has a slightly lower specificity than the MCMC algorithm 
 The performance of other methods is stated in detail in \citet{he2015rvd2}.
 \begin{table*}[htbp]
 \centering
-\includegraphics[width=1.0\textwidth]{tables/character_all.png}
+\includegraphics[width=1.0\textwidth]{character_all.png}
 \caption{Sensitivity/Specificity comparison of our variational RVD2 with other variant detection methods on synthetic DNA data.}
 \label{tbl:character_all}
 \end{table*}
@@ -529,7 +529,7 @@ Our variational EM algorithm is faster than the MCMC algorithm at the low median
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.6\textwidth]{figs/timing_var_mcmc.png}
+\includegraphics[width=0.6\textwidth]{timing_var_mcmc.png}
 \caption{Timing for our variational EM algorithm and MCMC sampling algorithm.
 Sixty processers are used to estimate the model on the synthetic data set.}
 \label{tbl:timing_mcmc_var}
@@ -541,7 +541,7 @@ Optimizing $\gamma$ in the E-step \eqref{eqn:partial_mu} and optimizing $M_j$ in
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-21_Timing_profile_rvd3_program
 \begin{table*}[htbp]
 \centering
-\includegraphics[width=1.0\textwidth]{tables/time_3089X_all_update.png}
+\includegraphics[width=1.0\textwidth]{time_3089X_all_update.png}
 \caption{Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is $3,089\times$.
 Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ in the E-step and optimizing $M$ in the M-step is highlighted in percentage.}
 \label{tbl:timing_profile_all}
@@ -556,7 +556,7 @@ The corresponding NRAFs of called variants at different time points are given by
 % results are under folder \fzhang\Research\rvd3-variational-notebook\results\2016-01-12_Run_rvd3_Dan_data_regions
 \begin{table*}[htbp]
 \centering
-\includegraphics[width=1.0\textwidth]{tables/mutations_MTH1.png}
+\includegraphics[width=1.0\textwidth]{mutations_MTH1.png}
 \caption{Identified variants and corresponding NRAFs in gene MTH1 on Chromosome 4.
 A blank cell indicates that the position of that time point is not called significantly different than G7.
 The positions highlighted as blue were also identified by Kvitek, 2013.
@@ -580,7 +580,7 @@ Further experimental validation of this hypothesis would be required to definiti
 % results in results\2016-01-12_Run_rvd3_Dan_data_regions
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.6\textwidth]{figs/concomitant.png}
+\includegraphics[width=0.6\textwidth]{concomitant.png}
 \caption{The NRAF trend of concomitant variants in gene MTH1 and ADE16.
 The 95\% Bayesian credible intervals are shown.}
 \label{tbl:concomitant}
@@ -594,7 +594,7 @@ But the effect of changing $\hat{M_0}$ over several orders of magnitude does not
 Here $\hat{M_0} = 1.752$ in this dataset.
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{figs/diff_M0.png}
+\includegraphics[width=0.8\textwidth]{diff_M0.png}
 \caption{Influence of $M_0$ on the estimate of $\mu_j$.
 Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{1,014,740}$, with different $\hat{M_0}$ are shown.}
 \label{tbl:M0}
