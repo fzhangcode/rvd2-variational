@@ -126,8 +126,9 @@ The latent variables are:
   \item[$\theta_{ji} \sim \text{Beta}(\mu_j, M_j)$] the non-reference read rate for position $j$ in replicate $i$.
 \end{description}
 
-In Figure~\ref{tbl:graphical_model}B, $\gamma$ is the proposal variational distribution for latent variable $\mu$,
-and $\delta$ is the proposal variational distribution for latent variable $\theta$.
+In Figure~\ref{tbl:graphical_model}B, $\gamma$ is the parameter for the variational distribution for latent variable $\mu$,
+and $\delta$ is the parameter for the variational distribution for latent variable $\theta$.
+We describe $q(\mu)$ and $q(\theta)$ in detail in section 3.3
 
 \begin{figure}[htpb]
 \centering
@@ -248,7 +249,7 @@ The posterior distribution of $\mu_j$ is given by its Markov blanket,
 p(\mu_j|\theta_{ji},M_j,\mu_0,M_0)\propto p(\mu_j|\mu_0,M_0)p(\theta_{ji}|\mu_j,M_j).
 \end{align}
 This is not in the form of any known distribution.
-But, since the support of $\mu_j$ is $[0,1]$, we propose Beta distribution with parameter vector $\gamma_{j}$ as a variational distribution,
+But, since the support of $\mu_j$ is $[0,1]$, we propose a Beta distribution with parameter vector $\gamma_{j}$ as variational distribution,
 \begin{align}
 \mu_j &\thicksim \text{Beta}(\gamma_{j1}, \gamma_{j2}) \nonumber.
 \end{align}
@@ -488,7 +489,7 @@ Figure~\ref{tbl:compare1} shows the approximate posterior distribution of the va
 One variant position, 85, is taken as an example to show the comparison of the approximated posteriors.
 The variational EM and MCMC algorithms both identify all the variants when NRAF is 10.0\% and 100.0\%.
 The variational EM algorithm calls 90 false positive positions without a $\chi^2$ test when NRAFs are 0.1\% and 0.3\% for low median read depth ($30\times$ and $400\times$).
-This is to be expected because it is highly unlikely to correctly identify a variant base with a population frequency of $1$ in $1000$ with less than a $1,000\times$ read depth.
+This is to be expected because it is highly unlikely to correctly identify a variant base with a population frequency of $1$ in $1,000$ with less than a $1,000\times$ read depth.
 
 A false positive, a non-mutated position that is called by the variational EM algorithm but not called by the MCMC algorithm, is shown in Figure~\ref{tbl:compare2}.
 The variance of MCMC posterior estimate is higher than that of the variational posterior estimate.
@@ -509,7 +510,7 @@ It is notable that the shape of the proposed Beta variational distribution is we
 \label{tbl:compare2}
 \end{figure}
 \subsubsection{Comparison to the State-of-the-Art Methods}
-We compared the performance of our variational EM algorithm with the state-of-the-art variant detection methods using synthetic DNA data set (Table~\ref{tbl:character_all}).
+We compared the performance of our variational EM algorithm with the state-of-the-art variant detection methods, SAMtools ~\citep{li2009sequence}, GATK ~\citep{mckenna2010genome}, VarScan2 ~\citep{koboldt2012varscan}, Strelka ~\citep{saunders2012strelka}, MuTect ~\citep{cibulskis2013sensitive}, and RVD2 ~\citep{he2015rvd2}, using synthetic DNA data set (Table~\ref{tbl:character_all}).
 Among all of the methods compared, our variational EM algorithm has a higher sensitivity and specificity for a broad range of read depths and NRAFs.
 Our variational EM algorithm shows higher specificity than all the other tested methods at a very low NRAF (0.1\%) level.
 However, our algorithm has a slightly lower specificity than the MCMC algorithm when the median read depth is $4,156\times$ at 0.3\% NRAF, and a slightly lower sensitivity than the MCMC algorithm when the median read depth is $41,472\times$ at 0.3\% NRAF and a median read depth of $55,489\times$ at 1.0\% NRAF.
@@ -614,8 +615,8 @@ and (iii) detects SNVs early in the evolutionary time course, as well as tracks 
 We have chosen parametric forms for the variational distributions.
 This choice has left us with a complex integral in our variational optimization problem.
 In future work, we plan to explore other approximations of the variational distributions that render the integral easier to compute.
-One could use cubic splines to numerically approximate the function and then integrate that surrogate~\citet{mckinley1998cubic}.
-Another strategy is to consider a Laplace approximation for the proposal variational distribution, as we and others have done previously ~\citep{saddiki2014glad, wang2013variational}.
+One could use cubic splines to numerically approximate the function and then integrate that surrogate ~\citep{mckinley1998cubic}.
+Another strategy is to consider a Laplace approximation for the variational distribution, as we and others have done previously ~\citep{saddiki2014glad, wang2013variational}.
 
 %As a local optimization methodology, variational EM can converge to local maximum.
 %It could be that the accuracy is not sufficient to identify variants with statistical confidence.
