@@ -71,6 +71,19 @@
 \usepackage{booktabs}
 \usepackage{threeparttable}
 
+
+% Fix a little bug in the class file for bmcart 
+%http://latex-community.org/forum/viewtopic.php?f=5&t=26665
+\makeatletter
+\def\@listiii{\leftmargin\leftmarginiii
+              \labelwidth\leftmarginiii
+              \advance\labelwidth-\labelsep
+              \topsep\z@
+              \parsep\z@
+              \partopsep\z@
+              \itemsep\topsep}
+\makeatother
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                             %%
 %%  If you wish to display your graphics for   %%
@@ -129,16 +142,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \author[
-   addressref={aff1}
-   %corref={aff1},                       % id of corresponding address, if any
+   addressref={aff1},
    %noteref={n1},                        % id's of article notes, if any
-   email={fzhang@wpi.edu}   % email address
-]{\inits{FZ}\fnm{Fan} \snm{Zhang}}
+   email={fzhang@wpi.edu}   			 % email address
+]{\inits{F}\fnm{Fan} \snm{Zhang}}
 \author[
-   addressref={aff1, aff2},                   % id's of addresses, e.g. {aff1,aff2}
+   addressref={aff1, aff2},              % id's of addresses, e.g. {aff1,aff2}
    corref={aff2},                       % id of corresponding address, if any
    email={flaherty@math.umass.edu}
-]{\inits{PF}\fnm{Patrick} \snm{Flaherty}}
+]{\inits{PJ}\fnm{Patrick J} \snm{Flaherty}}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
@@ -414,11 +428,12 @@ The ELBO can be expanded as
 \begin{split}
 \label{L}
 \mathcal{L}(q, \phi) &= E_q \left[ \log p\left(r,\mu,\theta | n; \phi \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
-&= E_q \left[ \log p\left(r | \theta, n \right)\right] + E_q \left[ \log p\left(\theta | \mu; M \right)\right] + E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]- E_q \left[ \log q\left(\mu \right)\right]- E_q \left[ \log q\left(\theta \right)\right]. \\
+&= E_q \left[ \log p\left(r | \theta, n \right)\right] + E_q \left[ \log p\left(\theta | \mu; M \right)\right] + E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] \\
+& - E_q \left[ \log q\left(\mu \right)\right]- E_q \left[ \log q\left(\theta \right)\right]. \\
 \end{split}
 \end{equation}
 We write out each component below.
-The detail of the derivation of $E_q \left[ \log p\left(r | \theta, n \right)\right]$, $E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]$, and $E_q \left[ \log p\left(\theta | \mu; M \right)\right]$ is shown in Appendix~\ref{appendix:ELBO}.
+%The detail of the derivation of $E_q \left[ \log p\left(r | \theta, n \right)\right]$, $E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]$, and $E_q \left[ \log p\left(\theta | \mu; M \right)\right]$ is shown in Appendix~\ref{appendix:ELBO}.
 \begin{equation}
 \begin{split}
 \label{r}
@@ -433,7 +448,8 @@ E_q \left[ \log p\left(r | \theta, n \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}
 \label{mu}
 E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] &= \sum_{j=1}^{J} E_q  \left[ \log p\left( \mu_j; \mu_0, M_0 \right) \right] \\
 &= J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
-&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \left\lbrace + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace
 \end{split}
 \end{equation}
 %
@@ -450,6 +466,7 @@ E_q \left[ \log p\left(\theta | \mu; M \right)\right] &= \sum_{j=1}^{J} \sum_{i=
 Therefore, we need to compute the following expectations with respect to the variational distribution:
 %
 $ E_q \left[ \log \theta_{ji} \right] $, $ E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] $ , $ E_q  \left[ \log \mu_j \right] $ , $ E_q  \left[ \log (1 - \mu_j)\right] $, $ E_q \left[ \mu_j \right] $, and $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.
+
 
 We select the functional forms for the variational distributions $q(\theta)$ and $q(\mu)$ to facilitate these expected value computations.
 
@@ -488,12 +505,12 @@ Since there is no analytical representation for $ E_q\left[ \log \left( \frac{ \
 
 \begin{equation}\label{eqn:integration}
 \begin{split}
-E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] &= \int_{0}^{1} q(\mu_j;\gamma_{j1}, \gamma_{j2}) \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right) d\mu_j.
-%&= \int_{0}^{1}\frac{\mu_j^{\gamma_{j1}-1}(1-\mu_j)^{\gamma_{j2}-1}}{B(\gamma_{j1},\gamma_{j2})}\log \left( \frac{\Gamma (M_j)}{\Gamma (\mu_jM_j)\Gamma ((1-\mu_j)M_j)}\right) d\mu_j\\
-%&=\int_{0}^{1}\frac{\mu_j^{\gamma_{j1}-1}(1-\mu_j)^{\gamma_{j2}-1}}{B(\gamma_{j1},\gamma_{j2})}\log \frac{1}{\int_{0}^{1} t^{\mu_jM_j} (1-t)^{(1-\mu_j)M_j} dt} d\mu_j.
+& E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] =\\
+& \int_{0}^{1} q(\mu_j;\gamma_{j1}, \gamma_{j2}) \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right) d\mu_j.
 \end{split}
 \end{equation}
 Here $q(\mu_j;\gamma_{j1}, \gamma_{j2})$ is the probability density function of the Beta distribution that is calculated using the Python built-in function \texttt{scipy.stats.beta.pdf},
+
 and $\log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)$ is calculated using the Python built-in function \texttt{scipy.special.betaln}.
 Unfortunately, this numerical integration step is computationally expensive.
 %
@@ -522,25 +539,35 @@ The terms in the ELBO that depend on $q(\theta_{ji} | \delta_{ji1}, \delta_{ji2}
 \begin{split}
 \mathcal{L}_{{[q(\theta_{ji})]}}
 & = \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace\\
-&\quad  +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
+&\quad  +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace\\
+&\quad  +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
 &\quad - \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right]
 \end{split}
 \end{equation}
 
-We update the variational parameters by numerically optimizing $\hat{\delta}_{ji1}, \hat{\delta}_{ji2} = \arg \max_{\delta_{ji1}, \delta_{ji2}} \mathcal{L}_{{[q(\theta_{ji})]}}$ subject to the constraints that $\delta_{ji1} \geq 0$ and $\delta_{ji2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using Sequential Least SQuares Programming (SLSQP) \cite{kraft1988software}.
+We update the variational parameters by numerically optimizing
+\begin{equation}
+ \hat{\delta}_{ji1}, \hat{\delta}_{ji2} = \arg \max_{\delta_{ji1}, \delta_{ji2}} \mathcal{L}_{{[q(\theta_{ji})]}}
+\end{equation}
+subject to the constraints that $\delta_{ji1} \geq 0$ and $\delta_{ji2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using Sequential Least SQuares Programming (SLSQP) \cite{kraft1988software}.
 
 We update the variational distribution $q(\mu_j)$ using the partial ELBO depending on $\gamma_j$ from each position $j$ \eqref{eqn:partial_mu}.
 \begin{equation}\label{eqn:partial_mu}
 \begin{split}
 \mathcal{L}_{{[q(\mu_j)]}}
 & = N \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
-&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] + \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace+ \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
 &\quad + J \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
 &\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace\\
 &\quad - \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right]
 \end{split}
 \end{equation}
-Again, we update the variational parameters by numerically optimizing $\hat{\gamma}_{j1}, \hat{\gamma}_{j2} = \arg \max_{\gamma_{j1}, \gamma_{j2}} \mathcal{L}_{{[q(\mu_{j})]}}$ subject to the constraints that $\gamma_{j1} \geq 0$ and $\gamma_{j2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using SLSQP \cite{kraft1988software}.
+Again, we update the variational parameters by numerically optimizing 
+\begin{equation}
+ \hat{\gamma}_{j1}, \hat{\gamma}_{j2} = \arg \max_{\gamma_{j1}, \gamma_{j2}} \mathcal{L}_{{[q(\mu_{j})]}}
+\end{equation}
+subject to the constraints that $\gamma_{j1} \geq 0$ and $\gamma_{j2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using SLSQP \cite{kraft1988software}.
 The computational cost of optimizing \eqref{eqn:partial_mu} is high because of the quadrature of $E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right]$ in \eqref{eqn:integration}.
 
 
@@ -552,9 +579,9 @@ The ELBO with respect to $ \mu_0 $ is
 \begin{equation}\label{eqn:mu_0}
 \begin{split}
 \mathcal{L}_{[\mu_0]}
-&= -J*\log  \Gamma(\mu_0 M_0) - J*\log \Gamma(M_0 (1-\mu_0))
-+ M_0\mu_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
-- E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace . \\
+&= -J*\log  \Gamma(\mu_0 M_0) - J*\log \Gamma(M_0 (1-\mu_0)) \\
+& + M_0\mu_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
+- E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace. \\
 \end{split}
 \end{equation}
 
@@ -564,8 +591,8 @@ The ELBO with respect to $ M_0 $ is
 \begin{equation}\label{eqn:M_0}
 \begin{split}
 \mathcal{L}_{[M_0]}
-&=J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}
-+ M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
+&=J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}\\
+& + M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
 \end{split}
 \end{equation}
 
@@ -583,7 +610,9 @@ We also use SLSQP to optimize the ELBO function with respect to each parameter, 
 It is computationally easy to optimize $\mu_0$ \eqref{eqn:mu_0} and $M_0$ \eqref{eqn:M_0}.
 However, it is costly for optimizing $M_j$ \eqref{eqn:M} because the quadrature is needed to calculate $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $ using \eqref{eqn:integration}.
 
+
 The variational EM algorithm is summarized using pseudocode in Algorithm 1.
+
 \begin{algorithm}[ht]
   \caption{Variational EM Inference}
 
@@ -640,7 +669,10 @@ We approximate the posterior for the case sample as
 and likewise for the control.
 Then,
 \begin{equation}
-  \mu_j^{\triangle} \mid r^{case}, r^{control} \sim \mathcal{N}(E_q[\mu_j|r^{case}] - E_q[\mu_j|r^{control}], \text{Var}_q[\mu_j|r^{case}] + \text{Var}_q[\mu_j|r^{control}])
+\begin{split}
+  &\mu_j^{\triangle} \mid r^{case}, r^{control} \sim \\
+  &\mathcal{N}(E_q[\mu_j|r^{case}] - E_q[\mu_j|r^{control}], \text{Var}_q[\mu_j|r^{case}] + \text{Var}_q[\mu_j|r^{control}])
+\end{split}
 \end{equation}
 
 Now, we can approximate the posterior probability of interest,
@@ -661,7 +693,7 @@ To discriminate this non-biological cause from the interesting true variants we 
 For each provisional variant, if we reject the null hypothesis that the distribution is uniform, we promote the position to a called variant.
 
 
-\section*{Results}
+\section*{Results and discussion}
 
 \subsection*{Data Sets}
 
@@ -1047,7 +1079,7 @@ Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{
 \label{tbl:M0}
 \end{figure}
 
-\section*{Discussion}
+\section*{Conclusions}
 % Brief summary of RVD3
 In this article, we propose a variational EM algorithm to estimate the non-reference allele frequency in the RVD2 model to identify rare nucleotide variants in heterogeneous pools.
 We derived a variational EM algorithm to avoid an intractable integration in our Bayesian model.
@@ -1077,9 +1109,6 @@ By doing this, we hope to reveal the dynamics of arising variants at the genome-
 Our method can also be extended to study drug resistance by characterizing tumor heterogeneity in targeted anti-cancer chemotherapy samples.
 We will be able to find the causative variants that lead to drug resistance and understand the causes of resistance at the single nucleotide level.
 
-\section*{Conclusion}
-
-
 
 
 %\section{Additional Files}
@@ -1094,11 +1123,14 @@ We will be able to find the causative variants that lead to drug resistance and 
 \section*{Competing interests}
   The authors declare that they have no competing interests.
 
-\section*{Author's contributions}
-    Text for this section \ldots
+\section*{Authors' contributions}
+%    Text for this section \ldots
+FZ developed and implemented the variational expectation maximization inference algorithm, and wrote the manuscript.
+PF conceived the study and helped to draft the manuscript.
+All authors read and approved the final manuscript.
 
 \section*{Acknowledgements}
-F.Z. and P.F. were supported by PhRMA Foundation Informatics Grant 2013080079.
+FZ and PF were supported by PhRMA Foundation Informatics Grant 2013080079.
 We would like to thank Dan Kvitek for kindly sharing the data set used for the longitudinal yeast evolution analysis.
 We acknowledge Chuangqi Wang and Ross Lagoy for valuable comments on the manuscript.
 
