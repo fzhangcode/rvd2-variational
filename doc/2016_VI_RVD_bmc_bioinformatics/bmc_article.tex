@@ -511,7 +511,9 @@ Since there is no analytical representation for $ E_q\left[ \log \left( \frac{ \
 \end{equation}
 Here $q(\mu_j;\gamma_{j1}, \gamma_{j2})$ is the probability density function of the Beta distribution that is calculated using the Python built-in function \texttt{scipy.stats.beta.pdf},
 
-and $\log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)$ is calculated using the Python built-in function \texttt{scipy.special.betaln}.
+and $\log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)$ is calculated using the Python built-in function
+
+\texttt{scipy.special.betaln}.
 Unfortunately, this numerical integration step is computationally expensive.
 %
 Finally, the entropy terms can be computed as follows,
@@ -738,7 +740,8 @@ The variational EM algorithm has a higher specificity compared with the MCMC alg
 \begin{table}[h!]
 \caption{Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm.}\label{table:mcmcvar}
 % Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.
-\small
+\scriptsize 
+%\small
 \begin{tabular}{c c c c c c }
 \hline
 \toprule
@@ -816,8 +819,8 @@ The performance of other methods is stated in detail in \cite{he2015rvd2}.
 \begin{table}[htbp]
   \centering
   \caption{Sensitivity/Specificity comparison with other variant detection methods.}\label{table:character}
-  %\footnotesize
-  \scriptsize 
+  \tiny
+  %\scriptsize 
     \begin{tabular}{rrrrrrrrrr}
     \toprule
     \textbf{NRAF} & \multicolumn{1}{c}{\textbf{Median}} & \multicolumn{1}{c}{\textbf{SAMtools}} & \multicolumn{1}{c}{\textbf{GATK}} & \multicolumn{1}{c}{\textbf{VarScan2 }} & \multicolumn{1}{c}{\textbf{VarScan2}} & \multicolumn{1}{c}{\textbf{Strelka}} & \multicolumn{1}{c}{\textbf{MuTect}} & \multicolumn{1}{c}{\textbf{RVD2 }} & \multicolumn{1}{c}{\textbf{RVD2 }} \\
@@ -878,8 +881,8 @@ Optimizing $\gamma$ in the E-step \eqref{eqn:partial_mu} and optimizing $M_j$ in
   \centering
   \caption{Timing profile of variational EM algorithm when median depth is $3,089\times$.}\label{table:timing}
   \begin{threeparttable}
-  %\footnotesize
-  \scriptsize 
+  \tiny
+  %\scriptsize 
     \begin{tabular}{ccrrrrrrcc}
     \toprule
     ~ & ~ & \multicolumn{3}{c}{\textbf{E-step}} & \multicolumn{4}{c}{\textbf{M-step}}    & ~ \\
