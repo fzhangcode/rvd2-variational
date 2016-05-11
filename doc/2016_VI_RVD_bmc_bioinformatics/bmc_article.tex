@@ -69,7 +69,7 @@
 \usepackage{graphicx}
 \usepackage{times}
 \usepackage{booktabs}
-
+\usepackage{threeparttable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                             %%
@@ -208,6 +208,8 @@ In an analysis of a directed evolution longitudinal yeast data set, we are able 
 Our model also detects the emergence of a beneficial variant earlier than was previously shown, and a pair of concomitant variants.
 
 \parttitle{Conclusion}
+We developed a variational EM algorithm for a novel hierarchical Bayesian model to identify rare variants in heterogeneous next-generation sequencing data.
+Our algorithm is able to identify variants in a broad range of read depths and non-reference allele frequencies with high sensitivity and specificity.
 
 \end{abstract}
 
@@ -363,10 +365,10 @@ The model generative process is as follows:
 	\begin{enumerate}
 		\item Draw an error rate $\mu_j \thicksim \text{Beta}(\mu_0, M_0)$
 		\item For each replicate $i \in [1, \ldots, N]$:
-%		\begin{enumerate}[noitemsep] 
-%			\item Draw $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$ 
-%			\item Draw $r_{ji} | n_{ji} \thicksim \text{Binomial}(\theta_{ji}, n_{ji})$  
-%		\end{enumerate}
+		\begin{enumerate}
+		    \item Draw $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$
+			\item Draw $r_{ji} | n_{ji} \thicksim \text{Binomial}(\theta_{ji}, n_{ji})$ 		
+		\end{enumerate}
 	\end{enumerate}
 \end{enumerate}
 
@@ -702,36 +704,36 @@ The variational EM algorithm has a higher specificity compared with the MCMC alg
 %\end{table}
 
 \begin{table}[h!]
-\caption{Sensitivity/Specificity comparison.}\label{table:mcmcvar} 
+\caption{Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm.}\label{table:mcmcvar}
 % Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.
 \small
 \begin{tabular}{c c c c c c }
 \hline
 \toprule
-	{\bfseries NRAF} & {\bfseries Median Depth} & \multicolumn{2}{c}{{{\bfseries Sensitivity}}} &  \multicolumn{2}{c}{\bfseries Specificity} \\  
-	\cmidrule(r{4pt}){3-4} \cmidrule(l){5-6} 
-	 ~ & ~ & {\bfseries MCMC} & {\bfseries Variational} & {\bfseries MCMC} & {\bfseries Variational}   \\ 
-	\midrule 
-	0.1\% & 39 & 0.00 & 0.00 & 1.00 & 1.00   \\ 
-	 & 408 & 0.00 & 0.07 & 1.00 & 1.00   \\ 
-	 & 4129 & 0.14 & 0.29 & 1.00 & 1.00   \\ 
-	 & 41449 & 0.86 & 1.00 & 0.97 & 1.00   \\ 
-	0.3\% & 36 & 0.00 & 0.00 & 1.00 & 1.00   \\ 
-	 & 410 & 0.00 & 0.00 & 1.00 & 1.00   \\ 
-	 & 4156 & 1.00 & 1.00 & 0.99 & 0.98   \\ 
-	 & 41472 & 1.00 & 0.93 & 0.85 & 0.91   \\ 
-	1.0\% & 53 & 0.00 & 0.00 & 1.00 & 1.00   \\ 
-	 & 535 & 0.21 & 0.29 & 1.00 & 1.00  \\ 
-	 & 5584 & 1.00 & 1.00 & 0.98 & 0.98   \\ 
-	 & 55489 & 1.00 & 0.93 & 0.87 & 0.95   \\ 
-	10.0\% & 22 & 0.00 & 0.57 & 1.00 & 1.00   \\ 
-	 & 260 & 1.00 & 1.00 & 1.00 & 1.00   \\ 
-	 & 2718 & 1.00 & 1.00 & 1.00 & 1.00   \\ 
-	 & 26959 & 1.00 & 1.00 & 1.00 & 1.00   \\ 
-	100.0\% & 27 & 1.00 & 1.00 & 1.00 & 1.00   \\ 
-	 & 298 & 1.00 & 1.00 & 1.00 & 1.00   \\ 
-	 & 3089 & 1.00 & 1.00 & 1.00 & 1.00   \\ 
-	 & 30590 & 1.00 & 1.00 & 1.00 & 1.00   \\ 
+	{\bfseries NRAF} & {\bfseries Median Depth} & \multicolumn{2}{c}{{{\bfseries Sensitivity}}} &  \multicolumn{2}{c}{\bfseries Specificity} \\
+	\cmidrule(r{4pt}){3-4} \cmidrule(l){5-6}
+	 ~ & ~ & {\bfseries MCMC} & {\bfseries Variational} & {\bfseries MCMC} & {\bfseries Variational}   \\
+	\midrule
+	0.1\% & 39 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 408 & 0.00 & 0.07 & 1.00 & 1.00   \\
+	 & 4129 & 0.14 & 0.29 & 1.00 & 1.00   \\
+	 & 41449 & 0.86 & 1.00 & 0.97 & 1.00   \\
+	0.3\% & 36 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 410 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 4156 & 1.00 & 1.00 & 0.99 & 0.98   \\
+	 & 41472 & 1.00 & 0.93 & 0.85 & 0.91   \\
+	1.0\% & 53 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 535 & 0.21 & 0.29 & 1.00 & 1.00  \\
+	 & 5584 & 1.00 & 1.00 & 0.98 & 0.98   \\
+	 & 55489 & 1.00 & 0.93 & 0.87 & 0.95   \\
+	10.0\% & 22 & 0.00 & 0.57 & 1.00 & 1.00   \\
+	 & 260 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 2718 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 26959 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	100.0\% & 27 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 298 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 3089 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 30590 & 1.00 & 1.00 & 1.00 & 1.00   \\
 	\bottomrule
 \end{tabular}
 \end{table}
@@ -781,9 +783,10 @@ The performance of other methods is stated in detail in \cite{he2015rvd2}.
 
 \begin{table}[htbp]
   \centering
-  \caption{Sensitivity/Specificity comparison of our variational RVD2 with other variant detection methods on synthetic data.}\label{table:character}
-  \footnotesize 
-    \begin{tabular}{rrrrrrrrrr} 
+  \caption{Sensitivity/Specificity comparison with other variant detection methods.}\label{table:character}
+  %\footnotesize
+  \scriptsize 
+    \begin{tabular}{rrrrrrrrrr}
     \toprule
     \textbf{NRAF} & \multicolumn{1}{c}{\textbf{Median}} & \multicolumn{1}{c}{\textbf{SAMtools}} & \multicolumn{1}{c}{\textbf{GATK}} & \multicolumn{1}{c}{\textbf{VarScan2 }} & \multicolumn{1}{c}{\textbf{VarScan2}} & \multicolumn{1}{c}{\textbf{Strelka}} & \multicolumn{1}{c}{\textbf{MuTect}} & \multicolumn{1}{c}{\textbf{RVD2 }} & \multicolumn{1}{c}{\textbf{RVD2 }} \\
     \textbf{} &\multicolumn{1}{c}{\textbf{Depth}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{mpileup}} & \multicolumn{1}{c}{\textbf{somatic}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{MCMC}} & \multicolumn{1}{c}{\textbf{Variational}} \\
@@ -822,7 +825,7 @@ Our variational EM algorithm is faster than the MCMC algorithm at the low median
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.6\textwidth]{timing.png}
-\caption{Timing for our variational EM algorithm and MCMC sampling algorithm.
+\caption{\csentence{Timing comparison for our variational EM algorithm and MCMC sampling algorithm.}
 Sixty processors are used to estimate the model on the synthetic data set.}\label{figure:timing}
 \end{figure}
 
@@ -839,19 +842,18 @@ Optimizing $\gamma$ in the E-step \eqref{eqn:partial_mu} and optimizing $M_j$ in
 %\end{table*}
 
 
-% Table generated by Excel2LaTeX from sheet 'Sheet1'
 \begin{table}[htbp]
   \centering
   \caption{Timing profile of variational EM algorithm when median depth is $3,089\times$.}\label{table:timing}
-%Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is $3,089\times$.
-%Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ in the E-step and optimizing $M$ in the M-step is highlighted in percentage.
-  \footnotesize 
+  \begin{threeparttable}
+  %\footnotesize
+  \scriptsize 
     \begin{tabular}{ccrrrrrrcc}
     \toprule
     ~ & ~ & \multicolumn{3}{c}{\textbf{E-step}} & \multicolumn{4}{c}{\textbf{M-step}}    & ~ \\
-    \cmidrule(r{4pt}){3-5} \cmidrule(l){6-9} 
+    \cmidrule(r{4pt}){3-5} \cmidrule(l){6-9}
     \textbf{Computation} & \textbf{Region} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Update} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & Update & \textbf{Total} \\
-    \textbf{resource} & \textbf{length}  & \multicolumn{1}{c}{$\gamma$} & \multicolumn{1}{c}{\textbf{$\delta$}} & \multicolumn{1}{c}{ELBO} & \multicolumn{1}{c}{$\mu_0$} & \multicolumn{1}{c}{$M_0$} & \multicolumn{1}{c}{$M$} &  \multicolumn{1}{c}{ELBO}  & \textbf{time (s)} \\ 
+    \textbf{resource} & \textbf{length}  & \multicolumn{1}{c}{$\gamma$} & \multicolumn{1}{c}{\textbf{$\delta$}} & \multicolumn{1}{c}{ELBO} & \multicolumn{1}{c}{$\mu_0$} & \multicolumn{1}{c}{$M_0$} & \multicolumn{1}{c}{$M$} &  \multicolumn{1}{c}{ELBO}  & \textbf{time (s)} \\
     \midrule
           & 100   & \multicolumn{1}{c}{617.7 (63\%)} & \multicolumn{1}{c}{4.232} & \multicolumn{1}{c}{10.42} & \multicolumn{1}{c}{0.264} & \multicolumn{1}{c}{0.159} & \multicolumn{1}{c}{332.8 (34\%)} & 10.29 & 976.0 \\
     single & 200   & \multicolumn{1}{c}{1124  (65\%)} & \multicolumn{1}{c}{8.936} & \multicolumn{1}{c}{18.64} & \multicolumn{1}{c}{0.418} & \multicolumn{1}{c}{0.256} & \multicolumn{1}{c}{570.0 (33\%)} & 18.37 & 1741 \\
@@ -864,6 +866,11 @@ Optimizing $\gamma$ in the E-step \eqref{eqn:partial_mu} and optimizing $M_j$ in
           & 400   & \multicolumn{1}{c}{94.66 (43\%)} & \multicolumn{1}{c}{0.7270} & \multicolumn{1}{c}{42.78} & \multicolumn{1}{c}{0.8200} & \multicolumn{1}{c}{0.7060} & \multicolumn{1}{c}{40.04 (18\%)} & 44.28 & 219.7 \\
     \bottomrule
     \end{tabular}%
+    \begin{tablenotes}
+    \item Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is $3,089\times$.
+Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ in the E-step and optimizing $M$ in the M-step is highlighted in percentage.
+    \end{tablenotes}
+    \end{threeparttable}
 \end{table}%
 
 
@@ -889,16 +896,13 @@ The corresponding NRAFs of called variants at different time points are given by
 % Table generated by Excel2LaTeX from sheet 'Sheet1'
 \begin{table}[htbp]
   \centering
-  \caption{Identified variants on the longitudinal data set}\label{table:mutations}
-%Identified variants and corresponding NRAFs in gene MTH1 on Chromosome 4.
-%A blank cell indicates that the position of that time point is not called significantly different than G7.
-%The positions highlighted as blue were also identified by Kvitek, 2013.
-%The other 81 positions are novel identified variants in 8 timepoints.}
-  \tiny 
+  \caption{Identified variants on the longitudinal data set.}\label{table:mutations}
+  \begin{threeparttable}
+  \tiny
     \begin{tabular}{rrrrrrrrrrrr}
     \toprule
           & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{8}{c}{\textbf{Allele frequency of generation (\%)}} \\
-      \cmidrule(r{4pt}){5-12} 
+      \cmidrule(r{4pt}){5-12}
     %\midrule
     \textbf{Index} & \textbf{Position} & \textbf{Ref} & \textbf{Alt} & \multicolumn{1}{c}{\textbf{G7}} & \multicolumn{1}{c}{\textbf{G70}} & \multicolumn{1}{c}{\textbf{G133}} & \multicolumn{1}{c}{\textbf{G196}} & \multicolumn{1}{c}{\textbf{G266}} & \multicolumn{1}{c}{\textbf{G322}} & \multicolumn{1}{c}{\textbf{G385}} & \multicolumn{1}{c}{\textbf{G448}} \\
     \midrule
@@ -995,7 +999,14 @@ The corresponding NRAFs of called variants at different time points are given by
     \midrule
     \multicolumn{4}{c}{\textbf{Num of variants}} & \multicolumn{1}{c}{0} & \multicolumn{1}{c}{22} & \multicolumn{1}{c}{24} & \multicolumn{1}{c}{42} & \multicolumn{1}{c}{21} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{6} \\
     \bottomrule
-    \end{tabular}%
+    \end{tabular}
+    \begin{tablenotes}
+    \item Identified variants and corresponding NRAFs in gene MTH1 on Chromosome 4.
+		  A blank cell indicates that the position of that time point is not called significantly different than G7.
+		  The positions highlighted as blue were also identified by Kvitek, 2013.
+		  The other 81 positions are novel identified variants in 8 timepoints.
+    \end{tablenotes}
+    \end{threeparttable}
 \end{table}%
 
 
@@ -1017,7 +1028,7 @@ Further experimental validation of this hypothesis would be required to definiti
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.6\textwidth]{concomitant.png}
-\caption{The NRAF trend of concomitant variants in gene MTH1 and ADE16.
+\caption{\csentence{The NRAF trend of concomitant variants in gene MTH1 and ADE16.}
 The 95\% Bayesian credible intervals are shown.}
 \label{figure:concomitant}
 \end{figure}
@@ -1031,7 +1042,7 @@ Here $\hat{M_0} = 1.752$ in this dataset.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{M0.png}
-\caption{Influence of $M_0$ on the estimate of $\mu_j$.
+\caption{\csentence{Influence of $M_0$ on the estimate of $\mu_j$.}
 Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{1,014,740}$, with different $\hat{M_0}$ are shown.}
 \label{tbl:M0}
 \end{figure}
@@ -1069,10 +1080,12 @@ We will be able to find the causative variants that lead to drug resistance and 
 \section*{Conclusion}
 
 
+
+
 %\section{Additional Files}
 %  \subsection*{Additional file 1 --- Sample additional file title}
 %    Additional file descriptions text.
-%    
+%
 %  \subsection*{Additional file 2 --- Sample additional file title}
 %    Additional file descriptions text.
 
