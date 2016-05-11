@@ -1,0 +1,1229 @@
+%% BioMed_Central_Tex_Template_v1.06
+%%                                      %
+%  bmc_article.tex            ver: 1.06 %
+%                                       %
+
+%%IMPORTANT: do not delete the first line of this template
+%%It must be present to enable the BMC Submission system to
+%%recognise this template!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                     %%
+%%  LaTeX template for BioMed Central  %%
+%%     journal article submissions     %%
+%%                                     %%
+%%          <8 June 2012>              %%
+%%                                     %%
+%%                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% For instructions on how to fill out this Tex template           %%
+%% document please refer to Readme.html and the instructions for   %%
+%% authors page on the biomed central website                      %%
+%% http://www.biomedcentral.com/info/authors/                      %%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%% BioMed Central currently use the MikTex distribution of         %%
+%% TeX for Windows) of TeX and LaTeX.  This is available from      %%
+%% http://www.miktex.org                                           %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% additional documentclass options:
+%  [doublespacing]
+%  [linenumbers]   - put the line numbers on margins
+
+%%% loading packages, author definitions
+
+%\documentclass[twocolumn]{bmcart}% uncomment this for twocolumn layout and comment line below
+\documentclass{bmcart}
+
+%%% Load packages
+%\usepackage{amsthm,amsmath}
+%\RequirePackage{natbib}
+%\RequirePackage[authoryear]{natbib}% uncomment this for author-year bibliography
+%\RequirePackage{hyperref}
+\usepackage[utf8]{inputenc} %unicode support
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{natbib}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+
+
+% Fix a little bug in the class file for bmcart 
+%http://latex-community.org/forum/viewtopic.php?f=5&t=26665
+\makeatletter
+\def\@listiii{\leftmargin\leftmarginiii
+              \labelwidth\leftmarginiii
+              \advance\labelwidth-\labelsep
+              \topsep\z@
+              \parsep\z@
+              \partopsep\z@
+              \itemsep\topsep}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                             %%
+%%  If you wish to display your graphics for   %%
+%%  your own use using includegraphic or       %%
+%%  includegraphics, then comment out the      %%
+%%  following two lines of code.               %%
+%%  NB: These line *must* be included when     %%
+%%  submitting to BMC.                         %%
+%%  All figure files must be submitted as      %%
+%%  separate graphics through the BMC          %%
+%%  submission process, not included in the    %%
+%%  submitted article.                         %%
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\def\includegraphic{}
+%\def\includegraphics{}
+
+
+
+%%% Put your definitions there:
+\startlocaldefs
+\endlocaldefs
+
+
+%%% Begin ...
+\begin{document}
+
+%%% Start of article front matter
+\begin{frontmatter}
+
+\begin{fmbox}
+\dochead{Research}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the title of your article here     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Variational inference for rare variant detection in deep, heterogeneous next-generation sequencing data}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors here                   %%
+%%                                          %%
+%% Specify information, if available,       %%
+%% in the form:                             %%
+%%   <key>={<id1>,<id2>}                    %%
+%%   <key>=                                 %%
+%% Comment or delete the keys which are     %%
+%% not used. Repeat \author command as much %%
+%% as required.                             %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author[
+   addressref={aff1},
+   %noteref={n1},                        % id's of article notes, if any
+   email={fzhang@wpi.edu}   			 % email address
+]{\inits{F}\fnm{Fan} \snm{Zhang}}
+\author[
+   addressref={aff1, aff2},              % id's of addresses, e.g. {aff1,aff2}
+   corref={aff2},                       % id of corresponding address, if any
+   email={flaherty@math.umass.edu}
+]{\inits{PJ}\fnm{Patrick J} \snm{Flaherty}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors' addresses here        %%
+%%                                          %%
+%% Repeat \address commands as much as      %%
+%% required.                                %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\address[id=aff1]{%                           % unique id
+  \orgname{Department of Biomedical Engineering, Worcester Polytechnic Institute}, % university, etc
+  \street{100 Institute Road},                     %
+  \postcode{01609}                                % post or zip code
+  \city{Worcester},                              % city
+  \cny{USA}                                    % country
+}
+\address[id=aff2]{%
+  \orgname{Department of Mathematics and Statistics, University of Massachusetts, Amherst},
+  \street{710 N. Pleasant Street},
+  \postcode{01003}
+  \city{Amherst},
+  \cny{USA}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter short notes here                   %%
+%%                                          %%
+%% Short notes will be after addresses      %%
+%% on first page.                           %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{artnotes}
+%\note{Sample of title note}     % note to the article
+\note[id=n1]{Equal contributor} % note, connected to author
+\end{artnotes}
+
+\end{fmbox}% comment this for two column layout
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Abstract begins here                 %%
+%%                                          %%
+%% Please refer to the Instructions for     %%
+%% authors on http://www.biomedcentral.com  %%
+%% and include the section headings         %%
+%% accordingly for your article type.       %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstractbox}
+
+\begin{abstract} % abstract
+
+\parttitle{Background} %if any
+The detection of rare variants is important for understanding the genetic heterogeneity in mixed samples.
+Recently, next-generation sequencing (NGS) technologies have enabled the identification of single nucleotide variants (SNVs) in mixed samples with high resolution.
+Yet, the noise inherent in the biological processes involved in next-generation sequencing necessitates the use of statistical methods to identify true rare variants.
+
+\parttitle{Results} %if any
+We propose a novel Bayesian statistical model and a variational expectation-maximization (EM) algorithm to estimate non-reference allele frequency (NRAF) and identify SNVs in heterogeneous cell populations.
+We demonstrate that our variational EM algorithm has comparable sensitivity and specificity compared with a Markov Chain Monte Carlo (MCMC) sampling inference algorithm, and is more computationally efficient on tests of low coverage ($27\times$ and $298\times$) data.
+Furthermore, we show that our model with a variational EM inference algorithm has higher specificity than many state-of-the-art algorithms.
+In an analysis of a directed evolution longitudinal yeast data set, we are able to identify a time-series trend in non-reference allele frequency and detect novel variants that have not yet been reported.
+Our model also detects the emergence of a beneficial variant earlier than was previously shown, and a pair of concomitant variants.
+
+\parttitle{Conclusion}
+We developed a variational EM algorithm for a novel hierarchical Bayesian model to identify rare variants in heterogeneous next-generation sequencing data.
+Our algorithm is able to identify variants in a broad range of read depths and non-reference allele frequencies with high sensitivity and specificity.
+
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The keywords begin here                  %%
+%%                                          %%
+%% Put each keyword in separate \kwd{}.     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{keyword}
+\kwd{single nucleotide variant detection}
+\kwd{next-generation sequencing}
+\kwd{Bayesian statistical method}
+\kwd{variational inference}
+\end{keyword}
+
+% MSC classifications codes, if any
+%\begin{keyword}[class=AMS]
+%\kwd[Primary ]{}
+%\kwd{}
+%\kwd[; secondary ]{}
+%\end{keyword}
+
+\end{abstractbox}
+%
+%\end{fmbox}% uncomment this for twcolumn layout
+
+\end{frontmatter}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Main Body begins here                %%
+%%                                          %%
+%% Please refer to the instructions for     %%
+%% authors on:                              %%
+%% http://www.biomedcentral.com/info/authors%%
+%% and include the section headings         %%
+%% accordingly for your article type.       %%
+%%                                          %%
+%% See the Results and Discussion section   %%
+%% for details on how to create sub-sections%%
+%%                                          %%
+%% use \cite{...} to cite references        %%
+%%  \cite{koon} and                         %%
+%%  \cite{oreg,khar,zvai,xjon,schn,pond}    %%
+%%  \nocite{smith,marg,hunn,advi,koha,mouse}%%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% start of article main body
+% <put your article body there>
+
+%%%%%%%%%%%%%%%%
+%% Background %%
+%%
+
+\section*{Background}
+Massively parallel sequencing data generated by next-generation sequencing technologies is routinely used to interrogate SNVs in research samples \cite{koboldt2013next}.
+For example, deep sequencing confirmed the degree of genetic heterogeneity of HIV and influenza \cite{flaherty2011ultrasensitive, ghedin2011deep}.
+Many solid tumors are represented as having intra-tumor heterogeneity by DNA sequencing technology, where SNVs are rare in the population \cite{navin2010inferring}.
+Also, whole genome sequencing has revealed that many beneficial mutations of minor allele frequencies are essential to respond to dynamic environments \cite{kvitek2013whole}.
+However, rare SNVs identification in heterogeneous cell populations is challenging, because of the intrinsic error rate of next generation sequencing platform \cite{shendure2008next}.
+Thus, there is a need for accurate and scalable statistical methods to uncover SNVs in heterogeneous samples.
+
+% Classes of Methods %
+% Probabilistic methods: Bayesian %
+A number of computational methods have been developed to detect SNVs in large scale genomic data sets.
+These methods can be roughly categorized as probabilistic or heuristic or some combination.
+Among all of the current probabilistic methods, the Bayesian probabilistic framework has been increasingly used to calculate the unobserved quantities such as variant allele frequency given the observed genomic sequencing data.
+GATK \cite{mckenna2010genome} and SAMTools \cite{li2009sequence} use a naive Bayesian decision rule to call variants.
+EBCall models sequencing errors based on a Beta-Binomial distribution, where the parameters and latent variables are estimated from a set of non-paired normal sequencing samples \cite{shiraishi2013empirical}.
+However, the error rate of normal sequencing samples could be unmatched with the error rate of the target samples, which may cause a problem of making false negatives calls \cite{wang2013detecting}.
+CRISP compares aligned reads across multiple pools to obtain sequencing errors, and then distinguishes true rare variants from the sequencing errors \cite{bansal2010statistical}.
+However, the bottleneck of CRISP is its low computational efficiency due to a calculation of a large amount of contingency tables.
+% Other Bayesian methods: MAQ, Mutect, and FamSeq
+
+% Joint distribution %
+Generally, independent modeling method models the genotypes of tumour and normal samples separately and then looks for the difference between them.
+In contrast to independently analyzing a tumour-normal pair, joint modeling method models a joint-genotype of the tumour and normal samples simultaneously.
+JointSNVMix introduces two Bayesian probabilistic models (JointSNVMix1 and JointSNVMix2) to jointly analyze a tumour-normal paired allelic count of NGS data \cite{roth2012jointsnvmix}.
+JointSNVMix derives an expectation maximization (EM) algorithm to calculate maximum a-posteriori (MAP) estimate of latent variables in a particular probabilistic graphical model.
+Furthermore, \cite{roth2012jointsnvmix} reveals that the joint modeling method, JointSNVMix1, observes 80-fold reduction of false positives compared with its independent analogue (SNVMix1).
+SomaticSniper \cite{larson2012somaticsniper} models the joint diploid genotype likelihoods for both tumour and normal samples.
+Additionally, Strelka \cite{saunders2012strelka} models the joint probabilistic distribution of allele frequencies for both tumour and normal samples, which is demonstrated to be more accurate compared with the methods based on the estimated allele frequency tests between tumour and normal samples.
+
+% Heuristic %
+An alternative strategy to probabilistic methods is heuristic methods that use a set of criteria to select variant positions instead of modeling the data using probabilistic distributions.
+%By setting thresholds of the rules, heuristic algorithms can find a good solution, but optimum is not guaranteed.
+VarScan is an example of a heuristic method that compares tumour and normal samples by satisfying some lower bounds, such as a certain variant allele frequency and a number of allele counts \cite{koboldt2012varscan}.
+%VarScan is based on Fisher's exact test to estimate sample allele frequencies.
+% Frequentist %
+SNVer focuses on a frequentist method that is able to calculate $P$-values, but \cite{wei2011snver} pointed out that this approach fails to model sampling bias that will reduce the power of detecting true rare variants.
+
+% RVD2 %
+In previous work, we developed a Beta-Binomial model to characterize a null hypothesis error rate distribution at each position.
+Using this rare variant detection (RVD) model, we call rare variants by comparing the error rate of the sample sequence data to a null distribution obtained from sequencing a known reference sample \cite{flaherty2011ultrasensitive}.
+RVD can identify mutant positions at a 0.1\% fraction in mixed samples using high read depth data.
+
+We improved upon that work, RVD2, by using hierarchical priors to tie parameters across positions\cite{he2015rvd2}.
+We derived a Markov Chain Monte Carlo (MCMC) sampling algorithm for posterior inference.
+However, the main limitation of MCMC is that it is hard to diagnose convergence and may be slow to converge\cite{jordan1999introduction}.
+An alternative method, that we explore here, is to use variational inference, which is based on a proposed variational distribution over latent variables.
+By optimizing variational parameters, we fit an approximate distribution that is close to the true posterior distribution in the sense of the Kullback-Liebler (KL) divergence.
+Variational inference can now handle nonconjugate distributions and tends to be more computationally efficient than MCMC sampling\cite{peterson1989explorations}.
+
+% VI for RVD %
+Here, we propose a variational EM algorithm for our Bayesian statistical model to detect SNVs in heterogeneous NGS data.
+We show that variational EM algorithm has comparable accuracy and efficiency compared with MCMC in a synthetic data set.
+In section 2, we define the model structure.
+In section 3, we derive our variational EM algorithm to approximate the posterior distribution over latent variables.
+In section 4, we call a variant by a posterior difference hypothesis test between the key model parameters of a pair of samples.
+In section 5, we compare the performance of the variational EM inference algorithm to the MCMC sampling method and the state-of-the-art methods using a synthetic data set.
+We also show that our variational EM algorithm is able to detect rare variants and estimate non-reference allele frequency (NRAF) in a longitudinal directed evolution experimental data set.
+
+\section*{Methods}
+\subsection*{Model Structure}
+Our Bayesian statistical model is shown as a graphical model in Figure \ref{figure:model}.
+In the model, $r_{ji}$ is the number of reads with a non-reference base at location $j$ in experimental replicate $i$; $n_{ji}$ is the total number of reads at location $j$ in experimental replicate $i$.
+The model parameters are:
+\begin{description}[noitemsep]
+  \item[$\mu_0$] a global non-reference read rate that captures the error rate across all the positions,
+  \item[$M_0$] a global precision that captures the variation of the error rate across positions in a sequence,
+  \item[$M_j$] a local precision that captures the variation of the error rate at position $j$ across different replicates.
+\end{description}
+The latent variables are:
+\begin{description}[noitemsep]
+  \item[$\mu_j \sim \text{Beta}(\mu_0, M_0)$] position-specific non-reference read rate for position $j$,
+  \item[$\theta_{ji} \sim \text{Beta}(\mu_j, M_j)$] the non-reference read rate for position $j$ in replicate $i$.
+\end{description}
+
+In Figure \ref{figure:model}B, $\gamma$ is the parameter for the variational distribution for latent variable $\mu$,
+and $\delta$ is the parameter for the variational distribution for latent variable $\theta$.
+We describe $q(\mu)$ and $q(\theta)$ in detail in section 3.3
+
+\begin{figure}[htpb]
+
+\begin{center}
+%\vspace{-10pt}
+\includegraphics[width=0.5\textwidth]{rvd3.png}
+\caption{\csentence{Graphical model.} A. Graphical model representation of the model.
+B. Graphical model representation of the variational approximation  to approximate the posterior distribution.
+Observed random variables are shown as shaded nodes and latent random variables are unshaded.
+The object of inference for the variational EM algorithm is the joint distribution $p(\mu, \theta|r, n)$.}
+\label{figure:model}
+\end{center}
+\end{figure}
+
+The model generative process is as follows:
+\begin{enumerate}[noitemsep]
+    \item For each location $j \in [1, \ldots, J]$:
+	\begin{enumerate}
+		\item Draw an error rate $\mu_j \thicksim \text{Beta}(\mu_0, M_0)$
+		\item For each replicate $i \in [1, \ldots, N]$:
+		\begin{enumerate}
+		    \item Draw $\theta_{ji} \thicksim \text{Beta}(\mu_j, M_j)$
+			\item Draw $r_{ji} | n_{ji} \thicksim \text{Binomial}(\theta_{ji}, n_{ji})$ 		
+		\end{enumerate}
+	\end{enumerate}
+\end{enumerate}
+
+The joint distribution $p(r, \mu, \theta|n; \phi)$ given the parameters can be factorized as
+\begin{equation}
+    p(r, \mu, \theta| n; \phi) = p(r |\theta, n)p(\theta |\mu; M )p(\mu;\mu_0, M_0).
+\end{equation}
+
+
+\subsection*{Variational Expectation Maximization (EM) Inference}
+%RVD3 improves RVD2 in the way of deterministic posterior distribution inference.
+We developed a non-conjugate variational inference algorithm to approximate the posterior distribution,
+\begin{equation}
+	p(\mu, \theta | r, n; \phi)  = \frac{ p(r, \mu, \theta| n; \phi) } {p ( r | n; \phi)},
+\end{equation}
+where the parameters are $\phi \triangleq \{\mu_0, M_0, M\}$.
+\subsubsection*{Factorization}
+We propose the following factorized variational distribution to approximate the true posterior over latent variables $\mu_j$ and $\theta_{ji}$.
+Here, $q(\mu_j)$ approximates the variational posterior distribution of $\mu_j$, which represents the local error rate distribution in position $j$ across different replicates;
+and $q(\theta_{ji})$ approximates the posterior distribution of $\theta_{ji}$, which is the error rate distribution in position $j$ replicate $i$.
+\begin{equation}
+  q(\mu, \theta) = q(\mu)q(\theta) = \prod_{j=1}^J q(\mu_{j}) \prod_{i=1}^N q(\theta_{ji}).
+  \label{eq:vardist}
+\end{equation}
+\subsubsection*{Evidence Lower Bound (ELBO)}
+Given the variational distribution, $q$, the log-likelihood of the data is lower-bounded according to Jensen's inequality,
+\begin{equation}
+\begin{split}
+\log p \left( r | \phi \right) &= \log \int_\mu \int_\theta p\left(r,\mu,\theta |n; \phi \right) d\theta d\mu \\
+&= \log \int_\mu \int_\theta p\left(r,\mu,\theta |n; \phi \right)\frac{q\left(\mu,\theta \right) }{q\left(\mu,\theta \right) } d\theta d\mu \\
+&\geq \int_\mu \int_\theta q\left(\mu,\theta \right) \log \frac{ p\left(r,\mu,\theta |n; \phi \right)}{q\left(\mu,\theta \right)} d\theta d\mu \\
+&= E_q \left[ \log p\left(r,\mu,\theta |n; \phi \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
+&\triangleq \mathcal{L}(q, \phi).
+\end{split}
+\end{equation}
+
+The function $\mathcal{L}(q, \phi)$ is the evidence of lower bound (ELBO) of the log-likelihood of the data, which is the sum of $q$-expected complete log-likelihood and the entropy of the variational distribution $q$.
+The goal of variational inference is to maximize the ELBO.
+Equivalently, $q$ is chosen by minimizing the KL divergence between the variational distribution and the true posterior distribution.
+
+The ELBO can be expanded as
+\begin{equation}
+\begin{split}
+\label{L}
+\mathcal{L}(q, \phi) &= E_q \left[ \log p\left(r,\mu,\theta | n; \phi \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
+&= E_q \left[ \log p\left(r | \theta, n \right)\right] + E_q \left[ \log p\left(\theta | \mu; M \right)\right] + E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] \\
+& - E_q \left[ \log q\left(\mu \right)\right]- E_q \left[ \log q\left(\theta \right)\right]. \\
+\end{split}
+\end{equation}
+We write out each component below.
+%The detail of the derivation of $E_q \left[ \log p\left(r | \theta, n \right)\right]$, $E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right]$, and $E_q \left[ \log p\left(\theta | \mu; M \right)\right]$ is shown in Appendix~\ref{appendix:ELBO}.
+\begin{equation}
+\begin{split}
+\label{r}
+E_q \left[ \log p\left(r | \theta, n \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log p \left( r_{ji} | \theta_{ji}, n_{ji} \right) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} \log \left( \frac{ \Gamma(n_{ji}+1) } { \Gamma(r_{ji}+1) \Gamma( n_{ji} - r_{ji} + 1 ) }\right)  \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace
+\end{split}
+\end{equation}
+%
+\begin{equation}
+\begin{split}
+\label{mu}
+E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] &= \sum_{j=1}^{J} E_q  \left[ \log p\left( \mu_j; \mu_0, M_0 \right) \right] \\
+&= J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \left\lbrace + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace
+\end{split}
+\end{equation}
+%
+\begin{equation}
+\begin{split}
+\label{theta}
+E_q \left[ \log p\left(\theta | \mu; M \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q \left[ \log p\left(\theta_{ji} | \mu_j; M_j \right)\right] \\
+&= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace
+\end{split}
+\end{equation}
+
+Therefore, we need to compute the following expectations with respect to the variational distribution:
+%
+$ E_q \left[ \log \theta_{ji} \right] $, $ E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] $ , $ E_q  \left[ \log \mu_j \right] $ , $ E_q  \left[ \log (1 - \mu_j)\right] $, $ E_q \left[ \mu_j \right] $, and $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.
+
+
+We select the functional forms for the variational distributions $q(\theta)$ and $q(\mu)$ to facilitate these expected value computations.
+
+
+\subsubsection*{Variational Distributions}
+Since $\theta$ and $r$ are conjugate pairs, the posterior distribution of $\theta_{ji}$ is a Beta distribution,
+\begin{align}
+&p(\theta_{ji}|r_{ji},n_{ji},\mu_j,M_j)
+\thicksim \text{Beta}(r_{ji}+M_j \mu_j, n_{ji}-r_{ji}+M_j(1-\mu_j)).
+\end{align}
+Therefore, we propose a Beta distribution with parameter vector $\delta_{ji}$ as variational distribution,
+\begin{align}
+\theta_{ji} &\thicksim \text{Beta}(\delta_{ji1}, \delta_{ji2}) \nonumber.
+\end{align}
+%
+The posterior distribution of $\mu_j$ is given by its Markov blanket,
+\begin{align}
+p(\mu_j|\theta_{ji},M_j,\mu_0,M_0)\propto p(\mu_j|\mu_0,M_0)p(\theta_{ji}|\mu_j,M_j).
+\end{align}
+This is not in the form of any known distribution.
+But, since the support of $\mu_j$ is $[0,1]$, we propose a Beta distribution with parameter vector $\gamma_{j}$ as variational distribution,
+\begin{align}
+\mu_j &\thicksim \text{Beta}(\gamma_{j1}, \gamma_{j2}) \nonumber.
+\end{align}
+Given these variational distributions, we have
+\begin{align}
+E_q \left[ \log \theta_{ji} \right] &= \psi(\delta_{ji1}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber \\
+E_q \left[ \log \left( 1 - \theta_{ji}\right) \right]&= \psi(\delta_{ji2}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber \\
+E_q \left[ \mu_j \right] &= \frac{\gamma_{j1}}{\gamma_{j1} + \gamma_{j2}} \nonumber \\
+E_q  \left[ \log \mu_j \right] &= \psi(\gamma_{j1}) - \psi(\gamma_{j1}+\gamma_{j2}) \nonumber \\
+E_q  \left[ \log (1 - \mu_j)\right] &= \psi(\gamma_{j2}) - \psi(\gamma_{j1}+\gamma_{j2})\nonumber, \\
+\end{align}
+where $\psi$ is the digamma function.
+
+Since there is no analytical representation for $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $, we must resort to numerical integration,
+
+\begin{equation}\label{eqn:integration}
+\begin{split}
+& E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] =\\
+& \int_{0}^{1} q(\mu_j;\gamma_{j1}, \gamma_{j2}) \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right) d\mu_j.
+\end{split}
+\end{equation}
+Here $q(\mu_j;\gamma_{j1}, \gamma_{j2})$ is the probability density function of the Beta distribution that is calculated using the Python built-in function \texttt{scipy.stats.beta.pdf},
+
+and $\log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)$ is calculated using the Python built-in function \texttt{scipy.special.betaln}.
+Unfortunately, this numerical integration step is computationally expensive.
+%
+Finally, the entropy terms can be computed as follows,
+\begin{equation}
+\begin{split}
+E_q \left[ \log q\left(\mu \right)\right] &= \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right] \\
+&= -\sum_{j=1}^{J} \left\lbrace \log (B(\gamma_{j1},\gamma_{j2})) -(\gamma_{j1}-1)\psi(\gamma_{j1}) \right\rbrace \\
+&\quad  + \sum_{j=1}^{J} \left\lbrace -(\gamma_{j2}-1)\psi(\gamma_{j2}) + (\gamma_{j1}+\gamma_{j2}-2)\psi(\gamma_{j1}+\gamma_{j2})\right\rbrace;
+\end{split}
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+E_q \left[ \log q\left(\theta \right)\right] &= \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right] \\
+&= -\sum_{j=1}^{J}\sum_{i=1}^{N} \left\lbrace \log (B(\delta_{ji1},\delta_{ji2}))-(\delta_{ji1}-1)\psi(\delta_{ji1}) \right\rbrace \\
+&\quad + \sum_{j=1}^{J}\sum_{i=1}^{N} \left\lbrace -(\delta_{ji2}-1)\psi(\delta_{ji2}) + (\delta_{ji1}+\delta_{ji2}-2)\psi(\delta_{ji1}+\delta_{ji2})\right\rbrace.
+\end{split}
+\end{equation}
+%
+%\subsubsection*{Variational EM Algorithm}
+Variational EM algorithm maximizes the ELBO on the true likelihood by alternating between maximization over $q$ (E-step) and maximization over $\phi= \left\{\mu_0, M_0, M \right\}$ (M-step).
+\subsubsection*{(E-step): Updating the variational distributions}
+The terms in the ELBO that depend on $q(\theta_{ji} | \delta_{ji1}, \delta_{ji2})$ are
+\begin{equation}\label{eqn:partial_theta}
+\begin{split}
+\mathcal{L}_{{[q(\theta_{ji})]}}
+& = \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace\\
+&\quad  +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace\\
+&\quad  +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
+&\quad - \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right]
+\end{split}
+\end{equation}
+
+We update the variational parameters by numerically optimizing
+\begin{equation}
+ \hat{\delta}_{ji1}, \hat{\delta}_{ji2} = \arg \max_{\delta_{ji1}, \delta_{ji2}} \mathcal{L}_{{[q(\theta_{ji})]}}
+\end{equation}
+subject to the constraints that $\delta_{ji1} \geq 0$ and $\delta_{ji2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using Sequential Least SQuares Programming (SLSQP) \cite{kraft1988software}.
+
+We update the variational distribution $q(\mu_j)$ using the partial ELBO depending on $\gamma_j$ from each position $j$ \eqref{eqn:partial_mu}.
+\begin{equation}\label{eqn:partial_mu}
+\begin{split}
+\mathcal{L}_{{[q(\mu_j)]}}
+& = N \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace+ \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
+&\quad + J \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace\\
+&\quad - \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right]
+\end{split}
+\end{equation}
+Again, we update the variational parameters by numerically optimizing 
+\begin{equation}
+ \hat{\gamma}_{j1}, \hat{\gamma}_{j2} = \arg \max_{\gamma_{j1}, \gamma_{j2}} \mathcal{L}_{{[q(\mu_{j})]}}
+\end{equation}
+subject to the constraints that $\gamma_{j1} \geq 0$ and $\gamma_{j2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using SLSQP \cite{kraft1988software}.
+The computational cost of optimizing \eqref{eqn:partial_mu} is high because of the quadrature of $E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right]$ in \eqref{eqn:integration}.
+
+
+\subsubsection*{(M-step): Updating the model parameters}
+We can write out the ELBO as a function of each model parameter $\mu_0$, $M_0$, and $M_j$ as follows.
+
+% Optimizing mu0
+The ELBO with respect to $ \mu_0 $ is
+\begin{equation}\label{eqn:mu_0}
+\begin{split}
+\mathcal{L}_{[\mu_0]}
+&= -J*\log  \Gamma(\mu_0 M_0) - J*\log \Gamma(M_0 (1-\mu_0)) \\
+& + M_0\mu_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
+- E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace. \\
+\end{split}
+\end{equation}
+
+
+% Optimizing M0
+The ELBO with respect to $ M_0 $ is
+\begin{equation}\label{eqn:M_0}
+\begin{split}
+\mathcal{L}_{[M_0]}
+&=J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}\\
+& + M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
+\end{split}
+\end{equation}
+
+
+% Optimizing M
+The ELBO with respect to $M_j$ is
+\begin{equation}\label{eqn:M}
+\begin{split}
+\mathcal{L}_{{[M_j]}}
+&= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + M_j \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] + \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace. \\
+\end{split}
+\end{equation}
+We also use SLSQP to optimize the ELBO function with respect to each parameter, $\mu_0$, $M_0$, and $M_j$.
+It is computationally easy to optimize $\mu_0$ \eqref{eqn:mu_0} and $M_0$ \eqref{eqn:M_0}.
+However, it is costly for optimizing $M_j$ \eqref{eqn:M} because the quadrature is needed to calculate $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $ using \eqref{eqn:integration}.
+
+
+The variational EM algorithm is summarized using pseudocode in Algorithm 1.
+
+\begin{algorithm}[ht]
+  \caption{Variational EM Inference}
+
+  \begin{algorithmic}[1]
+
+  \State Initialize $q(\theta, \mu)$ and $\hat{\phi}$
+
+  \State // M-step
+
+  \Repeat
+
+    \State // E-step
+
+	\Repeat
+
+		\For {j = 1 to J}
+			\For {i = 1 to N}
+			\State Optimize $\mathcal{L}(q, \hat{\phi})$ over $q(\theta_{ji}; \delta_{ji}) = \text{Beta} (\delta_{ji})$
+			\EndFor
+		\EndFor
+
+        \For {j = 1 to J}
+            \State Optimize $\mathcal{L}(q, \hat{\phi})$ over $q(\mu_j; \gamma_j) = \text{Beta} (\gamma_j)$
+        \EndFor
+
+    \Until{change in $\mathcal{L}(q,\hat{\phi})$ is small}
+
+    \State Set $\hat{\phi} \leftarrow \arg \max\limits_{\phi}
+            \mathcal{L}(\hat{q},\phi)$
+  \Until {change in $\mathcal{L}(\hat{q},\phi)$ is small}
+
+  \end{algorithmic}
+
+\end{algorithm}
+%
+\subsection*{Hypothesis Testing}
+%\subsection{Posterior Distribution Test}
+% Z-test
+The posterior distribution over $\mu_j^{\triangle} \mid r^{case}, r^{control} \triangleq \mu_j|r^{case} - \mu_j|r^{control}$ is the distribution over the change in the non-reference read rate at position $j$ between a case and control sample.
+However, we cannot compute the posterior distribution, $\mu_j^{\triangle} | r^{case}, r^{control}$, because we do not have access to the component posterior distributions $\mu_j|r^{case}$ and $\mu_j|r^{case}$.
+But, by approximating the distribution of $\mu_j|r^{case}$ and $\mu_j|r^{control}$ as Gaussians with moments matched to the variational posterior distributions, the distribution of $\mu_j^{\triangle} | r^{case}, r^{control}$ can be approximated as a Gaussian.
+
+Under the variational approximation,
+\begin{align}
+  E_q[\mu_j|r^{case}] &= \frac{\gamma_{j1}^{case}}{\gamma_{j1}^{case} + \gamma_{j2}^{case}}
+  \\
+  \text{Var}_q[\mu_j|r^{case}] &= \frac{\gamma_{j1}^{case} \gamma_{j2}^{case}}{(\gamma_{j1}^{case} + \gamma_{j2}^{case} + 1)(\gamma_{j1}^{case} + \gamma_{j2}^{case})^2}
+\end{align}
+for $\mu_j|r^{case}$ and likewise for $\mu_j|r^{control}$.
+We approximate the posterior for the case sample as
+\begin{equation}
+  \mu_j | r^{case} \sim \mathcal{N}(E_q[\mu_j|r^{case}], \text{Var}_q[\mu_j|r^{case}])
+\end{equation}
+and likewise for the control.
+Then,
+\begin{equation}
+\begin{split}
+  &\mu_j^{\triangle} \mid r^{case}, r^{control} \sim \\
+  &\mathcal{N}(E_q[\mu_j|r^{case}] - E_q[\mu_j|r^{control}], \text{Var}_q[\mu_j|r^{case}] + \text{Var}_q[\mu_j|r^{control}])
+\end{split}
+\end{equation}
+
+Now, we can approximate the posterior probability of interest,
+\begin{equation}
+  \Pr( \mu_j^{\triangle} \geq \tau \mid r^{case}, r^{control} ),
+\end{equation}
+that is, the posterior probability that the difference in the non-reference read rate is greater than a fixed effect size $\tau$ (e.g. zero) for a one sided test.
+For a two sided test, we compute the approximate probability
+\begin{equation}
+  \Pr( | \mu_j^{\triangle} | \geq \tau \mid r^{case}, r^{control}).
+\end{equation}
+A position is called a \textit{provisional variant} if $\Pr( | \mu_j^{\triangle} | \geq \tau \mid r^{case}, r^{control}) \geq 1-\alpha/2$, where the probability is approximated as described.
+
+% Chi-square test
+It is possible that a position is called a variant due to a differential non-reference read count, but no particular alternative base is more frequently observed than the others.
+In this case, the likely case is a sequencing error that indiscriminately incorporates a non-reference base at the position.
+To discriminate this non-biological cause from the interesting true variants we use a $\chi^2$ goodness-of-fit test for non-uniform base distribution\cite{efron2010large, he2015rvd2}.
+For each provisional variant, if we reject the null hypothesis that the distribution is uniform, we promote the position to a called variant.
+
+
+\section*{Results and discussion}
+
+\subsection*{Data Sets}
+
+\subsubsection*{Synthetic DNA Sequence Data}
+
+Two random 400bp DNA sequences were synthesized. One sample with 14 loci variants is taken as the case and the other without variants is taken as the control.
+Case and control samples were mixed to yield defined NRAF of 0.1\%, 0.3\%, 1.0\%, 10.0\%, and 100.0\%.
+The details of the experimental protocol are available in \cite{flaherty2011ultrasensitive}.
+The synthetic DNA data were downsampled by $10\times$, $100\times$, $1,000\times$, and $10,000\times$ using \texttt{picard} (v 1.96).
+The final data set contains read pairs for six replicates for the control and cases at different NRAF levels.
+
+\subsubsection*{Longitudinal Directed Evolution Data}
+
+The longitudinal yeast data comes from three strains of haploid S288c which were grown for 448 generations under limited-glucose (0.08\%).
+The wild-type ancestral strain GSY1136 was sequenced as a reference.
+Aliquots were taken about every 70 generations and sequenced.
+The detail of library sequencing is described in \cite{kvitek2013whole}, \cite{bansal2010statistical}, and \cite{kao2008molecular}.
+The Illumina sequencing data are available on the NCBI Sequence Read Archive (SRA054922)\cite{kvitek2013whole}.
+For this study, we received the original BAM files from one of the authors.
+The aligned BAM files have $266$ - $1,046\times$ coverage.
+We used \texttt{samtools} (v 1.1) with \texttt{-mpileup -C50} flags to convert BAM files to pileup files.
+Then, we generated depth chart files, which are tab-delimited text files recording the count of the number of nucleotides in columns and genomic positions in rows.
+We ran our variational inference algorithm on the depth chart files to identify SNVs.
+
+\subsection*{Performance on Synthetic DNA Data}
+
+\subsubsection*{Comparison of Sensitivity and Specificity}
+
+We compared the performance of our variational EM algorithm and the MCMC sampling algorithm in terms of sensitivity and specificity (Table \ref{table:mcmcvar}).
+We used the posterior distribution test and $\chi^2$ test to detect variants for a broad range of median read depths and NRAFs.
+The variational EM algorithm shows higher sensitivity and specificity than the MCMC algorithm in the events when NRAF is 0.1\%.
+The variational EM algorithm has a higher specificity compared with the MCMC algorithm for a median read depth of $41,472\times$ at 0.3\% NRAF and $55,489\times$ at 1.0\% NRAF, but the sensitivity is slightly lower due to false negatives.
+% results in results\2015-09-28_Run_rvd3_synthetic_data_set
+%
+%\begin{table}[ht]
+%\centering
+%\includegraphics[width=0.7\textwidth]{statisticsmcmcvar.png}
+%\caption{Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.}
+%\label{tbl:statistics_mcmc_var}
+%\end{table}
+
+\begin{table}[h!]
+\caption{Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm.}\label{table:mcmcvar}
+% Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.
+\small
+\begin{tabular}{c c c c c c }
+\hline
+\toprule
+	{\bfseries NRAF} & {\bfseries Median Depth} & \multicolumn{2}{c}{{{\bfseries Sensitivity}}} &  \multicolumn{2}{c}{\bfseries Specificity} \\
+	\cmidrule(r{4pt}){3-4} \cmidrule(l){5-6}
+	 ~ & ~ & {\bfseries MCMC} & {\bfseries Variational} & {\bfseries MCMC} & {\bfseries Variational}   \\
+	\midrule
+	0.1\% & 39 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 408 & 0.00 & 0.07 & 1.00 & 1.00   \\
+	 & 4129 & 0.14 & 0.29 & 1.00 & 1.00   \\
+	 & 41449 & 0.86 & 1.00 & 0.97 & 1.00   \\
+	0.3\% & 36 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 410 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 4156 & 1.00 & 1.00 & 0.99 & 0.98   \\
+	 & 41472 & 1.00 & 0.93 & 0.85 & 0.91   \\
+	1.0\% & 53 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 535 & 0.21 & 0.29 & 1.00 & 1.00  \\
+	 & 5584 & 1.00 & 1.00 & 0.98 & 0.98   \\
+	 & 55489 & 1.00 & 0.93 & 0.87 & 0.95   \\
+	10.0\% & 22 & 0.00 & 0.57 & 1.00 & 1.00   \\
+	 & 260 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 2718 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 26959 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	100.0\% & 27 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 298 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 3089 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 30590 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
+\subsubsection*{Comparison of Approximated Posterior Distribution}
+
+Figure~\ref{figure:compare1} shows the approximate posterior distribution of the variational EM algorithm and samples of the MCMC algorithm.
+One variant position, 85, is taken as an example to show the comparison of the approximated posteriors.
+The variational EM and MCMC algorithms both identify all the variants when NRAF is 10.0\% and 100.0\%.
+The variational EM algorithm calls 90 false positive positions without a $\chi^2$ test when NRAFs are 0.1\% and 0.3\% for low median read depth ($30\times$ and $400\times$).
+This is to be expected because it is highly unlikely to correctly identify a variant base with a population frequency of $1$ in $1,000$ with less than a $1,000\times$ read depth.
+
+A false positive, a non-mutated position that is called by the variational EM algorithm but not called by the MCMC algorithm, is shown in Figure~\ref{figure:compare2}.
+The variance of MCMC posterior estimate is higher than that of the variational posterior estimate.
+We tested 10 random initial values variational inference algorithm and found the approximate posterior distributions from the variational EM algorithm are essentially equivalent for all random initializations.
+It is notable that the shape of the proposed Beta variational distribution is well approximated by a Gaussian.
+
+% results in results\2015-10-14_Plot_mcmc_mu_vs_variational_mu
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{fig1.png}
+\caption{Approximated posterior distributions by the variational EM and MCMC algorithms on a true variant position 85 when the median read depth is $5,584\times$.}\label{figure:compare1}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{fig2.png}
+\caption{Approximated posterior distribution by the variational EM and MCMC algorithms on a false variant position 160 when the median read depth is $410\times$.}\label{figure:compare2}
+\end{figure}
+
+
+\subsubsection*{Comparison to the State-of-the-Art Methods}
+We compared the performance of our variational EM algorithm with the state-of-the-art variant detection methods, SAMtools \cite{li2009sequence}, GATK \cite{mckenna2010genome}, VarScan2 \cite{koboldt2012varscan}, Strelka \cite{saunders2012strelka}, MuTect \cite{cibulskis2013sensitive}, and RVD2 \cite{he2015rvd2}, using synthetic DNA data set (Table \ref{table:character}).
+Among all of the methods compared, our variational EM algorithm has a higher sensitivity and specificity for a broad range of read depths and NRAFs.
+Our variational EM algorithm shows higher specificity than all the other tested methods at a very low NRAF (0.1\%) level.
+However, our algorithm has a slightly lower specificity than the MCMC algorithm when the median read depth is $4,156\times$ at 0.3\% NRAF, and a slightly lower sensitivity than the MCMC algorithm when the median read depth is $41,472\times$ at 0.3\% NRAF and a median read depth of $55,489\times$ at 1.0\% NRAF.
+The performance of other methods is stated in detail in \cite{he2015rvd2}.
+%\begin{table*}[htbp]
+%\centering
+%\includegraphics[width=1.0\textwidth]{characterall.png}
+%\caption{Sensitivity/Specificity comparison of our variational RVD2 with other variant detection methods on synthetic DNA data.}
+%\label{tbl:character_all}
+%\end{table*}
+
+
+\begin{table}[htbp]
+  \centering
+  \caption{Sensitivity/Specificity comparison with other variant detection methods.}\label{table:character}
+  %\footnotesize
+  \scriptsize 
+    \begin{tabular}{rrrrrrrrrr}
+    \toprule
+    \textbf{NRAF} & \multicolumn{1}{c}{\textbf{Median}} & \multicolumn{1}{c}{\textbf{SAMtools}} & \multicolumn{1}{c}{\textbf{GATK}} & \multicolumn{1}{c}{\textbf{VarScan2 }} & \multicolumn{1}{c}{\textbf{VarScan2}} & \multicolumn{1}{c}{\textbf{Strelka}} & \multicolumn{1}{c}{\textbf{MuTect}} & \multicolumn{1}{c}{\textbf{RVD2 }} & \multicolumn{1}{c}{\textbf{RVD2 }} \\
+    \textbf{} &\multicolumn{1}{c}{\textbf{Depth}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{mpileup}} & \multicolumn{1}{c}{\textbf{somatic}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{MCMC}} & \multicolumn{1}{c}{\textbf{Variational}} \\
+    \midrule
+    \multicolumn{1}{c}{0.1\%} & \multicolumn{1}{l}{39} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.00/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{408} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.07/0.92} & 0.00/1.00 & 0.29/0.91 & 0.00/1.00 & \multicolumn{1}{c}{0.07/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4129} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.52} & 0.00/1.00 & 0.64/0.86 & 0.14/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41449} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.79} & 0.00/1.00 & 0.14/0.93 & 0.86/0.97 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{0.3\%} & \multicolumn{1}{l}{36} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.43/1.00 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{410} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.21/0.95} & 0.00/1.00 & 0.50/0.94 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4156} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.53} & 0.00/1.00 & 0.36/0.91 & 1.00/0.99 & \multicolumn{1}{c}{1.00/0.98} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41472} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.75} & 0.00/1.00 & 0.43/0.90 & 1.00/0.85 & \multicolumn{1}{c}{0.93/0.91} \\
+    \multicolumn{1}{c}{1.0\%} & \multicolumn{1}{l}{53} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/0.99} & 0.00/1.00 & 0.29/0.98 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{535} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.43/0.89} & 0.00/1.00 & 0.71/0.91 & 0.21/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{5584} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.47} & 0.00/1.00 & 0.64/0.95 & 1.00/0.98 & \multicolumn{1}{c}{1.00/0.98} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{55489} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.69} & 0.00/1.00 & 0.86/0.90 & 1.00/0.87 & \multicolumn{1}{c}{0.93/0.95} \\
+    \multicolumn{1}{c}{10.0\%} & \multicolumn{1}{l}{22} & \multicolumn{1}{c}{0.21/1.00} & \multicolumn{1}{c}{0.43/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.36/1.00} & 0.29/1.00 & 0.86/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.57/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{260} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.86/1.00} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{2718} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.79/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.78} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{26959} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.53} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{100.0\%} & \multicolumn{1}{l}{27} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{298} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.99} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{3089} & \multicolumn{1}{c}{0.86/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.65} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{30590} & \multicolumn{1}{c}{0.71/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.39} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \bottomrule
+    \end{tabular}%
+\end{table}%
+
+
+
+\subsubsection*{Comparison of Timing}
+% Timing comparison
+The computational time for approximating the variational posterior distribution is increased by expanding the length of region and the median read depth (Figure \ref{figure:timing}).
+Our variational EM algorithm is faster than the MCMC algorithm at the low median read depths of $27\times$ and $298\times$, and slower for the high median read depths of $3,089\times$ and $30,590\times$.
+ %results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.6\textwidth]{timing.png}
+\caption{\csentence{Timing comparison for our variational EM algorithm and MCMC sampling algorithm.}
+Sixty processors are used to estimate the model on the synthetic data set.}\label{figure:timing}
+\end{figure}
+
+% Timing profile of variational
+Table~\ref{table:timing} shows the timing profile for each part of our variational EM algorithm when median read depth is $3,089\times$.
+Optimizing $\gamma$ in the E-step \eqref{eqn:partial_mu} and optimizing $M_j$ in the M-step \eqref{eqn:M} takes more than 95\% of the time of one variational iteration in a test of a single processor, since the integration \eqref{eqn:integration} is needed.
+% results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-21_Timing_profile_rvd3_program
+%\begin{table*}[htbp]
+%\centering
+%\includegraphics[width=1.0\textwidth]{time3089X.png}
+%\caption{Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is $3,089\times$.
+%Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ in the E-step and optimizing $M$ in the M-step is highlighted in percentage.}
+%\label{tbl:timing_profile_all}
+%\end{table*}
+
+
+\begin{table}[htbp]
+  \centering
+  \caption{Timing profile of variational EM algorithm when median depth is $3,089\times$.}\label{table:timing}
+  \begin{threeparttable}
+  %\footnotesize
+  \scriptsize 
+    \begin{tabular}{ccrrrrrrcc}
+    \toprule
+    ~ & ~ & \multicolumn{3}{c}{\textbf{E-step}} & \multicolumn{4}{c}{\textbf{M-step}}    & ~ \\
+    \cmidrule(r{4pt}){3-5} \cmidrule(l){6-9}
+    \textbf{Computation} & \textbf{Region} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Update} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & Update & \textbf{Total} \\
+    \textbf{resource} & \textbf{length}  & \multicolumn{1}{c}{$\gamma$} & \multicolumn{1}{c}{\textbf{$\delta$}} & \multicolumn{1}{c}{ELBO} & \multicolumn{1}{c}{$\mu_0$} & \multicolumn{1}{c}{$M_0$} & \multicolumn{1}{c}{$M$} &  \multicolumn{1}{c}{ELBO}  & \textbf{time (s)} \\
+    \midrule
+          & 100   & \multicolumn{1}{c}{617.7 (63\%)} & \multicolumn{1}{c}{4.232} & \multicolumn{1}{c}{10.42} & \multicolumn{1}{c}{0.264} & \multicolumn{1}{c}{0.159} & \multicolumn{1}{c}{332.8 (34\%)} & 10.29 & 976.0 \\
+    single & 200   & \multicolumn{1}{c}{1124  (65\%)} & \multicolumn{1}{c}{8.936} & \multicolumn{1}{c}{18.64} & \multicolumn{1}{c}{0.418} & \multicolumn{1}{c}{0.256} & \multicolumn{1}{c}{570.0 (33\%)} & 18.37 & 1741 \\
+    processor & 300   & \multicolumn{1}{c}{1728  (65\%)} & \multicolumn{1}{c}{13.27} & \multicolumn{1}{c}{27.81} & \multicolumn{1}{c}{0.445} & \multicolumn{1}{c}{0.400} & \multicolumn{1}{c}{851.5 (32\%)} & 27.65 & 2649 \\
+          & 400   & \multicolumn{1}{c}{2433  (66\%)} & \multicolumn{1}{c}{17.99} & \multicolumn{1}{c}{38.55} & \multicolumn{1}{c}{0.737} & \multicolumn{1}{c}{0.635} & \multicolumn{1}{c}{1176  (32\%)} & 38.17 & 3705 \\
+       \midrule
+          & 100   & \multicolumn{1}{c}{29.93 (41\%)} & \multicolumn{1}{c}{0.2470} & \multicolumn{1}{c}{11.67} & \multicolumn{1}{c}{0.3070} & \multicolumn{1}{c}{0.1890} & \multicolumn{1}{c}{19.56 (26\%)} & 11.98 & 73.89 \\
+    60    & 200   & \multicolumn{1}{c}{44.69 (40\%)} & \multicolumn{1}{c}{0.4170} & \multicolumn{1}{c}{22.14} & \multicolumn{1}{c}{0.5230} & \multicolumn{1}{c}{0.3040} & \multicolumn{1}{c}{24.04 (21\%)} & 22.24 & 114.3 \\
+    processors & 300   & \multicolumn{1}{c}{63.47 (40\%)} & \multicolumn{1}{c}{0.7160} & \multicolumn{1}{c}{33.31} & \multicolumn{1}{c}{0.5620} & \multicolumn{1}{c}{0.5040} & \multicolumn{1}{c}{29.41 (18\%)} & 33.24 & 161.2 \\
+          & 400   & \multicolumn{1}{c}{94.66 (43\%)} & \multicolumn{1}{c}{0.7270} & \multicolumn{1}{c}{42.78} & \multicolumn{1}{c}{0.8200} & \multicolumn{1}{c}{0.7060} & \multicolumn{1}{c}{40.04 (18\%)} & 44.28 & 219.7 \\
+    \bottomrule
+    \end{tabular}%
+    \begin{tablenotes}
+    \item Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is $3,089\times$.
+Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ in the E-step and optimizing $M$ in the M-step is highlighted in percentage.
+    \end{tablenotes}
+    \end{threeparttable}
+\end{table}%
+
+
+
+\subsection*{Variant Detection on the Longitudinal Directed Evolution Data}
+% Generally describe detected variants
+We applied our variational EM algorithm to the MTH1 gene at Chr04:1,014,401-1,015,702 (1,302bp), which is the most frequently observed mutated gene by \cite{kvitek2013whole}.
+Our algorithm detected the same variants that were found by \cite{kvitek2013whole} (shown as highlighted in Table \ref{table:mutations}).
+Additionally, we detected 81 novel variants in 8 timepoints that the original publication did not detect.
+In Table \ref{table:mutations}, G7 is the baseline NRAF as the control sample when comparing with G70, G133, G266, G322, G385, and G448 in the respective hypotheses testing.
+The corresponding NRAFs of called variants at different time points are given by the estimate of the latent variable, $\hat{\mu_j} = E_q[\mu_j|r]$.
+% results are under folder \fzhang\Research\rvd3-variational-notebook\results\2016-01-12_Run_rvd3_Dan_data_regions
+%\begin{table*}[htbp]
+%\centering
+%\includegraphics[width=1.0\textwidth]{mutations.png}
+%\caption{Identified variants and corresponding NRAFs in gene MTH1 on Chromosome 4.
+%A blank cell indicates that the position of that time point is not called significantly different than G7.
+%The positions highlighted as blue were also identified by Kvitek, 2013.
+%The other 81 positions are novel identified variants in 8 timepoints.}
+%\label{tbl:mutations}
+%\end{table*}
+
+% Table generated by Excel2LaTeX from sheet 'Sheet1'
+\begin{table}[htbp]
+  \centering
+  \caption{Identified variants on the longitudinal data set.}\label{table:mutations}
+  \begin{threeparttable}
+  \tiny
+    \begin{tabular}{rrrrrrrrrrrr}
+    \toprule
+          & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{8}{c}{\textbf{Allele frequency of generation (\%)}} \\
+      \cmidrule(r{4pt}){5-12}
+    %\midrule
+    \textbf{Index} & \textbf{Position} & \textbf{Ref} & \textbf{Alt} & \multicolumn{1}{c}{\textbf{G7}} & \multicolumn{1}{c}{\textbf{G70}} & \multicolumn{1}{c}{\textbf{G133}} & \multicolumn{1}{c}{\textbf{G196}} & \multicolumn{1}{c}{\textbf{G266}} & \multicolumn{1}{c}{\textbf{G322}} & \multicolumn{1}{c}{\textbf{G385}} & \multicolumn{1}{c}{\textbf{G448}} \\
+    \midrule
+    1     & 1014407 & T     & C     & 0.127 &       &       & 0.620 & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+    2     & 1014408 & A     & G     & 0.083 & 0.374 & \textbf{} & \textbf{} & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+    3     & 1014422 & C     & G     & 0.160 &       &       & 1.036 & 7.431 &       &       &  \\
+    4     & 1014434 & T     & C     & 0.161 &       &       &       &       &       & 0.042 &  \\
+    5     & 1014436 & A     & G     & 0.161 &       & 0.127 &       &       &       &       &  \\
+    6     & 1014447 & A     & C     & 0.086 &       &       & 0.837 & 0.642 &       &       &  \\
+    7     & 1014455 & C     & T     & 0.044 & 0.345 &       &       &       &       &       &  \\
+    8     & 1014456 & T     & G     & 0.073 & 0.644 & 1.154 &       &       &       &       &  \\
+    9     & 1014457 & G     & T     & 0.031 &       & 0.777 & 2.675 &       &       &       &  \\
+    10    & 1014561 & T     & C     & 0.059 & 0.444 &       &       &       &       &       &  \\
+    11    & 1014580 & A     & G     & 0.161 &       & 0.096 & 0.168 & 0.481 & 0.088 & 0.038 & 0.081 \\
+    12    & 1014582 & T     & C     & 0.161 &       & 0.149 &       &       &       &       &  \\
+    13    & 1014583 & G     & A     & 0.039 & 0.405 & 1.171 & 0.366 &       &       &       &  \\
+    14    & 1014595 & A     & G     & 0.065 & 0.096 &       &       &       &       &       &  \\
+    15    & 1014607 & T     & A     & 0.039 & 0.292 & 0.443 &       &       &       &       &  \\
+    16    & 1014615 & G     & T     & 0.079 &       & 0.865 & 1.327 &       &       &       &  \\
+    17    & 1014651 & C     & T     & 0.210 &       &       & 0.723 &       &       &       &  \\
+    18    & 1014689 & T     & A     & 0.161 &       & 0.101 &       &       &       &       &  \\
+    19    & 1014691 & G     & A     & 0.056 &       & 0.308 &       &       &       &       &  \\
+    20    & 1014698 & C     & T     & 0.160 & 0.13  & 0.629 & 0.565 & 0.767 &       &       &  \\
+    21    & 1014701 & T     & C     & 0.160 &       & 0.120 &       &       &       &       &  \\
+    22    & 1014707 & A     & C     & 0.160 & 0.825 & 1.461 & 7.434 & 6.920 & 0.176 &       &  \\
+    23    & 1014712 & C     & A     & 0.160 & 0.116 & 1.429 & 0.350 & 1.104 &       &       &  \\
+    24    & 1014740 & G     & C     & 0.158 &       & 0.522 &       & 23.849 & 98.286 & 99.715 & 99.603 \\
+    25    & 1014741 & C     & T     & 0.028 & 0.997 & 1.622 & 0.780 &       &       &       &  \\
+    26    & 1014751 & C     & A     & 0.017 &       & 0.896 &       &       &       &       &  \\
+    27    & 1014765 & A     & C     & 0.159 &       & 0.431 &       &       &       &       &  \\
+    28    & 1014770 & G     & T     & 0.159 & 0.758 & 13.820 & 0.727 & 1.671 &       &       &  \\
+    29    & 1014791 & C     & T     & 0.014 &       & 0.918 &       &       &       &       &  \\
+    30    & 1014823 & C     & A     & 0.059 &       & 0.171 &       &       &       &       &  \\
+    31    & 1014856 & T     & C     & 0.160 &       & 0.119 &       &       &       &       &  \\
+    32    & 1014867 & A     & G     & 0.098 & 0.584 & 0.562 & 0.371 & 0.360 &       &       & 0.404 \\
+    33    & 1014877 & T     & A     & 0.039 &       &       & 0.449 &       &       &       &  \\
+    34    & 1014920 & G     & C     & 0.049 &       & 0.324 &       &       &       &       &  \\
+    35    & 1014930 & G     & T     & 0.010 &       & 0.303 &       &       &       &       &  \\
+    36    & 1014958 & C     & A     & 0.160 &       &       & 1.884 & 1.036 &       &       &  \\
+    37    & 1014971 & T     & C     & 0.030 & 0.445 &       &       &       &       &       &  \\
+    38    & 1014968 & A     & T     & 0.037 &       & 0.316 & 3.446 & 1.462 &       &       &  \\
+    39    & 1014978 & A     & C     & 0.011 &       & 1.430 &       &       &       &       &  \\
+    40    & 1014997 & G     & A     & 0.008 &       & 0.368 & 2.287 & 2.564 &       &       &  \\
+    41    & 1015004 & A     & G     & 0.160 & 0.127 &       &       &       &       &       &  \\
+    42    & 1015036 & G     & A     & 0.026 &       &       & 0.640 &       &       &       &  \\
+    43    & 1015043 & C     & T     & 0.047 &       & 0.399 &       &       &       &       &  \\
+    44    & 1015051 & G     & A     & 0.161 &       &       &       & 0.084 &       &       &  \\
+    45    & 1015069 & T     & C     & 0.162 &       &       &       &       &       & 0.027 &  \\
+    46    & 1015074 & A     & T     & 0.002 &       & 0.400 & 0.510 &       &       &       &  \\
+    47    & 1015077 & G     & T     & 0.047 &       & 1.06  &       &       &       &       &  \\
+    48    & 1015078 & A     & G     & 0.186 &       &       & 0.689 &       &       &       &  \\
+    49    & 1015086 & T     & C     & 0.055 &       &       & 0.525 & 0.437 &       &       & 0.307 \\
+    50    & 1015092 & A     & C     & 0.003 &       &       & 0.424 &       &       &       &  \\
+    51    & 1015190 & A     & C     & 0.160 &       & 0.459 & 0.545 &       &       &       &  \\
+    52    & 1015220 & G     & A     & 0.161 &       & 0.061 &       &       &       &       &  \\
+    53    & 1015222 & T     & C     & 0.161 &       &       &       &       & 0.040 &       & 0.067 \\
+    54    & 1015228 & T     & A     & 0.054 &       &       & 0.293 &       &       &       &  \\
+    55    & 1015236 & A     & C     & 0.095 & 0.935 & 2.211 & 1.425 & 1.100 &       &       &  \\
+    56    & 1015247 & A     & G     & 0.060 &       &       & 0.142 &       &       &       &  \\
+    57    & 1015276 & T     & C     & 0.109 &       &       & 0.519 &       &       &       &  \\
+    58    & 1015280 & T     & A     & 0.519 &       &       & 1.108 &       &       &       &  \\
+    59    & 1015284 & G     & A     & 0.159 &       &       &       & 0.190 &       &       &  \\
+    60    & 1015317 & G     & C     & 0.160 &       &       & 0.168 & 0.306 &       &       &  \\
+    61    & 1015321 & G     & A     & 0.059 &       & 0.803 &       &       &       &       &  \\
+    62    & 1015322 & A     & T     & 0.013 &       & 0.519 & 0.488 &       &       &       &  \\
+    63    & 1015360 & C     & A     & 0.161 &       &       & 0.067 &       &       &       &  \\
+    64    & 1015368 & C     & T     & 0.064 &       & 0.147 &       &       &       &       &  \\
+    65    & 1015370 & T     & C     & 0.161 &       & 0.149 &       &       &       &       &  \\
+    66    & 1015371 & G     & C     & 0.062 &       &       &       & 0.147 &       &       &  \\
+    67    & 1015386 & G     & T     & 0.047 & 0.375 & 3.012 & 2.098 & 1.022 &       &       &  \\
+    68    & 1015411 & A     & G     & 0.042 & 0.214 &       &       &       &       &       &  \\
+    69    & 1015423 & G     & A     & 0.161 &       &       & 0.159 &       &       &       &  \\
+    70    & 1015424 & T     & C     & 0.050 &       &       &       &       &       & 0.194 &  \\
+    71    & 1015434 & A     & T     & 0.161 &       & 0.151 &       &       &       &       &  \\
+    72    & 1015477 & C     & A     & 0.043 & 0.440 &       &       &       &       &       &  \\
+    73    & 1015478 & C     & T     & 0.161 &       &       & 0.162 &       &       &       &  \\
+    74    & 1015512 & G     & T     & 0.161 &       &       &       &       &       & 0.006 &  \\
+    75    & 1015519 & T     & C     & 0.161 &       & 0.080 &       &       &       &       &  \\
+    76    & 1015521 & G     & A     & 0.018 & 0.371 &       &       &       &       &       &  \\
+    77    & 1015522 & A     & G     & 0.040 &       &       & 0.343 &       &       &       &  \\
+    78    & 1015539 & G     & C     & 0.040 &       & 0.618 &       &       &       &       &  \\
+    79    & 1015555 & G     & A     & 0.160 &       & 0.110 &       &       &       &       &  \\
+    80    & 1015556 & A     & G     & 0.161 &       &       & 0.117 &       &       &       &  \\
+    81    & 1015563 & G     & A     & 0.041 &       &       & 0.247 &       &       &       &  \\
+    82    & 1015623 & T     & G     & 0.034 &       &       &       &       &       &       & 0.194 \\
+    83    & 1015627 & T     & C     & 0.161 &       &       &       &       & 0.060 &       &  \\
+    84    & 1015657 & G     & T     & 0.032 &       & 0.740 & 0.583 & 0.461 &       &       &  \\
+    85    & 1015666 & G     & A     & 0.065 & 0.091 &       & 0.105 &       &       &       &  \\
+    86    & 1015681 & C     & T     & 0.161 &       &       &       &       & 0.030 &       &  \\
+    87    & 1015691 & T     & C     & 0.037 &       & 0.358 &       &       &       &       &  \\
+    88    & 1015699 & A     & G     & 0.161 &       &       & 0.068 &       &       &       &  \\
+    89    & 1015700 & C     & A     & 0.015 & 0.949 & 1.965 & 1.044 & 0.379 &       &       &  \\
+    90    & 1015701 & A     & G     & 0.161 &       & 0.068 &       &       &       &       &  \\
+    \midrule
+    \multicolumn{4}{c}{\textbf{Num of variants}} & \multicolumn{1}{c}{0} & \multicolumn{1}{c}{22} & \multicolumn{1}{c}{24} & \multicolumn{1}{c}{42} & \multicolumn{1}{c}{21} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{6} & \multicolumn{1}{c}{6} \\
+    \bottomrule
+    \end{tabular}
+    \begin{tablenotes}
+    \item Identified variants and corresponding NRAFs in gene MTH1 on Chromosome 4.
+		  A blank cell indicates that the position of that time point is not called significantly different than G7.
+		  The positions highlighted as blue were also identified by Kvitek, 2013.
+		  The other 81 positions are novel identified variants in 8 timepoints.
+    \end{tablenotes}
+    \end{threeparttable}
+\end{table}%
+
+
+
+% Beneficial variant and early identification
+All of these variants, except the variant at position Chr04:1,014,740, decrease in NRAF following a maximum.
+The allele at position Chr04:1,014,740 is a beneficial variant that arises in NRAF to 99.603\% at generation 448 within a constant glucose-limited environment.
+Moreover, we identified the first emergence of this beneficial variant as early as 0.522\% in generation 133.
+Table \ref{table:mutations} shows that we are able to detect many variants (NRAF $<$ 1.0\%) early in the evolutionary time course.
+Furthermore, we detected a variant at position Chr04:1,015,666 at generation 70 as 0.091\% NRAF, which is less than a 0.1\% fraction.
+
+% Concomitant variants
+We identified a pair of variants, Chr04:1,014,740 in gene MTH1 and Chr12:200,286 in gene ADE16, that increase in NRAF together in time (Figure \ref{figure:concomitant}).
+We hypotheses that the variants are concomitant in the same strain.
+In this pair of genes, gene MTH1 is a negative regulator of the glucose-sensing signal transduction pathway, and gene ADE16 is an enzyme of $\mathit{de\, novo}$ purine biosynthesis.
+Glucose sensing induces gene expression changes to help yeast receive necessary nutrients, which could be a reason for this pair of genes to mutate together \cite{johnston1999feasting}.
+Further experimental validation of this hypothesis would be required to definitively show that the mutations are concomitant.
+% results in results\2016-01-12_Run_rvd3_Dan_data_regions
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{concomitant.png}
+\caption{\csentence{The NRAF trend of concomitant variants in gene MTH1 and ADE16.}
+The 95\% Bayesian credible intervals are shown.}
+\label{figure:concomitant}
+\end{figure}
+
+% Influence of M0 on muj
+The global precision parameter $\hat{M_0}$ could influence the estimate of $\mu_j$ due to its regularization effect.
+We show the influence of different $\hat{M_0}$ on variant position Chr04:1,014,740, $q(\mu_{1,014,740}|r)$ in Figure \ref{tbl:M0}.
+We see that as we decrease the prior precision parameter $\hat{M_0}$, $\hat{\mu}_{1,014,740}$ increases as expected.
+But the effect of changing $\hat{M_0}$ over several orders of magnitude does not change $\mu_j$ greatly.
+Here $\hat{M_0} = 1.752$ in this dataset.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{M0.png}
+\caption{\csentence{Influence of $M_0$ on the estimate of $\mu_j$.}
+Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{1,014,740}$, with different $\hat{M_0}$ are shown.}
+\label{tbl:M0}
+\end{figure}
+
+\section*{Conclusions}
+% Brief summary of RVD3
+In this article, we propose a variational EM algorithm to estimate the non-reference allele frequency in the RVD2 model to identify rare nucleotide variants in heterogeneous pools.
+We derived a variational EM algorithm to avoid an intractable integration in our Bayesian model.
+Our results show that the variational EM algorithm
+(i) is able to identify rare variants at a 0.1\% NRAF level with comparable sensitivity and specificity to a MCMC sampling algorithm;
+(ii) has a higher specificity in comparison with many state-of-the-art algorithms in a broad range of NRAFs;
+and (iii) detects SNVs early in the evolutionary time course, as well as tracks NRAF in a real longitudinal yeast data set.
+
+% Potential problems of variational EM and alternative strategies
+%However, the application on an interested gene region suggests that our variational EM algorithm yields an accurate identification of rare SNVs in sufficient efficiency.
+We have chosen parametric forms for the variational distributions.
+This choice has left us with a complex integral in our variational optimization problem.
+In future work, we plan to explore other approximations of the variational distributions that render the integral easier to compute.
+One could use cubic splines to numerically approximate the function and then integrate that surrogate \cite{mckinley1998cubic}.
+Another strategy is to consider a Laplace approximation for the variational distribution, as we and others have done previously \cite{saddiki2014glad, wang2013variational}.
+
+%As a local optimization methodology, variational EM can converge to local maximum.
+%It could be that the accuracy is not sufficient to identify variants with statistical confidence.
+%If so, we will generate different random initialized parameters to restart the algorithm.
+%We can also consider using RVD2 for more accurate posterior approximation, which is implemented by MCMC sampling algorithm.
+%MCMC is computationally slower, but is easily deployed to multiple computational cores in parallel.
+%Thus, we will be able to analyze the sequencing data using Amazon Elastic Compute Cloud (EC2) resource, which will increase computational efficiency.
+
+% Future work
+Improving the speed of the estimating algorithm enables us to interrogate whole-genome sequencing data.
+By doing this, we hope to reveal the dynamics of arising variants at the genome-wide scale to show the genetic basis of clonal interference.
+Our method can also be extended to study drug resistance by characterizing tumor heterogeneity in targeted anti-cancer chemotherapy samples.
+We will be able to find the causative variants that lead to drug resistance and understand the causes of resistance at the single nucleotide level.
+
+
+
+%\section{Additional Files}
+%  \subsection*{Additional file 1 --- Sample additional file title}
+%    Additional file descriptions text.
+%
+%  \subsection*{Additional file 2 --- Sample additional file title}
+%    Additional file descriptions text.
+
+\begin{backmatter}
+
+\section*{Competing interests}
+  The authors declare that they have no competing interests.
+
+\section*{Authors' contributions}
+%    Text for this section \ldots
+FZ developed and implemented the variational expectation maximization inference algorithm, and wrote the manuscript.
+PF conceived the study and helped to draft the manuscript.
+All authors read and approved the final manuscript.
+
+\section*{Acknowledgements}
+FZ and PF were supported by PhRMA Foundation Informatics Grant 2013080079.
+We would like to thank Dan Kvitek for kindly sharing the data set used for the longitudinal yeast evolution analysis.
+We acknowledge Chuangqi Wang and Ross Lagoy for valuable comments on the manuscript.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  The Bibliography                       %%
+%%                                                         %%
+%%  Bmc_mathpys.bst  will be used to                       %%
+%%  create a .BBL file for submission.                     %%
+%%  After submission of the .TEX file,                     %%
+%%  you will be prompted to submit your .BBL file.         %%
+%%                                                         %%
+%%                                                         %%
+%%  Note that the displayed Bibliography will not          %%
+%%  necessarily be rendered by Latex exactly as specified  %%
+%%  in the online Instructions for Authors.                %%
+%%                                                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% if your bibliography is in bibtex format, use those commands:
+\bibliographystyle{bmc-mathphys} % Style BST file (bmc-mathphys, vancouver, spbasic).
+\bibliography{bmc_article}      % Bibliography file (usually '*.bib' )
+% for author-year bibliography (bmc-mathphys or spbasic)
+% a) write to bib file (bmc-mathphys only)
+% @settings{label, options="nameyear"}
+% b) uncomment next line
+%\nocite{label}
+
+% or include bibliography directly:
+% \begin{thebibliography}
+% \bibitem{b1}
+% \end{thebibliography}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Figures                       %%
+%%                               %%
+%% NB: this is for captions and  %%
+%% Titles. All graphics must be  %%
+%% submitted separately and NOT  %%
+%% included in the Tex document  %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+%% Do not use \listoffigures as most will included as separate files
+
+%\section*{Figures}
+%  \begin{figure}[h!]
+%  \caption{\csentence{Sample figure title.}
+%      A short description of the figure content
+%      should go here.}
+%      \end{figure}
+%
+%\begin{figure}[h!]
+%  \caption{\csentence{Sample figure title.}
+%      Figure legend text.}
+%      \end{figure}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                               %%
+%%% Tables                        %%
+%%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%% Use of \listoftables is discouraged.
+%%%
+%\section*{Tables}
+%\begin{table}[h!]
+%\caption{Sample table title. This is where the description of the table should go.}
+%      \begin{tabular}{cccc}
+%        \hline
+%           & B1  &B2   & B3\\ \hline
+%        A1 & 0.1 & 0.2 & 0.3\\
+%        A2 & ... & ..  & .\\
+%        A3 & ..  & .   & .\\ \hline
+%      \end{tabular}
+%\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                               %%
+%%% Additional Files              %%
+%%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\section*{Additional Files}
+%  \subsection*{Additional file 1 --- Sample additional file title}
+%    Additional file descriptions text (including details of how to
+%    view the file, if it is in a non-standard format or the file extension).  This might
+%    refer to a multi-page table or a figure.
+%
+%  \subsection*{Additional file 2 --- Sample additional file title}
+%    Additional file descriptions text.
+
+
+\end{backmatter}
+\end{document}
