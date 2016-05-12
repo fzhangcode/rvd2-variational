@@ -358,7 +358,7 @@ The latent variables are:
 
 In Figure \ref{figure:model}B, $\gamma$ is the parameter for the variational distribution for latent variable $\mu$,
 and $\delta$ is the parameter for the variational distribution for latent variable $\theta$.
-We describe $q(\mu)$ and $q(\theta)$ in detail in section 3.3
+We describe $q(\mu)$ and $q(\theta)$ in detail in section 2.2.3.
 
 \begin{figure}[htpb]
 
@@ -559,7 +559,7 @@ We update the variational distribution $q(\mu_j)$ using the partial ELBO dependi
 \mathcal{L}_{{[q(\mu_j)]}}
 & = N \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
 &\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace \\
-&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace+ \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
 &\quad + J \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
 &\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace\\
 &\quad - \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right]
@@ -582,7 +582,7 @@ The ELBO with respect to $ \mu_0 $ is
 \begin{split}
 \mathcal{L}_{[\mu_0]}
 &= -J*\log  \Gamma(\mu_0 M_0) - J*\log \Gamma(M_0 (1-\mu_0)) \\
-& + M_0\mu_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
+& \quad+ M_0\mu_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
 - E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace. \\
 \end{split}
 \end{equation}
@@ -594,7 +594,7 @@ The ELBO with respect to $ M_0 $ is
 \begin{split}
 \mathcal{L}_{[M_0]}
 &=J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}\\
-& + M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
+&\quad + M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
 \end{split}
 \end{equation}
 
@@ -673,7 +673,7 @@ Then,
 \begin{equation}
 \begin{split}
   &\mu_j^{\triangle} \mid r^{case}, r^{control} \sim \\
-  &\mathcal{N}(E_q[\mu_j|r^{case}] - E_q[\mu_j|r^{control}], \text{Var}_q[\mu_j|r^{case}] + \text{Var}_q[\mu_j|r^{control}])
+  &\quad \mathcal{N}(E_q[\mu_j|r^{case}] - E_q[\mu_j|r^{control}], \text{Var}_q[\mu_j|r^{case}] + \text{Var}_q[\mu_j|r^{control}])
 \end{split}
 \end{equation}
 
@@ -738,7 +738,7 @@ The variational EM algorithm has a higher specificity compared with the MCMC alg
 %\end{table}
 
 \begin{table}[h!]
-\caption{Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm.}\label{table:mcmcvar}
+\caption{Sensitivity/Specificity comparison of variational EM algorithm with MCMC algorithm.}\label{table:mcmcvar}
 % Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.
 \scriptsize 
 %\small
@@ -753,18 +753,22 @@ The variational EM algorithm has a higher specificity compared with the MCMC alg
 	 & 408 & 0.00 & 0.07 & 1.00 & 1.00   \\
 	 & 4129 & 0.14 & 0.29 & 1.00 & 1.00   \\
 	 & 41449 & 0.86 & 1.00 & 0.97 & 1.00   \\
+	 \midrule
 	0.3\% & 36 & 0.00 & 0.00 & 1.00 & 1.00   \\
 	 & 410 & 0.00 & 0.00 & 1.00 & 1.00   \\
 	 & 4156 & 1.00 & 1.00 & 0.99 & 0.98   \\
 	 & 41472 & 1.00 & 0.93 & 0.85 & 0.91   \\
+	 \midrule
 	1.0\% & 53 & 0.00 & 0.00 & 1.00 & 1.00   \\
 	 & 535 & 0.21 & 0.29 & 1.00 & 1.00  \\
 	 & 5584 & 1.00 & 1.00 & 0.98 & 0.98   \\
 	 & 55489 & 1.00 & 0.93 & 0.87 & 0.95   \\
+	 \midrule
 	10.0\% & 22 & 0.00 & 0.57 & 1.00 & 1.00   \\
 	 & 260 & 1.00 & 1.00 & 1.00 & 1.00   \\
 	 & 2718 & 1.00 & 1.00 & 1.00 & 1.00   \\
 	 & 26959 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 \midrule
 	100.0\% & 27 & 1.00 & 1.00 & 1.00 & 1.00   \\
 	 & 298 & 1.00 & 1.00 & 1.00 & 1.00   \\
 	 & 3089 & 1.00 & 1.00 & 1.00 & 1.00   \\
@@ -830,18 +834,22 @@ The performance of other methods is stated in detail in \cite{he2015rvd2}.
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{408} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.07/0.92} & 0.00/1.00 & 0.29/0.91 & 0.00/1.00 & \multicolumn{1}{c}{0.07/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{4129} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.52} & 0.00/1.00 & 0.64/0.86 & 0.14/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{41449} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.79} & 0.00/1.00 & 0.14/0.93 & 0.86/0.97 & \multicolumn{1}{c}{1.00/1.00} \\
+    \midrule
     \multicolumn{1}{c}{0.3\%} & \multicolumn{1}{l}{36} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.43/1.00 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{410} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.21/0.95} & 0.00/1.00 & 0.50/0.94 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{4156} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.53} & 0.00/1.00 & 0.36/0.91 & 1.00/0.99 & \multicolumn{1}{c}{1.00/0.98} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{41472} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.75} & 0.00/1.00 & 0.43/0.90 & 1.00/0.85 & \multicolumn{1}{c}{0.93/0.91} \\
+    \midrule
     \multicolumn{1}{c}{1.0\%} & \multicolumn{1}{l}{53} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/0.99} & 0.00/1.00 & 0.29/0.98 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{535} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.43/0.89} & 0.00/1.00 & 0.71/0.91 & 0.21/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{5584} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.47} & 0.00/1.00 & 0.64/0.95 & 1.00/0.98 & \multicolumn{1}{c}{1.00/0.98} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{55489} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.69} & 0.00/1.00 & 0.86/0.90 & 1.00/0.87 & \multicolumn{1}{c}{0.93/0.95} \\
+    \midrule
     \multicolumn{1}{c}{10.0\%} & \multicolumn{1}{l}{22} & \multicolumn{1}{c}{0.21/1.00} & \multicolumn{1}{c}{0.43/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.36/1.00} & 0.29/1.00 & 0.86/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.57/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{260} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.86/1.00} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{2718} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.79/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.78} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{26959} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.53} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \midrule
     \multicolumn{1}{c}{100.0\%} & \multicolumn{1}{l}{27} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{298} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.99} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
     \multicolumn{1}{c}{} & \multicolumn{1}{l}{3089} & \multicolumn{1}{c}{0.86/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.65} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
