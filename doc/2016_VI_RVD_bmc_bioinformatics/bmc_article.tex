@@ -422,10 +422,7 @@ Given the variational distribution, $q$, the log-likelihood of the data is lower
 The function $\mathcal{L}(q, \phi)$ is the evidence of lower bound (ELBO) of the log-likelihood of the data, which is the sum of $q$-expected complete log-likelihood and the entropy of the variational distribution $q$.
 The goal of variational inference is to maximize the ELBO.
 Equivalently, $q$ is chosen by minimizing the KL divergence between the variational distribution and the true posterior distribution.
-Each component of ELBO is derived in Additional file \ref{derivation}.
 
-
-\subsubsection{Variational Distribution}
 Since $\theta$ and $r$ are conjugate pairs, the posterior distribution of $\theta_{ji}$ is a Beta distribution,
 \begin{align}
 &p(\theta_{ji}|r_{ji},n_{ji},\mu_j,M_j)
@@ -446,17 +443,18 @@ But, since the support of $\mu_j$ is $[0,1]$, we propose a Beta distribution wit
 \mu_j &\thicksim \text{Beta}(\gamma_{j1}, \gamma_{j2}) \nonumber.
 \end{align}
 
-The variational distributions can be derived in Additional file \ref{derivation} in detail.
+Each component of ELBO is derived in Additional file \ref{derivation}.
 
 
-\subsection{Variational EM algorithm}
+\subsubsection{Variational EM algorithm}
 Variational EM algorithm maximizes the ELBO on the true likelihood by alternating between maximization over $q$ (E-step) and maximization over $\phi= \left\{\mu_0, M_0, M \right\}$ (M-step).
 
 We update the variational parameters and the model parameters iteratively by numerically optimizing each problem using Sequential Least SQuares Programming (SLSQP) \cite{kraft1988software} (see Additional file \ref{derivation} for detail).
 
-It is noticable that there is no analytical representation for a component, 
+It is noticeable that there is no analytical representation for a component, 
 
-$ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $. 
+$ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $,
+which is required to be calculated for variational distribution for $\mu_j$ and model parameter $M$.
 We must resort to numerical integration,
 
 \begin{equation}\label{eqn:integration}
@@ -780,6 +778,7 @@ Single and multiple processors are both tested to estimate timing. Time for opti
 
 
 \subsection{Variant Detection on the Longitudinal Directed Evolution Data}
+\subsubsection{Detected Variants}
 % Generally describe detected variants
 We applied our variational EM algorithm to the MTH1 gene at Chr04:1,014,401-1,015,702 (1,302bp), which is the most frequently observed mutated gene by \cite{kvitek2013whole}.
 Our algorithm detected the same variants that were found by \cite{kvitek2013whole} (shown as highlighted in Additional file \ref{variants}).
@@ -922,7 +921,7 @@ Additional file \ref{variants} shows that we are able to detect many variants (N
 Furthermore, we detected a variant at position Chr04:1,015,666 at generation 70 as 0.091\% NRAF, which is less than a 0.1\% fraction.
 
 % Influence of M0 on muj
-\subsection{Sensitivity Analysis}
+\subsubsection{Sensitivity Analysis}
 The global precision parameter $\hat{M_0}$ could influence the estimate of $\mu_j$ due to its regularization effect.
 We show the influence of different $\hat{M_0}$ on variant position Chr04:1,014,740, $q(\mu_{1,014,740}|r)$ in Figure \ref{tbl:M0}.
 We see that as we decrease the prior precision parameter $\hat{M_0}$, $\hat{\mu}_{1,014,740}$ increases as expected.
@@ -937,7 +936,7 @@ Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{
 \end{figure}
 
 % Concomitant variants
-\subsection{Concomitant Variants Detection}
+\subsubsection{Concomitant Variants Detection}
 We identified a pair of variants, Chr04:1,014,740 in gene MTH1 and Chr12:200,286 in gene ADE16, that increase in NRAF together in time (Figure \ref{figure:concomitant}).
 We hypotheses that the variants are concomitant in the same strain.
 In this pair of genes, gene MTH1 is a negative regulator of the glucose-sensing signal transduction pathway, and gene ADE16 is an enzyme of $\mathit{de\, novo}$ purine biosynthesis.
@@ -987,10 +986,10 @@ We will be able to find the causative variants that lead to drug resistance and 
 
 
 \section{Additional Files}
-  \subsection{Additional file 1 --- Derivation of the variational EM inference algorithm.}\label{derivation}
-  Derivation of evidence lower bound, variational distribution, and variational EM algorithm is described in detail. (PDF 149 kb)
+  \subsection{Additional file 1 --- Derivation of the variational expectation maximization (EM) inference algorithm.}\label{derivation}
+  Derivation of the variational EM algorithm is described in detail. (PDF 149 kb)
 
-  \subsection{Additional file 2 --- Identified variants and corresponding NRAFs in gene MTH1 on Chromosome 4.}\label{variants}
+  \subsection{Additional file 2 --- Identified variants and corresponding non-reference allele frequencies in gene MTH1 on Chromosome 4.}\label{variants}
 	A blank cell indicates that the position of that time point is not called significantly different than G7.
 	The positions highlighted as blue were also identified by Kvitek, 2013.
 	The other 81 positions are novel identified variants in 8 timepoints. (XLSX 18.8 kb)
