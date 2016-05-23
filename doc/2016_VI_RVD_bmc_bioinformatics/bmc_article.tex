@@ -100,10 +100,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%\def\includegraphic{}
-%\def\includegraphics{}
-
-
 
 %%% Put your definitions there:
 \startlocaldefs
@@ -554,7 +550,7 @@ To discriminate this non-biological cause from the interesting true variants we 
 For each provisional variant, if we reject the null hypothesis that the distribution is uniform, we promote the position to a called variant.
 
 
-\section{Results and discussion}
+\section{Results and Discussion}
 
 \subsection{Data Sets}
 
@@ -671,6 +667,7 @@ Among all of the methods compared, our variational EM algorithm has a higher sen
 Our variational EM algorithm shows higher specificity than all the other tested methods at a very low NRAF (0.1\%) level.
 However, our algorithm has a slightly lower specificity than the MCMC algorithm when the median read depth is $4,156\times$ at 0.3\% NRAF, and a slightly lower sensitivity than the MCMC algorithm when the median read depth is $41,472\times$ at 0.3\% NRAF and a median read depth of $55,489\times$ at 1.0\% NRAF.
 The performance of other methods is stated in detail in \cite{he2015rvd2}.
+% results in results\2015-09-28_Run_rvd3_synthetic_data_set
 %\begin{table*}[htbp]
 %\centering
 %\includegraphics[width=1.0\textwidth]{characterall.png}
@@ -723,7 +720,7 @@ The performance of other methods is stated in detail in \cite{he2015rvd2}.
 % Timing comparison
 The computational time for approximating the variational posterior distribution is increased by expanding the length of region and the median read depth (Figure \ref{figure:timing}).
 Our variational EM algorithm is faster than the MCMC algorithm at the low median read depths of $27\times$ and $298\times$, and slower for the high median read depths of $3,089\times$ and $30,590\times$.
- %results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
+ %results in results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.6\textwidth]{timing.png}
@@ -734,7 +731,7 @@ Sixty processors are used to estimate the model on the synthetic data set.}\labe
 % Timing profile of variational
 Table~\ref{table:timing} shows the timing profile for each part of our variational EM algorithm when median read depth is $3,089\times$.
 Optimizing $\gamma$ in the E-step and optimizing $M_j$ in the M-step takes more than 95\% of the time of one variational iteration in a test of a single processor, since the integration \eqref{eqn:integration} is needed.
-% results are under folder \fzhang\Research\rvd3-variational-notebook\results\2015-10-21_Timing_profile_rvd3_program
+% results in results\2015-10-21_Timing_profile_rvd3_program
 %\begin{table*}[htbp]
 %\centering
 %\includegraphics[width=1.0\textwidth]{time3089X.png}
@@ -785,7 +782,7 @@ Our algorithm detected the same variants that were found by \cite{kvitek2013whol
 Additionally, we detected 81 novel variants in 8 timepoints that the original publication did not detect.
 In Additional file \ref{variants}, G7 is the baseline NRAF as the control sample when comparing with G70, G133, G266, G322, G385, and G448 in the respective hypotheses testing.
 The corresponding NRAFs of called variants at different time points are given by the estimate of the latent variable, $\hat{\mu_j} = E_q[\mu_j|r]$.
-% results are under folder \fzhang\Research\rvd3-variational-notebook\results\2016-01-12_Run_rvd3_Dan_data_regions
+% results in results\2016-01-12_Run_rvd3_Dan_data_regions
 %\begin{table*}[htbp]
 %\centering
 %\includegraphics[width=1.0\textwidth]{mutations.png}
@@ -927,6 +924,7 @@ We show the influence of different $\hat{M_0}$ on variant position Chr04:1,014,7
 We see that as we decrease the prior precision parameter $\hat{M_0}$, $\hat{\mu}_{1,014,740}$ increases as expected.
 But the effect of changing $\hat{M_0}$ over several orders of magnitude does not change $\mu_j$ greatly.
 Here $\hat{M_0} = 1.752$ in this dataset.
+% results in results\2016-03-07_Plot_influence_of_M0
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{M0.png}
@@ -1051,40 +1049,7 @@ We acknowledge Chuangqi Wang and Ross Lagoy for valuable comments on the manuscr
 %%                               %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%
-%% Do not use \listoffigures as most will included as separate files
 
-%\section{Figures}
-%  \begin{figure}[h!]
-%  \caption{\csentence{Sample figure title.}
-%      A short description of the figure content
-%      should go here.}
-%      \end{figure}
-%
-%\begin{figure}[h!]
-%  \caption{\csentence{Sample figure title.}
-%      Figure legend text.}
-%      \end{figure}
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%                               %%
-%%% Tables                        %%
-%%%                               %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%%% Use of \listoftables is discouraged.
-%%%
-%\section{Tables}
-%\begin{table}[h!]
-%\caption{Sample table title. This is where the description of the table should go.}
-%      \begin{tabular}{cccc}
-%        \hline
-%           & B1  &B2   & B3\\ \hline
-%        A1 & 0.1 & 0.2 & 0.3\\
-%        A2 & ... & ..  & .\\
-%        A3 & ..  & .   & .\\ \hline
-%      \end{tabular}
-%\end{table}
 
 \end{backmatter}
 \end{document}
