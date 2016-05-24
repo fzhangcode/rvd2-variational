@@ -1,0 +1,269 @@
+%% BioMed_Central_Tex_Template_v1.06
+%%                                      %
+%  bmc_article.tex            ver: 1.06 %
+%                                       %
+
+%%IMPORTANT: do not delete the first line of this template
+%%It must be present to enable the BMC Submission system to
+%%recognise this template!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                     %%
+%%  LaTeX template for BioMed Central  %%
+%%     journal article submissions     %%
+%%                                     %%
+%%          <8 June 2012>              %%
+%%                                     %%
+%%                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% For instructions on how to fill out this Tex template           %%
+%% document please refer to Readme.html and the instructions for   %%
+%% authors page on the biomed central website                      %%
+%% http://www.biomedcentral.com/info/authors/                      %%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%% BioMed Central currently use the MikTex distribution of         %%
+%% TeX for Windows) of TeX and LaTeX.  This is available from      %%
+%% http://www.miktex.org                                           %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% additional documentclass options:
+%  [doublespacing]
+%  [linenumbers]   - put the line numbers on margins
+
+%%% loading packages, author definitions
+
+%\documentclass[twocolumn]{bmcart}% uncomment this for twocolumn layout and comment line below
+\documentclass{bmcart}
+
+%%% Load packages
+%\usepackage{amsthm,amsmath}
+%\RequirePackage{natbib}
+%\RequirePackage[authoryear]{natbib}% uncomment this for author-year bibliography
+%\RequirePackage{hyperref}
+\usepackage[utf8]{inputenc} %unicode support
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{natbib}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+\usepackage{times}
+
+
+\begin{document}
+
+\title{Derivation of the Variational Expectation Maximization (EM) Inference Algorithm}
+\maketitle
+
+\section{Evidence Lower Bound}
+The ELBO can be expanded as
+\begin{equation}
+\begin{split}
+\label{L}
+\mathcal{L}(q, \phi) &= E_q \left[ \log p\left(r,\mu,\theta | n; \phi \right)\right] - E_q \left[ \log q\left(\mu,\theta \right)\right] \\
+&= E_q \left[ \log p\left(r | \theta, n \right)\right] + E_q \left[ \log p\left(\theta | \mu; M \right)\right] + E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] \\
+& - E_q \left[ \log q\left(\mu \right)\right]- E_q \left[ \log q\left(\theta \right)\right]. \\
+\end{split}
+\end{equation}
+We write out each component below.
+\begin{equation}
+\begin{split}
+\label{r}
+E_q \left[ \log p\left(r | \theta, n \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q  \left[ \log p \left( r_{ji} | \theta_{ji}, n_{ji} \right) \right] \\
+&= \sum_{j=1}^{J} \sum_{i=1}^{N} \log \left( \frac{ \Gamma(n_{ji}+1) } { \Gamma(r_{ji}+1) \Gamma( n_{ji} - r_{ji} + 1 ) }\right)  \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace
+\end{split}
+\end{equation}
+%
+\begin{equation}
+\begin{split}
+\label{mu}
+E_q \left[ \log p\left(\mu ; \mu_0, M_0 \right)\right] &= \sum_{j=1}^{J} E_q  \left[ \log p\left( \mu_j; \mu_0, M_0 \right) \right] \\
+&= J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace
+\end{split}
+\end{equation}
+%
+\begin{equation}
+\begin{split}
+\label{theta}
+E_q \left[ \log p\left(\theta | \mu; M \right)\right] &= \sum_{j=1}^{J} \sum_{i=1}^{N} E_q \left[ \log p\left(\theta_{ji} | \mu_j; M_j \right)\right] \\
+&= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace\\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace
+\end{split}
+\end{equation}
+
+Therefore, we need to compute the following expectations with respect to the variational distribution:
+%
+$ E_q \left[ \log \theta_{ji} \right] $, $ E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] $ , $ E_q  \left[ \log \mu_j \right] $ , $ E_q  \left[ \log (1 - \mu_j)\right] $, $ E_q \left[ \mu_j \right] $, and $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $.
+
+
+We select the functional forms for the variational distributions $q(\theta)$ and $q(\mu)$ to facilitate these expected value computations.
+
+
+\section{Variational Distributions}
+Since $\theta$ and $r$ are conjugate pairs, the posterior distribution of $\theta_{ji}$ is a Beta distribution,
+\begin{align}
+&p(\theta_{ji}|r_{ji},n_{ji},\mu_j,M_j)
+\thicksim \text{Beta}(r_{ji}+M_j \mu_j, n_{ji}-r_{ji}+M_j(1-\mu_j)).
+\end{align}
+Therefore, we propose a Beta distribution with parameter vector $\delta_{ji}$ as variational distribution,
+\begin{align}
+\theta_{ji} &\thicksim \text{Beta}(\delta_{ji1}, \delta_{ji2}) \nonumber.
+\end{align}
+%
+The posterior distribution of $\mu_j$ is given by its Markov blanket,
+\begin{align}
+p(\mu_j|\theta_{ji},M_j,\mu_0,M_0)\propto p(\mu_j|\mu_0,M_0)p(\theta_{ji}|\mu_j,M_j).
+\end{align}
+This is not in the form of any known distribution.
+But, since the support of $\mu_j$ is $[0,1]$, we propose a Beta distribution with parameter vector $\gamma_{j}$ as variational distribution,
+\begin{align}
+\mu_j &\thicksim \text{Beta}(\gamma_{j1}, \gamma_{j2}) \nonumber.
+\end{align}
+Given these variational distributions, we have
+\begin{align}
+E_q \left[ \log \theta_{ji} \right] &= \psi(\delta_{ji1}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber \\
+E_q \left[ \log \left( 1 - \theta_{ji}\right) \right]&= \psi(\delta_{ji2}) - \psi(\delta_{ji1}+\delta_{ji2}) \nonumber \\
+E_q \left[ \mu_j \right] &= \frac{\gamma_{j1}}{\gamma_{j1} + \gamma_{j2}} \nonumber \\
+E_q  \left[ \log \mu_j \right] &= \psi(\gamma_{j1}) - \psi(\gamma_{j1}+\gamma_{j2}) \nonumber \\
+E_q  \left[ \log (1 - \mu_j)\right] &= \psi(\gamma_{j2}) - \psi(\gamma_{j1}+\gamma_{j2})\nonumber, \\
+\end{align}
+where $\psi$ is the digamma function.
+
+Since there is no analytical representation for $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $, we must resort to numerical integration,
+
+\begin{equation}\label{eqn:integration}
+\begin{split}
+& E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)\right] =\\
+& \int_{0}^{1} q(\mu_j;\gamma_{j1}, \gamma_{j2}) \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right) d\mu_j.
+\end{split}
+\end{equation}
+Here $q(\mu_j;\gamma_{j1}, \gamma_{j2})$ is the probability density function of the Beta distribution that is calculated using the Python built-in function \texttt{scipy.stats.beta.pdf},
+
+and $\log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)$ is calculated using the Python built-in function
+
+\texttt{scipy.special.betaln}.
+Unfortunately, this numerical integration step is computationally expensive.
+%
+Finally, the entropy terms can be computed as follows,
+\begin{equation}
+\begin{split}
+E_q \left[ \log q\left(\mu \right)\right] &= \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right] \\
+&= -\sum_{j=1}^{J} \left\lbrace \log (B(\gamma_{j1},\gamma_{j2})) -(\gamma_{j1}-1)\psi(\gamma_{j1}) \right\rbrace \\
+&\quad  + \sum_{j=1}^{J} \left\lbrace -(\gamma_{j2}-1)\psi(\gamma_{j2}) + (\gamma_{j1}+\gamma_{j2}-2)\psi(\gamma_{j1}+\gamma_{j2})\right\rbrace;
+\end{split}
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+E_q \left[ \log q\left(\theta \right)\right] &= \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right] \\
+&= -\sum_{j=1}^{J}\sum_{i=1}^{N} \left\lbrace \log (B(\delta_{ji1},\delta_{ji2}))-(\delta_{ji1}-1)\psi(\delta_{ji1}) \right\rbrace \\
+&\quad + \sum_{j=1}^{J}\sum_{i=1}^{N} \left\lbrace -(\delta_{ji2}-1)\psi(\delta_{ji2}) + (\delta_{ji1}+\delta_{ji2}-2)\psi(\delta_{ji1}+\delta_{ji2})\right\rbrace.
+\end{split}
+\end{equation}
+
+\section{Variational EM Algorithm}
+
+\subsection{(E-step): Updating the variational distributions}
+The terms in the ELBO that depend on $q(\theta_{ji} | \delta_{ji1}, \delta_{ji2})$ are
+\begin{equation}\label{eqn:partial_theta}
+\begin{split}
+\mathcal{L}_{{[q(\theta_{ji})]}}
+& = \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace r_{ji} E_q \left[ \log \theta_{ji} \right] + (n_{ji} - r_{ji}) E_q  \left[  \log (1 - \theta_{ji}) \right] \right\rbrace\\
+&\quad  +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace\\
+&\quad  +  \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
+&\quad - \sum_{j=1}^{J}\sum_{i=1}^{N} E_q\left[ \log q(\theta_{ji})\right]
+\end{split}
+\end{equation}
+
+We update the variational parameters by numerically optimizing
+\begin{equation}
+ \hat{\delta}_{ji1}, \hat{\delta}_{ji2} = \arg \max_{\delta_{ji1}, \delta_{ji2}} \mathcal{L}_{{[q(\theta_{ji})]}}
+\end{equation}
+subject to the constraints that $\delta_{ji1} \geq 0$ and $\delta_{ji2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using Sequential Least SQuares Programming (SLSQP).
+
+We update the variational distribution $q(\mu_j)$ using the partial ELBO depending on $\gamma_j$ from each position $j$ \eqref{eqn:partial_mu}.
+\begin{equation}\label{eqn:partial_mu}
+\begin{split}
+\mathcal{L}_{{[q(\mu_j)]}}
+& = N \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace M_j E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] - E_q  \left[ \log \theta_{ji} \right] \right\rbrace \\
+&\quad + \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace \left( M_j - 1 - M_j E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace\\
+&\quad + J \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))} \\
+&\quad + \sum_{j=1}^{J} \left\lbrace (M_0\mu_0 -1)E_q  \left[ \log \mu_j \right] + (M_0 ( 1 - \mu_0) - 1) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace\\
+&\quad - \sum_{j=1}^{J} E_q \left[ \log q(\mu_j)\right]
+\end{split}
+\end{equation}
+Again, we update the variational parameters by numerically optimizing 
+\begin{equation}
+ \hat{\gamma}_{j1}, \hat{\gamma}_{j2} = \arg \max_{\gamma_{j1}, \gamma_{j2}} \mathcal{L}_{{[q(\mu_{j})]}}
+\end{equation}
+subject to the constraints that $\gamma_{j1} \geq 0$ and $\gamma_{j2} \geq 0$ and conditioned on fixed values for the other model and variational parameters using SLSQP.
+The computational cost of optimizing \eqref{eqn:partial_mu} is high because of the quadrature of $E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right]$ in \eqref{eqn:integration}.
+
+
+\subsection{(M-step): Updating the model parameters}
+We can write out the ELBO as a function of each model parameter $\mu_0$, $M_0$, and $M_j$ as follows.
+
+% Optimizing mu0
+The ELBO with respect to $ \mu_0 $ is
+\begin{equation}\label{eqn:mu_0}
+\begin{split}
+\mathcal{L}_{[\mu_0]}
+&= -J*\log  \Gamma(\mu_0 M_0) - J*\log \Gamma(M_0 (1-\mu_0)) \\
+& \quad+ M_0\mu_0\sum_{j=1}^{J} \left\lbrace E_q  \left[ \log \mu_j \right]
+- E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace. \\
+\end{split}
+\end{equation}
+
+
+% Optimizing M0
+The ELBO with respect to $ M_0 $ is
+\begin{equation}\label{eqn:M_0}
+\begin{split}
+\mathcal{L}_{[M_0]}
+&=J* \log \frac{ \Gamma(M_0) } { \Gamma(\mu_0 M_0) \Gamma(M_0 (1-\mu_0))}\\
+&\quad + M_0 \sum_{j=1}^{J} \left\lbrace \mu_0E_q  \left[ \log \mu_j \right] + ( 1 - \mu_0) E_q  \left[ \log (1 - \mu_j)\right]\right\rbrace.  \\
+\end{split}
+\end{equation}
+
+
+% Optimizing M
+The ELBO with respect to $M_j$ is
+\begin{equation}\label{eqn:M}
+\begin{split}
+\mathcal{L}_{{[M_j]}}
+&= N* \sum_{j=1}^{J} E_q  \left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right) \right] \\
+&\quad + M_j \sum_{j=1}^{J} \sum_{i=1}^{N} \left\lbrace E_q \left[ \mu_j \right] E_q \left[ \log \theta_{ji} \right] + \left( 1 - E_q\left[ \mu_j \right]  \right) E_q\left[ \log \left( 1 - \theta_{ji}\right) \right] \right\rbrace. \\
+\end{split}
+\end{equation}
+We also use SLSQP to optimize the ELBO function with respect to each parameter, $\mu_0$, $M_0$, and $M_j$.
+It is computationally easy to optimize $\mu_0$ \eqref{eqn:mu_0} and $M_0$ \eqref{eqn:M_0}.
+However, it is costly for optimizing $M_j$ \eqref{eqn:M} because the quadrature is needed to calculate $ E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right] $ using \eqref{eqn:integration}.
+
+
+
+\end{document}
