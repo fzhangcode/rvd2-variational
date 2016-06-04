@@ -3,10 +3,10 @@ tmp*
 *.hdf5
 *.mat
 *.pyc
-*.csv
+
 *.txt
 *.pileup
-*.xlsx
+
 *.jpg
 
 *.bam
@@ -24,7 +24,7 @@ Thumbs.db
 *.intervals
 *.indel
 *.snp
-*.xls
+
 *.aux
 *.log
 *.gz
@@ -32,7 +32,7 @@ Thumbs.db
 *.fig
 *.pdf
 <<<<<<< HEAD
-*.docx
+
 *.pptx
 
 =======
