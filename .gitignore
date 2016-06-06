@@ -3,10 +3,11 @@ tmp*
 *.hdf5
 *.mat
 *.pyc
-*.csv
+
 *.txt
 *.pileup
-*.xlsx
+
+*.jpg
 
 *.bam
 *.pileup
@@ -23,10 +24,17 @@ Thumbs.db
 *.intervals
 *.indel
 *.snp
-*.xls
+
 *.aux
 *.log
 *.gz
 *.blg
 *.fig
 *.pdf
+<<<<<<< HEAD
+
+*.pptx
+
+=======
+doc/2016rvd3_draft/.texpadtmp
+>>>>>>> a32afb303e0fbad1f76819f5325843683057a6b4
