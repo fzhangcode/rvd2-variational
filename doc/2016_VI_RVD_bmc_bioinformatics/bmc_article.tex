@@ -109,6 +109,23 @@
 %%% Begin ...
 \begin{document}
 
+\title{Variational inference for rare variant detection in deep, heterogeneous next-generation sequencing data}
+\author{Fan Zhang\\
+Department of Biomedical Engineering\\
+Worcester Polytechnic Institute, USA\\
+\texttt{fzhang@wpi.edu}
+\and
+Patrick Flaherty\\
+Department of Mathematics \& Statistics\\
+University of Massachusetts, Amherst\\
+Lederle Graduate Research Tower, Rm 1336\\
+710 N. Pleasant St.\\
+Amherst, MA 01003\\
+\texttt{flaherty@math.umass.edu}
+}
+\maketitle
+\newpage
+
 %%% Start of article front matter
 \begin{frontmatter}
 
@@ -352,18 +369,24 @@ In Figure \ref{figure:model}B, $\gamma$ is the parameter for the variational dis
 and $\delta$ is the parameter for the variational distribution for latent variable $\theta$.
 We describe $q(\mu)$ and $q(\theta)$ in detail in section 2.2.2.
 
-\begin{figure}[htpb]
+%\begin{figure}[htpb]
+%\begin{center}
+%%\vspace{-10pt}
+%\includegraphics[width=0.5\textwidth]{rvd3.png}
+%\caption{\csentence{Graphical model.} A. Graphical model representation of the model.
+%B. Graphical model representation of the variational approximation  to approximate the posterior distribution.
+%Observed random variables are shown as shaded nodes and latent random variables are unshaded.
+%The object of inference for the variational EM algorithm is the joint distribution $p(\mu, \theta|r, n)$.}
+%\label{figure:model}
+%\end{center}
+%\end{figure}
 
+\vspace{2em}
 \begin{center}
-%\vspace{-10pt}
-\includegraphics[width=0.5\textwidth]{rvd3.png}
-\caption{\csentence{Graphical model.} A. Graphical model representation of the model.
-B. Graphical model representation of the variational approximation  to approximate the posterior distribution.
-Observed random variables are shown as shaded nodes and latent random variables are unshaded.
-The object of inference for the variational EM algorithm is the joint distribution $p(\mu, \theta|r, n)$.}
-\label{figure:model}
+[FIGURE 1 HERE]  
 \end{center}
-\end{figure}
+\vspace{2em}
+
 
 The model generative process is as follows:
 \begin{enumerate}[noitemsep]
@@ -444,7 +467,7 @@ Each component of ELBO is derived in Additional File 1.
 
 \subsubsection{Variational EM algorithm}
 Variational EM algorithm maximizes the ELBO of the likelihood by alternating between maximization over $q$ (E-step) and maximization over $\phi= \left\{\mu_0, M_0, M \right\}$ (M-step).
-We update the variational parameters and the model parameters iteratively by numerically optimizing each problem using Sequential Least SQuares Programming (SLSQP) \cite{kraft1988software} (see Additional file \ref{derivation} for detail).
+We update the variational parameters and the model parameters iteratively by numerically optimizing each problem using Sequential Least SQuares Programming (SLSQP) ~\cite{kraft1988software} (see Additional file \ref{derivation} for detail).
 There is no analytical representation for 
 $E_q\left[ \log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma(M_j (1-\mu_j)) }\right)\right]$,
 which is required to update variational distribution for $\mu_j$ and model parameter $M$.
@@ -458,6 +481,7 @@ So, we must resort to numerical integration,
 %where $q(\mu_j;\gamma_{j1}, \gamma_{j2})$ is the probability density function of the Beta distribution that is calculated using the Python built-in function \texttt{scipy.stats.beta.pdf}, and $\log \left( \frac{ \Gamma(M_j) } { \Gamma(\mu_j M_j) \Gamma((1-\mu_j)M_j ) }\right)$ is calculated using the Python built-in function\texttt{scipy.special.betaln}.
 Unfortunately, this numerical integration step is computationally expensive.
 The variational EM algorithm is summarized using pseudocode in Algorithm 1.
+
 \begin{algorithm}[ht]
   \caption{Variational EM Inference}
   \begin{algorithmic}[1]
@@ -570,47 +594,51 @@ The variational EM algorithm has a higher specificity compared with the MCMC alg
 %\label{tbl:statistics_mcmc_var}
 %\end{table}
 
-\begin{table}[h!]
-\caption{Sensitivity/Specificity comparison of variational EM algorithm with MCMC algorithm.}\label{table:mcmcvar}
-% Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.
-\scriptsize 
-%\small
-\begin{tabular}{c c c c c c }
-\hline
-\toprule
-	{\bfseries True NRAF} & {\bfseries Median Depth} & \multicolumn{2}{c}{{{\bfseries Sensitivity}}} &  \multicolumn{2}{c}{\bfseries Specificity} \\
-	\cmidrule(r{4pt}){3-4} \cmidrule(l){5-6}
-	 ~ & ~ & {\bfseries MCMC} & {\bfseries Variational} & {\bfseries MCMC} & {\bfseries Variational}   \\
-	\midrule
-	0.1\% & 39 & 0.00 & 0.00 & 1.00 & 1.00   \\
-	 & 408 & 0.00 & 0.07 & 1.00 & 1.00   \\
-	 & 4129 & 0.14 & 0.29 & 1.00 & 1.00   \\
-	 & 41449 & 0.86 & 1.00 & 0.97 & 1.00   \\
-	 \midrule
-	0.3\% & 36 & 0.00 & 0.00 & 1.00 & 1.00   \\
-	 & 410 & 0.00 & 0.00 & 1.00 & 1.00   \\
-	 & 4156 & 1.00 & 1.00 & 0.99 & 0.98   \\
-	 & 41472 & 1.00 & 0.93 & 0.85 & 0.91   \\
-	 \midrule
-	1.0\% & 53 & 0.00 & 0.00 & 1.00 & 1.00   \\
-	 & 535 & 0.21 & 0.29 & 1.00 & 1.00  \\
-	 & 5584 & 1.00 & 1.00 & 0.98 & 0.98   \\
-	 & 55489 & 1.00 & 0.93 & 0.87 & 0.95   \\
-	 \midrule
-	10.0\% & 22 & 0.00 & 0.57 & 1.00 & 1.00   \\
-	 & 260 & 1.00 & 1.00 & 1.00 & 1.00   \\
-	 & 2718 & 1.00 & 1.00 & 1.00 & 1.00   \\
-	 & 26959 & 1.00 & 1.00 & 1.00 & 1.00   \\
-	 \midrule
-	100.0\% & 27 & 1.00 & 1.00 & 1.00 & 1.00   \\
-	 & 298 & 1.00 & 1.00 & 1.00 & 1.00   \\
-	 & 3089 & 1.00 & 1.00 & 1.00 & 1.00   \\
-	 & 30590 & 1.00 & 1.00 & 1.00 & 1.00   \\
-	\bottomrule
-\end{tabular}
-\end{table}
+%\begin{table}[h!]
+%\caption{Sensitivity/Specificity comparison of variational EM algorithm with MCMC algorithm.}\label{table:mcmcvar}
+%% Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.
+%\scriptsize 
+%%\small
+%\begin{tabular}{c c c c c c }
+%\hline
+%\toprule
+%	{\bfseries True NRAF} & {\bfseries Median Depth} & \multicolumn{2}{c}{{{\bfseries Sensitivity}}} &  \multicolumn{2}{c}{\bfseries Specificity} \\
+%	\cmidrule(r{4pt}){3-4} \cmidrule(l){5-6}
+%	 ~ & ~ & {\bfseries MCMC} & {\bfseries Variational} & {\bfseries MCMC} & {\bfseries Variational}   \\
+%	\midrule
+%	0.1\% & 39 & 0.00 & 0.00 & 1.00 & 1.00   \\
+%	 & 408 & 0.00 & 0.07 & 1.00 & 1.00   \\
+%	 & 4129 & 0.14 & 0.29 & 1.00 & 1.00   \\
+%	 & 41449 & 0.86 & 1.00 & 0.97 & 1.00   \\
+%	 \midrule
+%	0.3\% & 36 & 0.00 & 0.00 & 1.00 & 1.00   \\
+%	 & 410 & 0.00 & 0.00 & 1.00 & 1.00   \\
+%	 & 4156 & 1.00 & 1.00 & 0.99 & 0.98   \\
+%	 & 41472 & 1.00 & 0.93 & 0.85 & 0.91   \\
+%	 \midrule
+%	1.0\% & 53 & 0.00 & 0.00 & 1.00 & 1.00   \\
+%	 & 535 & 0.21 & 0.29 & 1.00 & 1.00  \\
+%	 & 5584 & 1.00 & 1.00 & 0.98 & 0.98   \\
+%	 & 55489 & 1.00 & 0.93 & 0.87 & 0.95   \\
+%	 \midrule
+%	10.0\% & 22 & 0.00 & 0.57 & 1.00 & 1.00   \\
+%	 & 260 & 1.00 & 1.00 & 1.00 & 1.00   \\
+%	 & 2718 & 1.00 & 1.00 & 1.00 & 1.00   \\
+%	 & 26959 & 1.00 & 1.00 & 1.00 & 1.00   \\
+%	 \midrule
+%	100.0\% & 27 & 1.00 & 1.00 & 1.00 & 1.00   \\
+%	 & 298 & 1.00 & 1.00 & 1.00 & 1.00   \\
+%	 & 3089 & 1.00 & 1.00 & 1.00 & 1.00   \\
+%	 & 30590 & 1.00 & 1.00 & 1.00 & 1.00   \\
+%	\bottomrule
+%\end{tabular}
+%\end{table}
 
-
+\vspace{2em}
+\begin{center}
+[TABLE 1 HERE]  
+\end{center}
+\vspace{2em}
 
 
 \subsubsection{Comparison of Approximated Posterior Distribution}
@@ -626,18 +654,30 @@ The variance of MCMC posterior estimate is higher than that of the variational p
 We tested 10 random initial values variational inference algorithm and found the approximate posterior distributions from the variational EM algorithm are essentially equivalent for all random initializations.
 It is notable that the shape of the proposed Beta variational distribution is well approximated by a Gaussian.
 
-% results in results\2015-10-14_Plot_mcmc_mu_vs_variational_mu
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.7\textwidth]{fig1.png}
-\caption{Approximated posterior distributions by the variational EM and MCMC algorithms on a true variant position 85 when the median read depth is $5,584\times$.}\label{figure:compare1}
-\end{figure}
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.7\textwidth]{fig2.png}
-\caption{Approximated posterior distribution by the variational EM and MCMC algorithms on a non-variant position (160) that was not called by the MCMC algorithm (true negative), but was called by the variational EM algorithm (false positive) with a median read depth of $410\times$.}\label{figure:compare2}
-\end{figure}
+%% results in results\2015-10-14_Plot_mcmc_mu_vs_variational_mu
+%\begin{figure}[htbp]
+%\centering
+%\includegraphics[width=0.7\textwidth]{fig1.png}
+%\caption{Approximated posterior distributions by the variational EM and MCMC algorithms on a true variant position 85 when the median read depth is $5,584\times$.}\label{figure:compare1}
+%\end{figure}
+%\begin{figure}[htbp]
+%\centering
+%\includegraphics[width=0.7\textwidth]{fig2.png}
+%\caption{Approximated posterior distribution by the variational EM and MCMC algorithms on a non-variant position (160) that was not called by the MCMC algorithm (true negative), but was called by the variational EM algorithm (false positive) with a median read depth of $410\times$.}\label{figure:compare2}
+%\end{figure}
 
+
+\vspace{2em}
+\begin{center}
+[FIGURE 2 HERE]  
+\end{center}
+\vspace{2em}
+
+\vspace{2em}
+\begin{center}
+[FIGURE 3 HERE]  
+\end{center}
+\vspace{2em}
 
 \subsubsection{Comparison to the State-of-the-Art Methods}
 We compared the performance of our variational EM algorithm with the state-of-the-art variant detection methods, SAMtools \cite{li2009sequence}, GATK \cite{mckenna2010genome}, VarScan2 \cite{koboldt2012varscan}, Strelka \cite{saunders2012strelka}, MuTect \cite{cibulskis2013sensitive}, and RVD2 \cite{he2015rvd2}, using synthetic DNA data set (Table \ref{table:character}).
@@ -654,57 +694,70 @@ The performance of other methods is stated in detail in \cite{he2015rvd2}.
 %\end{table*}
 
 
-\begin{table}[htbp]
-  \centering
-  \caption{Sensitivity/Specificity comparison with other variant detection methods.}\label{table:character}
-  \tiny
-  %\scriptsize 
-    \begin{tabular}{rrrrrrrrrr}
-    \toprule
-    \textbf{NRAF} & \multicolumn{1}{c}{\textbf{Median}} & \multicolumn{1}{c}{\textbf{SAMtools}} & \multicolumn{1}{c}{\textbf{GATK}} & \multicolumn{1}{c}{\textbf{VarScan2 }} & \multicolumn{1}{c}{\textbf{VarScan2}} & \multicolumn{1}{c}{\textbf{Strelka}} & \multicolumn{1}{c}{\textbf{MuTect}} & \multicolumn{1}{c}{\textbf{RVD2 }} & \multicolumn{1}{c}{\textbf{RVD2 }} \\
-    \textbf{} &\multicolumn{1}{c}{\textbf{Depth}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{mpileup}} & \multicolumn{1}{c}{\textbf{somatic}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{MCMC}} & \multicolumn{1}{c}{\textbf{Variational}} \\
-    \midrule
-    \multicolumn{1}{c}{0.1\%} & \multicolumn{1}{l}{39} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.00/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{408} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.07/0.92} & 0.00/1.00 & 0.29/0.91 & 0.00/1.00 & \multicolumn{1}{c}{0.07/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4129} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.52} & 0.00/1.00 & 0.64/0.86 & 0.14/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41449} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.79} & 0.00/1.00 & 0.14/0.93 & 0.86/0.97 & \multicolumn{1}{c}{1.00/1.00} \\
-    \midrule
-    \multicolumn{1}{c}{0.3\%} & \multicolumn{1}{l}{36} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.43/1.00 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{410} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.21/0.95} & 0.00/1.00 & 0.50/0.94 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4156} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.53} & 0.00/1.00 & 0.36/0.91 & 1.00/0.99 & \multicolumn{1}{c}{1.00/0.98} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41472} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.75} & 0.00/1.00 & 0.43/0.90 & 1.00/0.85 & \multicolumn{1}{c}{0.93/0.91} \\
-    \midrule
-    \multicolumn{1}{c}{1.0\%} & \multicolumn{1}{l}{53} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/0.99} & 0.00/1.00 & 0.29/0.98 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{535} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.43/0.89} & 0.00/1.00 & 0.71/0.91 & 0.21/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{5584} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.47} & 0.00/1.00 & 0.64/0.95 & 1.00/0.98 & \multicolumn{1}{c}{1.00/0.98} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{55489} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.69} & 0.00/1.00 & 0.86/0.90 & 1.00/0.87 & \multicolumn{1}{c}{0.93/0.95} \\
-    \midrule
-    \multicolumn{1}{c}{10.0\%} & \multicolumn{1}{l}{22} & \multicolumn{1}{c}{0.21/1.00} & \multicolumn{1}{c}{0.43/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.36/1.00} & 0.29/1.00 & 0.86/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.57/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{260} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.86/1.00} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{2718} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.79/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.78} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{26959} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.53} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \midrule
-    \multicolumn{1}{c}{100.0\%} & \multicolumn{1}{l}{27} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{298} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.99} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{3089} & \multicolumn{1}{c}{0.86/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.65} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{30590} & \multicolumn{1}{c}{0.71/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.39} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \bottomrule
-    \end{tabular}%
-\end{table}%
+%\begin{table}[htbp]
+%  \centering
+%  \caption{Sensitivity/Specificity comparison with other variant detection methods.}\label{table:character}
+%  \tiny
+%  %\scriptsize 
+%    \begin{tabular}{rrrrrrrrrr}
+%    \toprule
+%    \textbf{NRAF} & \multicolumn{1}{c}{\textbf{Median}} & \multicolumn{1}{c}{\textbf{SAMtools}} & \multicolumn{1}{c}{\textbf{GATK}} & \multicolumn{1}{c}{\textbf{VarScan2 }} & \multicolumn{1}{c}{\textbf{VarScan2}} & \multicolumn{1}{c}{\textbf{Strelka}} & \multicolumn{1}{c}{\textbf{MuTect}} & \multicolumn{1}{c}{\textbf{RVD2 }} & \multicolumn{1}{c}{\textbf{RVD2 }} \\
+%    \textbf{} &\multicolumn{1}{c}{\textbf{Depth}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{mpileup}} & \multicolumn{1}{c}{\textbf{somatic}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{MCMC}} & \multicolumn{1}{c}{\textbf{Variational}} \\
+%    \midrule
+%    \multicolumn{1}{c}{0.1\%} & \multicolumn{1}{l}{39} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.00/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{408} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.07/0.92} & 0.00/1.00 & 0.29/0.91 & 0.00/1.00 & \multicolumn{1}{c}{0.07/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4129} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.52} & 0.00/1.00 & 0.64/0.86 & 0.14/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41449} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.79} & 0.00/1.00 & 0.14/0.93 & 0.86/0.97 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \midrule
+%    \multicolumn{1}{c}{0.3\%} & \multicolumn{1}{l}{36} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.43/1.00 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{410} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.21/0.95} & 0.00/1.00 & 0.50/0.94 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4156} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.53} & 0.00/1.00 & 0.36/0.91 & 1.00/0.99 & \multicolumn{1}{c}{1.00/0.98} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41472} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.75} & 0.00/1.00 & 0.43/0.90 & 1.00/0.85 & \multicolumn{1}{c}{0.93/0.91} \\
+%    \midrule
+%    \multicolumn{1}{c}{1.0\%} & \multicolumn{1}{l}{53} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/0.99} & 0.00/1.00 & 0.29/0.98 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{535} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.43/0.89} & 0.00/1.00 & 0.71/0.91 & 0.21/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{5584} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.47} & 0.00/1.00 & 0.64/0.95 & 1.00/0.98 & \multicolumn{1}{c}{1.00/0.98} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{55489} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.69} & 0.00/1.00 & 0.86/0.90 & 1.00/0.87 & \multicolumn{1}{c}{0.93/0.95} \\
+%    \midrule
+%    \multicolumn{1}{c}{10.0\%} & \multicolumn{1}{l}{22} & \multicolumn{1}{c}{0.21/1.00} & \multicolumn{1}{c}{0.43/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.36/1.00} & 0.29/1.00 & 0.86/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.57/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{260} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.86/1.00} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{2718} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.79/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.78} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{26959} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.53} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \midrule
+%    \multicolumn{1}{c}{100.0\%} & \multicolumn{1}{l}{27} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{298} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.99} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{3089} & \multicolumn{1}{c}{0.86/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.65} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{30590} & \multicolumn{1}{c}{0.71/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.39} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \bottomrule
+%    \end{tabular}%
+%\end{table}%
 
+
+\vspace{2em}
+\begin{center}
+[TABLE 2 HERE]  
+\end{center}
+\vspace{2em}
 
 
 \subsubsection{Comparison of Timing}
 % Timing comparison
 The computational time for approximating the variational posterior distribution is increased by expanding the length of region and the median read depth (Figure \ref{figure:timing}).
 Our variational EM algorithm is faster than the MCMC algorithm at the low median read depths of $27\times$ and $298\times$, and slower for the high median read depths of $3,089\times$ and $30,590\times$.
- %results in results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.6\textwidth]{timing.png}
-\caption{\csentence{Timing comparison for our variational EM algorithm and MCMC sampling algorithm.}
-Sixty processors are used to estimate the model on the synthetic data set.}\label{figure:timing}
-\end{figure}
+% %results in results\2015-10-15_Plot_time_vs_region_length_rvd3_synthetic_data
+%\begin{figure}[ht]
+%\centering
+%\includegraphics[width=0.6\textwidth]{timing.png}
+%\caption{\csentence{Timing comparison for our variational EM algorithm and MCMC sampling algorithm.}
+%Sixty processors are used to estimate the model on the synthetic data set.}\label{figure:timing}
+%\end{figure}
+
+\vspace{2em}
+\begin{center}
+[FIGURE 4 HERE]  
+\end{center}
+\vspace{2em}
+
 
 % Timing profile of variational
 Table~\ref{table:timing} shows the timing profile for each part of our variational EM algorithm when median read depth is $3,089\times$.
@@ -719,36 +772,42 @@ Optimizing $\gamma$ in the E-step and optimizing $M_j$ in the M-step takes more 
 %\end{table*}
 
 
-\begin{table}[htbp]
-  \centering
-  \caption{Timing profile of variational EM algorithm when median depth is $3,089\times$.}\label{table:timing}
-  \begin{threeparttable}
-  \tiny
-  %\scriptsize 
-    \begin{tabular}{ccrrrrrrcc}
-    \toprule
-    ~ & ~ & \multicolumn{3}{c}{\textbf{E-step}} & \multicolumn{4}{c}{\textbf{M-step}}    & ~ \\
-    \cmidrule(r{4pt}){3-5} \cmidrule(l){6-9}
-    \textbf{Computation} & \textbf{Region} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Update} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & Update & \textbf{Total} \\
-    \textbf{resource} & \textbf{length}  & \multicolumn{1}{c}{$\gamma$} & \multicolumn{1}{c}{\textbf{$\delta$}} & \multicolumn{1}{c}{ELBO} & \multicolumn{1}{c}{$\mu_0$} & \multicolumn{1}{c}{$M_0$} & \multicolumn{1}{c}{$M$} &  \multicolumn{1}{c}{ELBO}  & \textbf{time (s)} \\
-    \midrule
-          & 100   & \multicolumn{1}{c}{617.7 (63\%)} & \multicolumn{1}{c}{4.232} & \multicolumn{1}{c}{10.42} & \multicolumn{1}{c}{0.264} & \multicolumn{1}{c}{0.159} & \multicolumn{1}{c}{332.8 (34\%)} & 10.29 & 976.0 \\
-    single & 200   & \multicolumn{1}{c}{1124  (65\%)} & \multicolumn{1}{c}{8.936} & \multicolumn{1}{c}{18.64} & \multicolumn{1}{c}{0.418} & \multicolumn{1}{c}{0.256} & \multicolumn{1}{c}{570.0 (33\%)} & 18.37 & 1741 \\
-    processor & 300   & \multicolumn{1}{c}{1728  (65\%)} & \multicolumn{1}{c}{13.27} & \multicolumn{1}{c}{27.81} & \multicolumn{1}{c}{0.445} & \multicolumn{1}{c}{0.400} & \multicolumn{1}{c}{851.5 (32\%)} & 27.65 & 2649 \\
-          & 400   & \multicolumn{1}{c}{2433  (66\%)} & \multicolumn{1}{c}{17.99} & \multicolumn{1}{c}{38.55} & \multicolumn{1}{c}{0.737} & \multicolumn{1}{c}{0.635} & \multicolumn{1}{c}{1176  (32\%)} & 38.17 & 3705 \\
-       \midrule
-          & 100   & \multicolumn{1}{c}{29.93 (41\%)} & \multicolumn{1}{c}{0.2470} & \multicolumn{1}{c}{11.67} & \multicolumn{1}{c}{0.3070} & \multicolumn{1}{c}{0.1890} & \multicolumn{1}{c}{19.56 (26\%)} & 11.98 & 73.89 \\
-    60    & 200   & \multicolumn{1}{c}{44.69 (40\%)} & \multicolumn{1}{c}{0.4170} & \multicolumn{1}{c}{22.14} & \multicolumn{1}{c}{0.5230} & \multicolumn{1}{c}{0.3040} & \multicolumn{1}{c}{24.04 (21\%)} & 22.24 & 114.3 \\
-    processors & 300   & \multicolumn{1}{c}{63.47 (40\%)} & \multicolumn{1}{c}{0.7160} & \multicolumn{1}{c}{33.31} & \multicolumn{1}{c}{0.5620} & \multicolumn{1}{c}{0.5040} & \multicolumn{1}{c}{29.41 (18\%)} & 33.24 & 161.2 \\
-          & 400   & \multicolumn{1}{c}{94.66 (43\%)} & \multicolumn{1}{c}{0.7270} & \multicolumn{1}{c}{42.78} & \multicolumn{1}{c}{0.8200} & \multicolumn{1}{c}{0.7060} & \multicolumn{1}{c}{40.04 (18\%)} & 44.28 & 219.7 \\
-    \bottomrule
-    \end{tabular}%
-    \begin{tablenotes}
-    \item Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is $3,089\times$.
-Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ in the E-step and optimizing $M$ in the M-step is highlighted in percentage.
-    \end{tablenotes}
-    \end{threeparttable}
-\end{table}%
+%\begin{table}[htbp]
+%  \centering
+%  \caption{Timing profile of variational EM algorithm when median depth is $3,089\times$.}\label{table:timing}
+%  \begin{threeparttable}
+%  \tiny
+%  %\scriptsize 
+%    \begin{tabular}{ccrrrrrrcc}
+%    \toprule
+%    ~ & ~ & \multicolumn{3}{c}{\textbf{E-step}} & \multicolumn{4}{c}{\textbf{M-step}}    & ~ \\
+%    \cmidrule(r{4pt}){3-5} \cmidrule(l){6-9}
+%    \textbf{Computation} & \textbf{Region} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Update} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & Update & \textbf{Total} \\
+%    \textbf{resource} & \textbf{length}  & \multicolumn{1}{c}{$\gamma$} & \multicolumn{1}{c}{\textbf{$\delta$}} & \multicolumn{1}{c}{ELBO} & \multicolumn{1}{c}{$\mu_0$} & \multicolumn{1}{c}{$M_0$} & \multicolumn{1}{c}{$M$} &  \multicolumn{1}{c}{ELBO}  & \textbf{time (s)} \\
+%    \midrule
+%          & 100   & \multicolumn{1}{c}{617.7 (63\%)} & \multicolumn{1}{c}{4.232} & \multicolumn{1}{c}{10.42} & \multicolumn{1}{c}{0.264} & \multicolumn{1}{c}{0.159} & \multicolumn{1}{c}{332.8 (34\%)} & 10.29 & 976.0 \\
+%    single & 200   & \multicolumn{1}{c}{1124  (65\%)} & \multicolumn{1}{c}{8.936} & \multicolumn{1}{c}{18.64} & \multicolumn{1}{c}{0.418} & \multicolumn{1}{c}{0.256} & \multicolumn{1}{c}{570.0 (33\%)} & 18.37 & 1741 \\
+%    processor & 300   & \multicolumn{1}{c}{1728  (65\%)} & \multicolumn{1}{c}{13.27} & \multicolumn{1}{c}{27.81} & \multicolumn{1}{c}{0.445} & \multicolumn{1}{c}{0.400} & \multicolumn{1}{c}{851.5 (32\%)} & 27.65 & 2649 \\
+%          & 400   & \multicolumn{1}{c}{2433  (66\%)} & \multicolumn{1}{c}{17.99} & \multicolumn{1}{c}{38.55} & \multicolumn{1}{c}{0.737} & \multicolumn{1}{c}{0.635} & \multicolumn{1}{c}{1176  (32\%)} & 38.17 & 3705 \\
+%       \midrule
+%          & 100   & \multicolumn{1}{c}{29.93 (41\%)} & \multicolumn{1}{c}{0.2470} & \multicolumn{1}{c}{11.67} & \multicolumn{1}{c}{0.3070} & \multicolumn{1}{c}{0.1890} & \multicolumn{1}{c}{19.56 (26\%)} & 11.98 & 73.89 \\
+%    60    & 200   & \multicolumn{1}{c}{44.69 (40\%)} & \multicolumn{1}{c}{0.4170} & \multicolumn{1}{c}{22.14} & \multicolumn{1}{c}{0.5230} & \multicolumn{1}{c}{0.3040} & \multicolumn{1}{c}{24.04 (21\%)} & 22.24 & 114.3 \\
+%    processors & 300   & \multicolumn{1}{c}{63.47 (40\%)} & \multicolumn{1}{c}{0.7160} & \multicolumn{1}{c}{33.31} & \multicolumn{1}{c}{0.5620} & \multicolumn{1}{c}{0.5040} & \multicolumn{1}{c}{29.41 (18\%)} & 33.24 & 161.2 \\
+%          & 400   & \multicolumn{1}{c}{94.66 (43\%)} & \multicolumn{1}{c}{0.7270} & \multicolumn{1}{c}{42.78} & \multicolumn{1}{c}{0.8200} & \multicolumn{1}{c}{0.7060} & \multicolumn{1}{c}{40.04 (18\%)} & 44.28 & 219.7 \\
+%    \bottomrule
+%    \end{tabular}%
+%    \begin{tablenotes}
+%    \item Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is $3,089\times$.
+%Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ in the E-step and optimizing $M$ in the M-step is highlighted in percentage.
+%    \end{tablenotes}
+%    \end{threeparttable}
+%\end{table}%
+
+\vspace{2em}
+\begin{center}
+[TABLE 3 HERE]  
+\end{center}
+\vspace{2em}
 
 
 
@@ -903,14 +962,21 @@ We show the influence of different $\hat{M_0}$ on variant position Chr04:1,014,7
 We see that as we decrease the prior precision parameter $\hat{M_0}$, $\hat{\mu}_{1,014,740}$ increases as expected.
 But the effect of changing $\hat{M_0}$ over several orders of magnitude does not change $\hat{\mu}_j$ greatly.
 Here $\hat{M_0} = 1.752$ in this dataset.
-% results in results\2016-03-07_Plot_influence_of_M0
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{M0.png}
-\caption{\csentence{Influence of $M_0$ on the estimate of $\mu_j$.}
-Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{1,014,740}$, with different $\hat{M_0}$ are shown.}
-\label{tbl:M0}
-\end{figure}
+%% results in results\2016-03-07_Plot_influence_of_M0
+%\begin{figure}[htbp]
+%\centering
+%\includegraphics[width=0.8\textwidth]{M0.png}
+%\caption{\csentence{Influence of $M_0$ on the estimate of $\mu_j$.}
+%Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{1,014,740}$, with different $\hat{M_0}$ are shown.}
+%\label{tbl:M0}
+%\end{figure}
+
+\vspace{2em}
+\begin{center}
+[FIGURE 5 HERE]  
+\end{center}
+\vspace{2em}
+
 
 % Concomitant variants
 \subsubsection{Concomitant Variants Detection}
@@ -919,14 +985,20 @@ We hypotheses that the variants are concomitant in the same clone.
 In this pair of genes, gene MTH1 is a negative regulator of the glucose-sensing signal transduction pathway, and gene ADE16 is an enzyme of $\mathit{de\, novo}$ purine biosynthesis.
 Glucose sensing induces gene expression changes to help yeast receive necessary nutrients, which could be a reason for this pair of genes to mutate together \cite{johnston1999feasting}.
 Further experimental validation of this hypothesis would be required to definitively show that the mutations are concomitant.
-% results in results\2016-01-12_Run_rvd3_Dan_data_regions
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.6\textwidth]{concomitant.png}
-\caption{\csentence{The NRAF trend of concomitant variants in gene MTH1 and ADE16.}
-The 95\% Bayesian credible intervals are shown.}
-\label{figure:concomitant}
-\end{figure}
+%% results in results\2016-01-12_Run_rvd3_Dan_data_regions
+%\begin{figure}[htbp]
+%\centering
+%\includegraphics[width=0.6\textwidth]{concomitant.png}
+%\caption{\csentence{The NRAF trend of concomitant variants in gene MTH1 and ADE16.}
+%The 95\% Bayesian credible intervals are shown.}
+%\label{figure:concomitant}
+%\end{figure}
+
+\vspace{2em}
+\begin{center}
+[FIGURE 6 HERE]  
+\end{center}
+\vspace{2em}
 
 
 
@@ -944,7 +1016,7 @@ and (iii) detects SNVs early in the evolutionary time course, as well as tracks 
 We have chosen parametric forms for the variational distributions.
 This choice has left us with a complex integral in our variational optimization problem.
 In future work, we plan to explore other approximations of the variational distributions that render the integral easier to compute.
-One could use cubic splines to numerically approximate the function and then integrate that surrogate \cite{mckinley1998cubic}.
+One could use cubic splines to numerically approximate the function and then integrate that surrogate \cite{de1978practical}.
 Another strategy is to consider a Laplace approximation for the variational distribution, as we and others have done previously \cite{saddiki2014glad, wang2013variational}.
 
 %As a local optimization methodology, variational EM can converge to local maximum.
@@ -961,30 +1033,39 @@ Our method can also be extended to study drug resistance by characterizing tumor
 We will be able to find the causative variants that lead to drug resistance and understand the causes of resistance at the single nucleotide level.
 
 
-\section{Ethics approval and consent to participate}
+
+\begin{backmatter}
+
+\section*{Ethics approval and consent to participate}
 Not applicable.
 
-\section{Consent to publication}
+\section*{Consent to publication}
 Not applicable.
 
-\section{Availability of data and materials}
+\section*{Competing interests}
+  The authors declare that they have no competing interests.
+
+\section*{Authors' contributions}
+%    Text for this section \ldots
+FZ developed and implemented the variational expectation maximization inference algorithm, and wrote the manuscript.
+PF conceived the study and helped to draft the manuscript.
+All authors read and approved the final manuscript.
+
+\section*{Availability of data and materials}
 The synthetic data set is available on \url{http://dna-discovery.stanford.edu/software/rvd/} under the heading of \texttt{Synthetic DNA Data}. 
 The Illumina sequencing data is available on the NCBI Sequence Read Archive SRA054922.
 %The source code could be found via the link below \url{http://genomics.wpi.edu/vi_rvd/}.
 
-\section{Additional Files}
-  \subsection{Additional file 1 --- Derivation of the variational expectation maximization (EM) inference algorithm.}\label{derivation}
+\section*{Additional Files}
+  \subsection*{Additional file 1 --- Derivation of the variational expectation maximization (EM) inference algorithm.}\label{derivation}
   Derivation of the variational EM algorithm is described in detail. (PDF 149 kb)
 
-  \subsection{Additional file 2 --- Identified variants and corresponding non-reference allele frequencies in gene MTH1 on Chromosome 4.}\label{variants}
+  \subsection*{Additional file 2 --- Identified variants and corresponding non-reference allele frequencies in gene MTH1 on Chromosome 4.}\label{variants}
 	A blank cell indicates that the position of that time point is not called significantly different than G7.
 	The positions highlighted as blue were also identified by Kvitek, 2013.
 	The other 81 positions are novel identified variants in 8 timepoints. (XLSX 18.8 kb)
 
-
-\begin{backmatter}
-
-\section{List of abbreviations}
+\section*{List of abbreviations}
 NGS, next-generation sequencing;
 SNVs, single nucleotide variants;
 EM, expectation maximization;
@@ -995,16 +1076,7 @@ RVD, rare variant detection;
 KL, Kullback-Liebler;
 ELBO, evidence lower bound.
 
-\section{Competing interests}
-  The authors declare that they have no competing interests.
-
-\section{Authors' contributions}
-%    Text for this section \ldots
-FZ developed and implemented the variational expectation maximization inference algorithm, and wrote the manuscript.
-PF conceived the study and helped to draft the manuscript.
-All authors read and approved the final manuscript.
-
-\section{Acknowledgements}
+\section*{Acknowledgements}
 FZ and PF were supported by PhRMA Foundation Informatics Grant 2013080079.
 We would like to thank Dan Kvitek for kindly sharing the data set used for the longitudinal yeast evolution analysis.
 We acknowledge Chuangqi Wang and Ross Lagoy for valuable comments on the manuscript.
@@ -1049,6 +1121,269 @@ We acknowledge Chuangqi Wang and Ross Lagoy for valuable comments on the manuscr
 %%                               %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newpage
+% FIGURE 1
+\begin{figure}[h!]
+\begin{center}
+%\vspace{-10pt}
+%\includegraphics[width=0.5\textwidth]{rvd3.png}
+\caption{\csentence{Graphical model.} A. Graphical model representation of the model.
+B. Graphical model representation of the variational approximation  to approximate the posterior distribution.
+Observed random variables are shown as shaded nodes and latent random variables are unshaded.
+The object of inference for the variational EM algorithm is the joint distribution $p(\mu, \theta|r, n)$.}
+\label{figure:model}
+\end{center}
+\end{figure}
+
+
+% TABLE 1
+\begin{table}[h!]
+\caption{Sensitivity/Specificity comparison of variational EM algorithm with MCMC algorithm.}\label{table:mcmcvar}
+\end{table}
+
+% FIGURE 2
+\begin{figure}[h!]
+\centering
+%\includegraphics[width=0.7\textwidth]{fig1.png}
+\caption{Approximated posterior distributions by the variational EM and MCMC algorithms on a true variant position 85 when the median read depth is $5,584\times$.}\label{figure:compare1}
+\end{figure}
+
+% FIGURE 3
+\begin{figure}[h!]
+\centering
+%\includegraphics[width=0.7\textwidth]{fig2.png}
+\caption{Approximated posterior distribution by the variational EM and MCMC algorithms on a non-variant position (160) that was not called by the MCMC algorithm (true negative), but was called by the variational EM algorithm (false positive) with a median read depth of $410\times$.}\label{figure:compare2}
+\end{figure}
+
+% TABLE 2
+\begin{table}[h!]
+\centering
+\caption{Sensitivity/Specificity comparison with other variant detection methods.}\label{table:character}
+\end{table}%
+
+% FIGURE 4
+\begin{figure}[h!]
+\centering
+%\includegraphics[width=0.6\textwidth]{timing.png}
+\caption{\csentence{Timing comparison for our variational EM algorithm and MCMC sampling algorithm.}
+Sixty processors are used to estimate the model on the synthetic data set.}\label{figure:timing}
+\end{figure}
+
+% TABLE 3
+\begin{table}[h!]
+\centering
+\caption{Timing profile of variational EM algorithm when median depth is $3,089\times$.}\label{table:timing}
+\end{table}%
+
+\vspace{1em}
+
+% FIGURE 5
+\begin{figure}[h!]
+\centering
+%\includegraphics[width=0.8\textwidth]{M0.png}
+\caption{\csentence{Influence of $M_0$ on the estimate of $\mu_j$.}
+Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{1,014,740}$, with different $\hat{M_0}$ are shown.}
+\label{tbl:M0}
+\end{figure}
+
+\vspace{1em}
+
+% FIGURE 6
+\begin{figure}[h!]
+\centering
+%\includegraphics[width=0.6\textwidth]{concomitant.png}
+\caption{\csentence{The NRAF trend of concomitant variants in gene MTH1 and ADE16.}
+The 95\% Bayesian credible intervals are shown.}
+\label{figure:concomitant}
+\end{figure}
+
+
+% Figures on separate pages
+\setcounter{figure}{0}
+\setcounter{table}{0}
+
+\clearpage
+%\newpage
+% FIGURE 1
+\begin{figure}[htpb]
+\begin{center}
+%\vspace{-10pt}
+\includegraphics[width=0.5\textwidth]{rvd3.png}
+\caption{\csentence{Graphical model.} A. Graphical model representation of the model.
+B. Graphical model representation of the variational approximation  to approximate the posterior distribution.
+Observed random variables are shown as shaded nodes and latent random variables are unshaded.
+The object of inference for the variational EM algorithm is the joint distribution $p(\mu, \theta|r, n)$.}
+\end{center}
+\end{figure}
+
+\clearpage
+%\newpage
+% TABLE 1
+\begin{table}[h!]
+\caption{Sensitivity/Specificity comparison of variational EM algorithm with MCMC algorithm.}%\label{table:mcmcvar}
+% Sensitivity/Specificity comparison of variational EM algorithm with the MCMC algorithm on the synthetic DNA data set.
+\scriptsize 
+%\small
+\begin{tabular}{c c c c c c }
+\hline
+\toprule
+	{\bfseries True NRAF} & {\bfseries Median Depth} & \multicolumn{2}{c}{{{\bfseries Sensitivity}}} &  \multicolumn{2}{c}{\bfseries Specificity} \\
+	\cmidrule(r{4pt}){3-4} \cmidrule(l){5-6}
+	 ~ & ~ & {\bfseries MCMC} & {\bfseries Variational} & {\bfseries MCMC} & {\bfseries Variational}   \\
+	\midrule
+	0.1\% & 39 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 408 & 0.00 & 0.07 & 1.00 & 1.00   \\
+	 & 4129 & 0.14 & 0.29 & 1.00 & 1.00   \\
+	 & 41449 & 0.86 & 1.00 & 0.97 & 1.00   \\
+	 \midrule
+	0.3\% & 36 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 410 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 4156 & 1.00 & 1.00 & 0.99 & 0.98   \\
+	 & 41472 & 1.00 & 0.93 & 0.85 & 0.91   \\
+	 \midrule
+	1.0\% & 53 & 0.00 & 0.00 & 1.00 & 1.00   \\
+	 & 535 & 0.21 & 0.29 & 1.00 & 1.00  \\
+	 & 5584 & 1.00 & 1.00 & 0.98 & 0.98   \\
+	 & 55489 & 1.00 & 0.93 & 0.87 & 0.95   \\
+	 \midrule
+	10.0\% & 22 & 0.00 & 0.57 & 1.00 & 1.00   \\
+	 & 260 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 2718 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 26959 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 \midrule
+	100.0\% & 27 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 298 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 3089 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	 & 30590 & 1.00 & 1.00 & 1.00 & 1.00   \\
+	\bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+%\newpage
+% FIGURE 2
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{fig1.png}
+\caption{Approximated posterior distributions by the variational EM and MCMC algorithms on a true variant position 85 when the median read depth is $5,584\times$.}%\label{figure:compare1}
+\end{figure}
+
+\clearpage
+%\newpage
+% FIGURE 3
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{fig2.png}
+\caption{Approximated posterior distribution by the variational EM and MCMC algorithms on a non-variant position (160) that was not called by the MCMC algorithm (true negative), but was called by the variational EM algorithm (false positive) with a median read depth of $410\times$.}%\label{figure:compare2}
+\end{figure}
+
+\clearpage
+%\newpage
+% TABLE 2
+\begin{table}[htbp]
+\centering
+\caption{Sensitivity/Specificity comparison with other variant detection methods.}%\label{table:character}
+  \tiny
+  %\scriptsize 
+    \begin{tabular}{rrrrrrrrrr}
+    \toprule
+    \textbf{NRAF} & \multicolumn{1}{c}{\textbf{Median}} & \multicolumn{1}{c}{\textbf{SAMtools}} & \multicolumn{1}{c}{\textbf{GATK}} & \multicolumn{1}{c}{\textbf{VarScan2 }} & \multicolumn{1}{c}{\textbf{VarScan2}} & \multicolumn{1}{c}{\textbf{Strelka}} & \multicolumn{1}{c}{\textbf{MuTect}} & \multicolumn{1}{c}{\textbf{RVD2 }} & \multicolumn{1}{c}{\textbf{RVD2 }} \\
+    \textbf{} &\multicolumn{1}{c}{\textbf{Depth}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{mpileup}} & \multicolumn{1}{c}{\textbf{somatic}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{MCMC}} & \multicolumn{1}{c}{\textbf{Variational}} \\
+    \midrule
+    \multicolumn{1}{c}{0.1\%} & \multicolumn{1}{l}{39} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.00/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{408} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.07/0.92} & 0.00/1.00 & 0.29/0.91 & 0.00/1.00 & \multicolumn{1}{c}{0.07/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4129} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.52} & 0.00/1.00 & 0.64/0.86 & 0.14/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41449} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.79} & 0.00/1.00 & 0.14/0.93 & 0.86/0.97 & \multicolumn{1}{c}{1.00/1.00} \\
+    \midrule
+    \multicolumn{1}{c}{0.3\%} & \multicolumn{1}{l}{36} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.43/1.00 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{410} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.21/0.95} & 0.00/1.00 & 0.50/0.94 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4156} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.53} & 0.00/1.00 & 0.36/0.91 & 1.00/0.99 & \multicolumn{1}{c}{1.00/0.98} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41472} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.75} & 0.00/1.00 & 0.43/0.90 & 1.00/0.85 & \multicolumn{1}{c}{0.93/0.91} \\
+    \midrule
+    \multicolumn{1}{c}{1.0\%} & \multicolumn{1}{l}{53} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/0.99} & 0.00/1.00 & 0.29/0.98 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{535} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.43/0.89} & 0.00/1.00 & 0.71/0.91 & 0.21/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{5584} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.47} & 0.00/1.00 & 0.64/0.95 & 1.00/0.98 & \multicolumn{1}{c}{1.00/0.98} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{55489} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.69} & 0.00/1.00 & 0.86/0.90 & 1.00/0.87 & \multicolumn{1}{c}{0.93/0.95} \\
+    \midrule
+    \multicolumn{1}{c}{10.0\%} & \multicolumn{1}{l}{22} & \multicolumn{1}{c}{0.21/1.00} & \multicolumn{1}{c}{0.43/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.36/1.00} & 0.29/1.00 & 0.86/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.57/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{260} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.86/1.00} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{2718} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.79/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.78} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{26959} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.53} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \midrule
+    \multicolumn{1}{c}{100.0\%} & \multicolumn{1}{l}{27} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{298} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.99} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{3089} & \multicolumn{1}{c}{0.86/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.65} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \multicolumn{1}{c}{} & \multicolumn{1}{l}{30590} & \multicolumn{1}{c}{0.71/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.39} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    \bottomrule
+    \end{tabular}%
+\end{table}%
+
+
+\clearpage
+%\newpage
+% FIGURE 4
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.6\textwidth]{timing.png}
+\caption{\csentence{Timing comparison for our variational EM algorithm and MCMC sampling algorithm.}
+Sixty processors are used to estimate the model on the synthetic data set.}%\label{figure:timing}
+\end{figure}
+
+\clearpage
+%\newpage
+% TABLE 3
+\begin{table}[htbp]
+\centering
+\caption{Timing profile of variational EM algorithm when median depth is $3,089\times$.}%\label{table:timing}
+  \begin{threeparttable}
+  \tiny
+  %\scriptsize 
+    \begin{tabular}{ccrrrrrrcc}
+    \toprule
+    ~ & ~ & \multicolumn{3}{c}{\textbf{E-step}} & \multicolumn{4}{c}{\textbf{M-step}}    & ~ \\
+    \cmidrule(r{4pt}){3-5} \cmidrule(l){6-9}
+    \textbf{Computation} & \textbf{Region} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Update} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & \multicolumn{1}{c}{Optimize} & Update & \textbf{Total} \\
+    \textbf{resource} & \textbf{length}  & \multicolumn{1}{c}{$\gamma$} & \multicolumn{1}{c}{\textbf{$\delta$}} & \multicolumn{1}{c}{ELBO} & \multicolumn{1}{c}{$\mu_0$} & \multicolumn{1}{c}{$M_0$} & \multicolumn{1}{c}{$M$} &  \multicolumn{1}{c}{ELBO}  & \textbf{time (s)} \\
+    \midrule
+          & 100   & \multicolumn{1}{c}{617.7 (63\%)} & \multicolumn{1}{c}{4.232} & \multicolumn{1}{c}{10.42} & \multicolumn{1}{c}{0.264} & \multicolumn{1}{c}{0.159} & \multicolumn{1}{c}{332.8 (34\%)} & 10.29 & 976.0 \\
+    single & 200   & \multicolumn{1}{c}{1124  (65\%)} & \multicolumn{1}{c}{8.936} & \multicolumn{1}{c}{18.64} & \multicolumn{1}{c}{0.418} & \multicolumn{1}{c}{0.256} & \multicolumn{1}{c}{570.0 (33\%)} & 18.37 & 1741 \\
+    processor & 300   & \multicolumn{1}{c}{1728  (65\%)} & \multicolumn{1}{c}{13.27} & \multicolumn{1}{c}{27.81} & \multicolumn{1}{c}{0.445} & \multicolumn{1}{c}{0.400} & \multicolumn{1}{c}{851.5 (32\%)} & 27.65 & 2649 \\
+          & 400   & \multicolumn{1}{c}{2433  (66\%)} & \multicolumn{1}{c}{17.99} & \multicolumn{1}{c}{38.55} & \multicolumn{1}{c}{0.737} & \multicolumn{1}{c}{0.635} & \multicolumn{1}{c}{1176  (32\%)} & 38.17 & 3705 \\
+       \midrule
+          & 100   & \multicolumn{1}{c}{29.93 (41\%)} & \multicolumn{1}{c}{0.2470} & \multicolumn{1}{c}{11.67} & \multicolumn{1}{c}{0.3070} & \multicolumn{1}{c}{0.1890} & \multicolumn{1}{c}{19.56 (26\%)} & 11.98 & 73.89 \\
+    60    & 200   & \multicolumn{1}{c}{44.69 (40\%)} & \multicolumn{1}{c}{0.4170} & \multicolumn{1}{c}{22.14} & \multicolumn{1}{c}{0.5230} & \multicolumn{1}{c}{0.3040} & \multicolumn{1}{c}{24.04 (21\%)} & 22.24 & 114.3 \\
+    processors & 300   & \multicolumn{1}{c}{63.47 (40\%)} & \multicolumn{1}{c}{0.7160} & \multicolumn{1}{c}{33.31} & \multicolumn{1}{c}{0.5620} & \multicolumn{1}{c}{0.5040} & \multicolumn{1}{c}{29.41 (18\%)} & 33.24 & 161.2 \\
+          & 400   & \multicolumn{1}{c}{94.66 (43\%)} & \multicolumn{1}{c}{0.7270} & \multicolumn{1}{c}{42.78} & \multicolumn{1}{c}{0.8200} & \multicolumn{1}{c}{0.7060} & \multicolumn{1}{c}{40.04 (18\%)} & 44.28 & 219.7 \\
+    \bottomrule
+    \end{tabular}%
+    \begin{tablenotes}
+    \item Timing profile of 4 significant figures for one iteration of variational EM algorithm when median read depth is $3,089\times$.
+Single and multiple processors are both tested to estimate timing. Time for optimizing $\gamma$ in the E-step and optimizing $M$ in the M-step is highlighted in percentage.
+    \end{tablenotes}
+    \end{threeparttable}
+\end{table}%
+
+\clearpage
+%\newpage
+% FIGURE 5
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{M0.png}
+\caption{\csentence{Influence of $M_0$ on the estimate of $\mu_j$.}
+Posterior distributions of the variant at position Chr04:1,014,740, $\hat{\mu}_{1,014,740}$, with different $\hat{M_0}$ are shown.}
+%\label{tbl:M0}
+\end{figure}
+
+\clearpage
+%\newpage
+% FIGURE 6
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{concomitant.png}
+\caption{\csentence{The NRAF trend of concomitant variants in gene MTH1 and ADE16.}
+The 95\% Bayesian credible intervals are shown.}
+%\label{figure:concomitant}
+\end{figure}
 
 
 \end{backmatter}
