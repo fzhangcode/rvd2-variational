@@ -211,13 +211,13 @@ Recently, next-generation sequencing (NGS) technologies have enabled the identif
 Yet, the noise inherent in the biological processes involved in next-generation sequencing necessitates the use of statistical methods to identify true rare variants.
 
 \parttitle{Results}
-We propose a Bayesian statistical model and a variational expectation-maximization (EM) algorithm to estimate non-reference allele frequency (NRAF) and identify SNVs in heterogeneous cell populations.
+We propose a Bayesian statistical model and a variational expectation maximization (EM) algorithm to estimate non-reference allele frequency (NRAF) and identify SNVs in heterogeneous cell populations.
 We demonstrate that our variational EM algorithm has comparable sensitivity and specificity compared with a Markov Chain Monte Carlo (MCMC) sampling inference algorithm, and is more computationally efficient on tests of relatively low coverage ($27\times$ and $298\times$) data.
 Furthermore, we show that our model with a variational EM inference algorithm has higher specificity than many state-of-the-art algorithms.
 In an analysis of a directed evolution longitudinal yeast data set, we are able to identify a time-series trend in non-reference allele frequency and detect novel variants that have not yet been reported.
 Our model also detects the emergence of a beneficial variant earlier than was previously shown, and a pair of concomitant variants.
 
-\parttitle{Conclusion}
+\parttitle{Conclusions}
 We developed a variational EM algorithm for a hierarchical Bayesian model to identify rare variants in heterogeneous next-generation sequencing data.
 Our algorithm is able to identify variants in a broad range of read depths and non-reference allele frequencies with high sensitivity and specificity.
 
@@ -546,7 +546,7 @@ The longitudinal yeast data comes from three strains of haploid S288c which were
 The wild-type ancestral strain GSY1136 was sequenced as a reference.
 Aliquots were taken about every 70 generations and sequenced.
 The detail of library sequencing is described in \cite{kvitek2013whole}, \cite{bansal2010statistical}, and \cite{kao2008molecular}.
-The Illumina sequencing data are available on the NCBI Sequence Read Archive (SRA054922)\cite{kvitek2013whole}.
+The Illumina sequencing data is available on the NCBI Sequence Read Archive (SRA054922)\cite{kvitek2013whole}.
 For this study, we received the original BAM files from one of the authors.
 The aligned BAM files have $266$ -- $1,046\times$ coverage.
 We used \texttt{samtools} (v 1.1) with \texttt{-mpileup -C50} flags to convert BAM files to pileup files.
@@ -961,6 +961,16 @@ Our method can also be extended to study drug resistance by characterizing tumor
 We will be able to find the causative variants that lead to drug resistance and understand the causes of resistance at the single nucleotide level.
 
 
+\section{Ethics approval and consent to participate}
+Not applicable.
+
+\section{Consent to publication}
+Not applicable.
+
+\section{Availability of data and materials}
+The synthetic data set is available on \url{http://dna-discovery.stanford.edu/software/rvd/} under the heading of \texttt{Synthetic DNA Data}. 
+The Illumina sequencing data is available on the NCBI Sequence Read Archive SRA054922.
+%The source code could be found via the link below \url{http://genomics.wpi.edu/vi_rvd/}.
 
 \section{Additional Files}
   \subsection{Additional file 1 --- Derivation of the variational expectation maximization (EM) inference algorithm.}\label{derivation}
@@ -973,6 +983,17 @@ We will be able to find the causative variants that lead to drug resistance and 
 
 
 \begin{backmatter}
+
+\section{List of abbreviations}
+NGS, next-generation sequencing;
+SNVs, single nucleotide variants;
+EM, expectation maximization;
+NRAF, non-reference allele frequency;
+MCMC, Markov Chain Monte Carlo;
+MAP, maximum a-posteriori;
+RVD, rare variant detection;
+KL, Kullback-Liebler;
+ELBO, evidence lower bound.
 
 \section{Competing interests}
   The authors declare that they have no competing interests.
