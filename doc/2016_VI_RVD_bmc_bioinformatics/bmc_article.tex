@@ -681,7 +681,7 @@ It is notable that the shape of the proposed Beta variational distribution is we
 \vspace{2em}
 
 \subsubsection{Comparison to the State-of-the-Art Methods}
-We compared the performance of our variational EM algorithm with the state-of-the-art variant detection methods, SAMtools \cite{li2009sequence}, GATK \cite{mckenna2010genome}, VarScan2 \cite{koboldt2012varscan}, Strelka \cite{saunders2012strelka}, MuTect \cite{cibulskis2013sensitive}, and RVD2 \cite{he2015rvd2}, using synthetic DNA data set (Table \ref{table:character}).
+We compared the performance of our variational EM algorithm with the state-of-the-art variant detection methods, SAMtools \cite{li2009sequence}, GATK \cite{mckenna2010genome}, CRISP\cite{bansal2010statistical}, VarScan2 \cite{koboldt2012varscan}, Strelka \cite{saunders2012strelka}, SNVer\cite{wei2011snver}, MuTect \cite{cibulskis2013sensitive}, and RVD2 \cite{he2015rvd2}, using synthetic DNA data set (Table \ref{table:character}).
 Among all of the methods compared, our variational EM algorithm has a higher sensitivity and specificity for a broad range of read depths and NRAFs.
 Our variational EM algorithm shows higher specificity than all the other tested methods at a very low NRAF (0.1\%) level.
 However, our algorithm has a slightly lower specificity than the MCMC algorithm when the median read depth is $4,156\times$ at 0.3\% NRAF, and a slightly lower sensitivity than the MCMC algorithm when the median read depth is $41,472\times$ at 0.3\% NRAF and a median read depth of $55,489\times$ at 1.0\% NRAF.
@@ -1281,43 +1281,96 @@ The object of inference for the variational EM algorithm is the joint distributi
 \clearpage
 %\newpage
 % TABLE 2
+%\begin{table}[htbp]
+%\centering
+%\caption{Sensitivity/Specificity comparison with other variant detection methods.}%\label{table:character}
+%  \tiny
+%  %\scriptsize 
+%    \begin{tabular}{rrrrrrrrrr}
+%    \toprule
+%    \textbf{NRAF} & \multicolumn{1}{c}{\textbf{Median}} & \multicolumn{1}{c}{\textbf{SAMtools}} & \multicolumn{1}{c}{\textbf{GATK}} & \multicolumn{1}{c}{\textbf{VarScan2 }} & \multicolumn{1}{c}{\textbf{VarScan2}} & \multicolumn{1}{c}{\textbf{Strelka}} & \multicolumn{1}{c}{\textbf{MuTect}} & \multicolumn{1}{c}{\textbf{RVD2 }} & \multicolumn{1}{c}{\textbf{RVD2 }} \\
+%    \textbf{} &\multicolumn{1}{c}{\textbf{Depth}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{mpileup}} & \multicolumn{1}{c}{\textbf{somatic}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{MCMC}} & \multicolumn{1}{c}{\textbf{Variational}} \\
+%    \midrule
+%    \multicolumn{1}{c}{0.1\%} & \multicolumn{1}{l}{39} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.00/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{408} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.07/0.92} & 0.00/1.00 & 0.29/0.91 & 0.00/1.00 & \multicolumn{1}{c}{0.07/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4129} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.52} & 0.00/1.00 & 0.64/0.86 & 0.14/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41449} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.79} & 0.00/1.00 & 0.14/0.93 & 0.86/0.97 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \midrule
+%    \multicolumn{1}{c}{0.3\%} & \multicolumn{1}{l}{36} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.43/1.00 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{410} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.21/0.95} & 0.00/1.00 & 0.50/0.94 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4156} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.53} & 0.00/1.00 & 0.36/0.91 & 1.00/0.99 & \multicolumn{1}{c}{1.00/0.98} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41472} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.75} & 0.00/1.00 & 0.43/0.90 & 1.00/0.85 & \multicolumn{1}{c}{0.93/0.91} \\
+%    \midrule
+%    \multicolumn{1}{c}{1.0\%} & \multicolumn{1}{l}{53} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/0.99} & 0.00/1.00 & 0.29/0.98 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{535} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.43/0.89} & 0.00/1.00 & 0.71/0.91 & 0.21/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{5584} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.47} & 0.00/1.00 & 0.64/0.95 & 1.00/0.98 & \multicolumn{1}{c}{1.00/0.98} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{55489} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.69} & 0.00/1.00 & 0.86/0.90 & 1.00/0.87 & \multicolumn{1}{c}{0.93/0.95} \\
+%    \midrule
+%    \multicolumn{1}{c}{10.0\%} & \multicolumn{1}{l}{22} & \multicolumn{1}{c}{0.21/1.00} & \multicolumn{1}{c}{0.43/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.36/1.00} & 0.29/1.00 & 0.86/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.57/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{260} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.86/1.00} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{2718} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.79/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.78} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{26959} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.53} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \midrule
+%    \multicolumn{1}{c}{100.0\%} & \multicolumn{1}{l}{27} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{298} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.99} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{3089} & \multicolumn{1}{c}{0.86/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.65} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \multicolumn{1}{c}{} & \multicolumn{1}{l}{30590} & \multicolumn{1}{c}{0.71/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.39} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+%    \bottomrule
+%    \end{tabular}%
+%\end{table}%
+
+
+
+
+
+
+% Table generated by Excel2LaTeX from sheet 'TPR_TNR'
 \begin{table}[htbp]
-\centering
+  \centering
 \caption{Sensitivity/Specificity comparison with other variant detection methods.}%\label{table:character}
   \tiny
-  %\scriptsize 
-    \begin{tabular}{rrrrrrrrrr}
+    \begin{tabular}{cl|ccccclcllc}
     \toprule
-    \textbf{NRAF} & \multicolumn{1}{c}{\textbf{Median}} & \multicolumn{1}{c}{\textbf{SAMtools}} & \multicolumn{1}{c}{\textbf{GATK}} & \multicolumn{1}{c}{\textbf{VarScan2 }} & \multicolumn{1}{c}{\textbf{VarScan2}} & \multicolumn{1}{c}{\textbf{Strelka}} & \multicolumn{1}{c}{\textbf{MuTect}} & \multicolumn{1}{c}{\textbf{RVD2 }} & \multicolumn{1}{c}{\textbf{RVD2 }} \\
-    \textbf{} &\multicolumn{1}{c}{\textbf{Depth}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{mpileup}} & \multicolumn{1}{c}{\textbf{somatic}} & \textbf{} & \textbf{} & \multicolumn{1}{c}{\textbf{MCMC}} & \multicolumn{1}{c}{\textbf{Variational}} \\
+    \multicolumn{1}{l}{\textbf{NRAF}} & \multicolumn{1}{c|}{\textbf{Median }} & \multicolumn{1}{l}{\textbf{SAMtools}} & \multicolumn{1}{l}{\textbf{GATK}} & \multicolumn{1}{l}{\textbf{CRISP}} & \textbf{VarScan2 } & \textbf{VarScan2 } & \textbf{Strelka} & \multicolumn{1}{l}{\textbf{SNVer}} & \textbf{MuTect} & \multicolumn{1}{c}{\textbf{RVD2}} & \textbf{RVD2} \\
+          & \multicolumn{1}{c|}{\textbf{Depth}} &       &       &       & \textbf{mpileup} & \textbf{somatic} &       &       &       & \multicolumn{1}{c}{\textbf{MCMC}} & \textbf{Variational} \\
     \midrule
-    \multicolumn{1}{c}{0.1\%} & \multicolumn{1}{l}{39} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.00/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{408} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.07/0.92} & 0.00/1.00 & 0.29/0.91 & 0.00/1.00 & \multicolumn{1}{c}{0.07/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4129} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.52} & 0.00/1.00 & 0.64/0.86 & 0.14/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41449} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.79} & 0.00/1.00 & 0.14/0.93 & 0.86/0.97 & \multicolumn{1}{c}{1.00/1.00} \\
+    0.1\% & 39    & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/0.99 & 0.00/1.00 & 0.00/1.00 \\
+          & 408   & 0.00/1.00 & 0.00/1.00 & \multicolumn{1}{l}{0.00/1.00} & 0.00/1.00 & 0.07/0.92 & 0.00/1.00 & 0.00/1.00 & 0.29/0.91 & 0.00/1.00 & 0.07/1.00 \\
+          & 4129  & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.57/0.52 & 0.00/1.00 & 0.00/1.00 & 0.64/0.86 & 0.14/1.00 & 0.29/1.00 \\
+          & 41449 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.64/0.79 & 0.00/1.00 & 0.00/1.00 & 0.14/0.93 & 0.86/0.97 & 1.00/1.00 \\
     \midrule
-    \multicolumn{1}{c}{0.3\%} & \multicolumn{1}{l}{36} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & 0.00/1.00 & 0.43/1.00 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{410} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.21/0.95} & 0.00/1.00 & 0.50/0.94 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{4156} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.53} & 0.00/1.00 & 0.36/0.91 & 1.00/0.99 & \multicolumn{1}{c}{1.00/0.98} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{41472} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.75} & 0.00/1.00 & 0.43/0.90 & 1.00/0.85 & \multicolumn{1}{c}{0.93/0.91} \\
+    0.3\% & 36    & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.43/1.00 & 0.00/1.00 & 0.00/1.00 \\
+          & 410   & 0.00/1.00 & 0.00/1.00 & \multicolumn{1}{l}{0.00/1.00} & 0.00/1.00 & 0.21/0.95 & 0.00/1.00 & 0.00/1.00 & 0.50/0.94 & 0.00/1.00 & 0.00/1.00 \\
+          & 4156  & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.57/0.53 & 0.00/1.00 & 0.21/0.99 & 0.36/0.91 & 1.00/0.99 & 1.00/0.98 \\
+          & 41472 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.64/0.75 & 0.00/1.00 & 0.86/0.97 & 0.43/0.90 & 1.00/0.85 & 0.93/0.91 \\
     \midrule
-    \multicolumn{1}{c}{1.0\%} & \multicolumn{1}{l}{53} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/0.99} & 0.00/1.00 & 0.29/0.98 & 0.00/1.00 & \multicolumn{1}{c}{0.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{535} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.43/0.89} & 0.00/1.00 & 0.71/0.91 & 0.21/1.00 & \multicolumn{1}{c}{0.29/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{5584} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.47} & 0.00/1.00 & 0.64/0.95 & 1.00/0.98 & \multicolumn{1}{c}{1.00/0.98} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{55489} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.69} & 0.00/1.00 & 0.86/0.90 & 1.00/0.87 & \multicolumn{1}{c}{0.93/0.95} \\
+    1.0\% & 53    & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/0.99 & 0.00/1.00 & 0.00/1.00 & 0.29/0.98 & 0.00/1.00 & 0.00/1.00 \\
+          & 535   & 0.00/1.00 & 0.00/1.00 & \multicolumn{1}{l}{0.00/1.00} & 0.00/1.00 & 0.43/0.89 & 0.00/1.00 & 0.29/1.00 & 0.71/0.91 & 0.21/1.00 & 0.29/1.00 \\
+          & 5584  & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.57/0.47 & 0.00/1.00 & 1.00/0.99 & 0.64/0.95 & 1.00/0.98 & 1.00/0.98 \\
+          & 55489 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.00/1.00 & 0.64/0.69 & 0.00/1.00 & 1.00/0.97 & 0.86/0.90 & 1.00/0.87 & 0.93/0.95 \\
     \midrule
-    \multicolumn{1}{c}{10.0\%} & \multicolumn{1}{l}{22} & \multicolumn{1}{c}{0.21/1.00} & \multicolumn{1}{c}{0.43/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.36/1.00} & 0.29/1.00 & 0.86/0.99 & 0.00/1.00 & \multicolumn{1}{c}{0.57/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{260} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.86/1.00} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{2718} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.79/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/0.78} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{26959} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.57/1.00} & \multicolumn{1}{c}{0.00/1.00} & \multicolumn{1}{c}{0.64/0.53} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    10.0\% & 22    & 0.21/1.00 & 0.43/1.00 & 0.86/1.00 & 0.00/1.00 & 0.36/1.00 & 0.29/1.00 & 0.93/1.00 & 0.86/0.99 & 0.00/1.00 & 0.57/1.00 \\
+          & 260   & 0.00/1.00 & 0.57/1.00 & \multicolumn{1}{l}{1.00/1.00} & 0.00/1.00 & 0.86/1.00 & 1.00/1.00 & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & 1.00/1.00 \\
+          & 2718  & 0.00/1.00 & 0.79/1.00 & 0.07/1.00 & 0.00/1.00 & 0.57/0.78 & 1.00/1.00 & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & 1.00/1.00 \\
+          & 26959 & 0.00/1.00 & 0.57/1.00 & 0.00/1.00 & 0.00/1.00 & 0.64/0.53 & 1.00/0.99 & 1.00/0.98 & 1.00/0.98 & 1.00/1.00 & 1.00/1.00 \\
     \midrule
-    \multicolumn{1}{c}{100.0\%} & \multicolumn{1}{l}{27} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & 1.00/1.00 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{298} & \multicolumn{1}{c}{1.00/0.99} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.99} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{3089} & \multicolumn{1}{c}{0.86/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.65} & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
-    \multicolumn{1}{c}{} & \multicolumn{1}{l}{30590} & \multicolumn{1}{c}{0.71/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/1.00} & \multicolumn{1}{c}{1.00/0.39} & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{c}{1.00/1.00} \\
+    100.0\% & 27    & 1.00/0.99 & 1.00/1.00 & 1.00/1.00 & 1.00/1.00 & 1.00/1.00 & 1.00/1.00 & 1.00/0.99 & 1.00/0.98 & 1.00/1.00 & 1.00/1.00 \\
+          & 298   & 1.00/0.99 & 1.00/1.00 & \multicolumn{1}{l}{1.00/1.00} & 1.00/1.00 & 1.00/0.99 & 1.00/0.99 & 1.00/0.98 & 1.00/0.98 & 1.00/1.00 & 1.00/1.00 \\
+          & 3089  & 0.86/1.00 & 1.00/1.00 & 1.00/0.99 & 1.00/1.00 & 1.00/0.65 & 1.00/0.99 & 1.00/0.98 & 1.00/0.98 & 1.00/1.00 & 1.00/1.00 \\
+          & 30590 & 0.71/1.00 & 1.00/1.00 & 1.00/1.00 & 1.00/1.00 & 1.00/0.39 & 1.00/1.00 & 1.00/0.98 & 1.00/0.99 & 1.00/1.00 & 1.00/1.00 \\
     \bottomrule
-    \end{tabular}%
-\end{table}%
+    \end{tabular}
+  \label{tab:addlabel}
+\end{table}
+
+
+
+
+
+
+
+
+
 
 
 \clearpage
