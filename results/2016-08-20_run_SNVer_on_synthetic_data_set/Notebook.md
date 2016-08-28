@@ -8,7 +8,8 @@ Call variants using SNVer pool.
 
 Conclusions
 -----------------
-
+SNVer performs good when VAF is 0.3%, 1.0%, 10.0%, and 100.0% compared with RVD2.  
+However, it failed to call any variants in the highest read depth when VAF is 0.1%.
    
 Background
 -----------------

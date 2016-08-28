@@ -3,10 +3,12 @@
 
 Purpose
 ------------
+Run CRISP on the synthetic data set.
 
 Conclusions
 -----------------
-
+CRISP works very well in the case of VAF = 100%.  
+It failed to call true positives when the VAF is 1.0%, 03%, and 0.1%.
    
 Background
 -----------------
