@@ -201,10 +201,10 @@
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{artnotes}
-%\note{Sample of title note}     % note to the article
-\note[id=n1]{Equal contributor} % note, connected to author
-\end{artnotes}
+%\begin{artnotes}
+%%\note{Sample of title note}     % note to the article
+%\note[id=n1]{Equal contributor} % note, connected to author
+%\end{artnotes}
 
 \end{fmbox}% comment this for two column layout
 
@@ -314,7 +314,7 @@ GATK~\cite{mckenna2010genome} and SAMTools~\cite{li2009sequence} use a naive Bay
 EBCall models sequencing errors based on a Beta-Binomial distribution, where the parameters and latent variables are estimated from a set of non-paired normal sequencing samples~\cite{shiraishi2013empirical}.
 However, the error rate of normal sequencing samples could be unmatched with the error rate of the target samples, which may cause a problem of making false negatives calls~\cite{wang2013detecting}.
 CRISP compares aligned reads across multiple pools to obtain sequencing errors, and then distinguishes true rare variants from the sequencing errors~\cite{bansal2010statistical}.
-However, the bottleneck of CRISP is its low computational efficiency due to a calculation of a large amount of contingency tables.
+However, the bottleneck of CRISP is its low computational efficiency due to a calculation of a large number of contingency tables.
 % Other Bayesian methods: MAQ, Mutect, and FamSeq
 %
 % Joint distribution %
@@ -326,7 +326,7 @@ Furthermore, they showed that the joint modeling method, JointSNVMix1, observes 
 SomaticSniper models the joint diploid genotype likelihoods for both tumour and normal samples~\cite{larson2012somaticsniper}.
 Strelka models the joint probabilistic distribution of allele frequencies for both tumour and normal samples, which is demonstrated to be more accurate compared with the methods based on the estimated allele frequency tests between tumour and normal samples~\cite{saunders2012strelka}.
 SNVer focuses on a frequentist method that is able to calculate $P$-values, but \cite{wei2011snver} pointed out that this approach fails to model sampling bias that will reduce the power of detecting true rare variants.
-VarScan compares tumour and normal samples thresholding on variant allele frequency and a number of allele counts then uses Fisher's exact test to estimate sample allele frequencies\cite{koboldt2012varscan}.
+VarScan compares tumour and normal samples thresholding on variant allele frequency and a number of allele counts then uses Fisher's exact test to estimate sample allele frequencies~\cite{koboldt2012varscan}.
 
 %By setting thresholds of the rules, heuristic algorithms can find a good solution, but optimum is not guaranteed.
 
@@ -352,7 +352,7 @@ We also show that our variational EM algorithm is able to detect rare variants a
 
 \section{Methods}
 \subsection{Model Structure}
-Our Bayesian statistical model is shown as a graphical model in Figure \ref{figure:model}.
+Our Bayesian statistical model is shown as a graphical model in Figure \ref{figure:model}A.
 In the model, $r_{ji}$ is the number of reads with a non-reference base at location $j$ in experimental replicate $i$; $n_{ji}$ is the total number of reads at location $j$ in experimental replicate $i$.
 The model parameters are:
 \begin{description}[noitemsep]
@@ -362,7 +362,7 @@ The model parameters are:
 \end{description}
 The latent variables are:
 \begin{description}[noitemsep]
-  \item[$- \ \mu_j \sim \text{Beta}(\mu_0, M_0)$] position-specific non-reference read rate for position $j$, and
+  \item[$- \ \mu_j \sim \text{Beta}(\mu_0, M_0)$] a position-specific non-reference read rate for position $j$, and
   \item[$- \ \theta_{ji} \sim \text{Beta}(\mu_j, M_j)$] the non-reference read rate for position $j$ in replicate $i$.
 \end{description}
 
@@ -462,7 +462,7 @@ But, since the support of $\mu_j$ is $[0,1]$, we propose a Beta distribution wit
 \begin{align}
 \mu_j &\thicksim \text{Beta}(\gamma_{j1}, \gamma_{j2}) \nonumber.
 \end{align}
-
+%
 Each component of ELBO is derived in Additional File 1.
 
 
@@ -487,7 +487,6 @@ The variational EM algorithm is summarized using pseudocode in Algorithm 1.
   \caption{Variational EM Inference}
   \begin{algorithmic}[1]
   \State Initialize $q(\theta, \mu)$ and $\hat{\phi}$
-  \State // M-step
   \Repeat
     \State // E-step
 	\Repeat
@@ -500,6 +499,7 @@ The variational EM algorithm is summarized using pseudocode in Algorithm 1.
             \State Optimize $\mathcal{L}(q, \hat{\phi})$ over $q(\mu_j; \gamma_j) = \text{Beta} (\gamma_j)$
         \EndFor
     \Until{change in $\mathcal{L}(q,\hat{\phi})$ is small}
+    \State // M-step
     \State Set $\hat{\phi} \leftarrow \arg \max\limits_{\phi}
             \mathcal{L}(\hat{q},\phi)$
   \Until {change in $\mathcal{L}(\hat{q},\phi)$ is small}
@@ -512,8 +512,12 @@ The variational EM algorithm is summarized using pseudocode in Algorithm 1.
 %\subsection{Posterior Distribution Test}
 % Z-test
 The posterior distribution over $\mu_j^{\triangle} \mid r^{case}, r^{control} \triangleq \mu_j|r^{case} - \mu_j|r^{control}$ is the distribution over the change in the non-reference read rate at position $j$ between a case and control sample.
-However, we cannot compute the posterior distribution, $\mu_j^{\triangle} | r^{case}, r^{control}$, because we do not have access to the component posterior distributions $\mu_j|r^{case}$ and $\mu_j|r^{case}$.
-But, by approximating the distribution of $\mu_j|r^{case}$ and $\mu_j|r^{control}$ as Gaussians with moments matched to the variational posterior distributions, the distribution of $\mu_j^{\triangle} | r^{case}, r^{control}$ can be approximated as a Gaussian.
+Since variational approximate posterior distributions in the difference are Beta distributions, the distribution of the difference is not analytically known.
+In order to compute the statistic of interest, we approximate $\mu_j|r^{case}$ and $\mu_j|r^{control}$ with univariate Gaussian distributions by matching the first two moments of the Beta distributions.
+Then, the difference is a Gaussian distribution.
+As we show in section 3.2.2 the Gaussian approximation is empirically reasonable.
+%However, we cannot compute the posterior distribution, $\mu_j^{\triangle} | r^{case}, r^{control}$, because we do not have access to the component posterior distributions $\mu_j|r^{case}$ and $\mu_j|r^{case}$.
+%But, by approximating the distribution of $\mu_j|r^{case}$ and $\mu_j|r^{control}$ as Gaussians with moments matched to the variational posterior distributions, the distribution of $\mu_j^{\triangle} | r^{case}, r^{control}$ can be approximated as a Gaussian.
 
 Under the variational approximation,
 \begin{align}
@@ -564,7 +568,7 @@ Briefly, we performed an in-vitro mixture of two DNA sequences to test the sensi
 Two 400bp DNA sequences were chemically synthesized. 
 One sample has 14 variant loci and is taken as the case and the other without variants is taken as the control.
 Case and control DNA samples were mixed in-vitro to yield defined NRAF of 0.1\%, 0.3\%, 1.0\%, 10.0\%, and 100.0\%.
-The details of the experimental protocol and data set are available in~\cite{flaherty2011ultrasensitive}.
+%The details of the experimental protocol and data set are available in~\cite{flaherty2011ultrasensitive}.
 The synthetic DNA dataset was downsampled by $10\times$, $100\times$, $1,000\times$, and $10,000\times$ using \texttt{picard} (v 1.96).
 The final data set contains read pairs for six replicates for the control and cases at different NRAF levels.
 
@@ -578,7 +582,7 @@ The Illumina sequencing data is available on the NCBI Sequence Read Archive (SRA
 For this study, we received the original BAM files from one of the authors.
 The aligned BAM files have $266$ -- $1,046\times$ coverage.
 We used \texttt{samtools} (v 1.1) with \texttt{-mpileup -C50} flags to convert BAM files to pileup files.
-Then, we generated depth chart files, which are tab-delimited text files tables recording in each element of the table the count of a nucleotide at a genomic position.
+Then, we generated depth chart files, which are tab-delimited text tables recording in each element of the table the count of a nucleotide at a genomic position.
 We ran our variational inference algorithm on the depth chart files to identify SNVs.
 
 \subsection{Performance on Synthetic DNA Data}
@@ -666,7 +670,7 @@ The variational EM algorithm calls 90 false positive positions without a $\chi^2
 This is to be expected because it is highly unlikely to correctly identify a variant base with a population frequency of $1$ in $1,000$ with less than a $1,000\times$ read depth.
 
 A false positive, a non-mutated position that is called by the variational EM algorithm but not called by the MCMC algorithm, is shown in Figure~\ref{figure:compare2}.
-The variance of MCMC posterior estimate is higher than that of the variational posterior estimate.
+The variance of the MCMC posterior estimate is higher than that of the variational posterior estimate.
 We tested 10 random initial values variational inference algorithm and found the approximate posterior distributions from the variational EM algorithm are essentially equivalent for all random initializations.
 It is notable that the shape of the proposed Beta variational distribution is well approximated by a Gaussian.
 
@@ -960,8 +964,8 @@ The corresponding NRAFs of called variants at different time points are given by
 
 % Beneficial variant and early identification
 All of these variants, except the variant at position Chr04:1,014,740, decrease in NRAF following a maximum.
-The allele at position Chr04:1,014,740 is a beneficial variant that arises in NRAF to 99.603\% at generation 448 within a constant glucose-limited environment.
-Moreover, we identified the first emergence of this beneficial variant as early as 0.522\% in generation 133.
+The allele at position Chr04:1,014,740 is a beneficial variant that arises in NRAF to 99.6\% at generation 448 within a constant glucose-limited environment.
+Moreover, we identified the first emergence of this beneficial variant as early as 0.5\% in generation 133.
 We detected 22 variants (NRAF $<$ 1.0\%) early (at generation 70) in the evolutionary time course.
 Given that the median read depth is $1,649\times$, we have some confidence these are bona-fide variants.
 %Specifically, we detected a variant at position Chr04:1,015,666 at generation 70 as 0.091\% NRAF, which is less than a 0.1\% fraction.
